@@ -1,0 +1,3 @@
+logging:
+  level:
+    com.ringochi.tripservice: info

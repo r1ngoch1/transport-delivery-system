@@ -1,0 +1,25 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: user-service
+  config:
+    import: optional:configserver:http://localhost:8889
+  datasource:
+    url: jdbc:postgresql://localhost:15433/user_db
+    username: user_service
+    password: user_service
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+app:
+  jwt:
+    secret: "system-transport-demo-secret-must-be-at-least-32-bytes"

@@ -1,0 +1,19 @@
+server:
+  port: 8889
+
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: file:./config-repo
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

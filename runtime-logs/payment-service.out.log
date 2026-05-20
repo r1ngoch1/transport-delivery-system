@@ -1,0 +1,200 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] --------------------< com.ringochi:payment-service >--------------------
+[INFO] Building payment-service 1.0-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.3.5:run (default-cli) > test-compile @ payment-service >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ payment-service ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.13.0:compile (default-compile) @ payment-service ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ payment-service ---
+[INFO] skip non existing resourceDirectory C:\Users\sholo\IdeaProjects\system-transport-architecture\services\payment-service\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ payment-service ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:3.3.5:run (default-cli) < test-compile @ payment-service <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.3.5:run (default-cli) @ payment-service ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.5)
+
+2026-05-19T19:30:19.231+05:00  INFO 21152 --- [payment-service] [           main] c.r.p.PaymentServiceApplication          : Starting PaymentServiceApplication using Java 21.0.6 with PID 21152 (C:\Users\sholo\IdeaProjects\system-transport-architecture\services\payment-service\target\classes started by sholo in C:\Users\sholo\IdeaProjects\system-transport-architecture\services\payment-service)
+2026-05-19T19:30:19.235+05:00  INFO 21152 --- [payment-service] [           main] c.r.p.PaymentServiceApplication          : No active profile set, falling back to 1 default profile: "default"
+2026-05-19T19:30:19.307+05:00  INFO 21152 --- [payment-service] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8889
+2026-05-19T19:30:19.308+05:00  INFO 21152 --- [payment-service] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=payment-service, profiles=[default], label=null, version=null, state=null
+2026-05-19T19:30:20.330+05:00  INFO 21152 --- [payment-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-19T19:30:20.546+05:00  INFO 21152 --- [payment-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 203 ms. Found 1 JPA repository interface.
+2026-05-19T19:30:20.966+05:00  INFO 21152 --- [payment-service] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=b8504e5c-e03a-390a-a38b-5f844ae590e2
+2026-05-19T19:30:21.197+05:00  WARN 21152 --- [payment-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-05-19T19:30:21.200+05:00  WARN 21152 --- [payment-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
+2026-05-19T19:30:21.566+05:00  INFO 21152 --- [payment-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8087 (http)
+2026-05-19T19:30:21.589+05:00  INFO 21152 --- [payment-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-19T19:30:21.590+05:00  INFO 21152 --- [payment-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.31]
+2026-05-19T19:30:21.702+05:00  INFO 21152 --- [payment-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-19T19:30:21.704+05:00  INFO 21152 --- [payment-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2391 ms
+2026-05-19T19:30:22.019+05:00  INFO 21152 --- [payment-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-19T19:30:22.256+05:00  INFO 21152 --- [payment-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@3e2d8623
+2026-05-19T19:30:22.258+05:00  INFO 21152 --- [payment-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-19T19:30:22.315+05:00  INFO 21152 --- [payment-service] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:15437/payment_db (PostgreSQL 16.14)
+2026-05-19T19:30:22.408+05:00  INFO 21152 --- [payment-service] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 1 migration (execution time 00:00.054s)
+2026-05-19T19:30:22.441+05:00  INFO 21152 --- [payment-service] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 1
+2026-05-19T19:30:22.448+05:00  INFO 21152 --- [payment-service] [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+2026-05-19T19:30:22.630+05:00  INFO 21152 --- [payment-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-19T19:30:22.828+05:00  INFO 21152 --- [payment-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2026-05-19T19:30:22.895+05:00  INFO 21152 --- [payment-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-19T19:30:23.400+05:00  INFO 21152 --- [payment-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-19T19:30:24.830+05:00  INFO 21152 --- [payment-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-19T19:30:24.885+05:00  INFO 21152 --- [payment-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-19T19:30:27.158+05:00  INFO 21152 --- [payment-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-05-19T19:30:28.218+05:00  INFO 21152 --- [payment-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-05-19T19:30:28.237+05:00  INFO 21152 --- [payment-service] [           main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestTemplate.
+2026-05-19T19:30:28.283+05:00  WARN 21152 --- [payment-service] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-05-19T19:30:28.308+05:00  INFO 21152 --- [payment-service] [           main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-05-19T19:30:28.335+05:00  INFO 21152 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-05-19T19:30:28.339+05:00  INFO 21152 --- [payment-service] [           main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-19T19:30:28.350+05:00  INFO 21152 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-05-19T19:30:28.351+05:00  INFO 21152 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-05-19T19:30:28.351+05:00  INFO 21152 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-05-19T19:30:28.351+05:00  INFO 21152 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-05-19T19:30:28.351+05:00  INFO 21152 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-05-19T19:30:28.352+05:00  INFO 21152 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2026-05-19T19:30:28.352+05:00  INFO 21152 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-05-19T19:30:28.723+05:00  INFO 21152 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-05-19T19:30:28.726+05:00  INFO 21152 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+2026-05-19T19:30:28.729+05:00  INFO 21152 --- [payment-service] [           main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-05-19T19:30:28.731+05:00  INFO 21152 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1779201028731 with initial instances count: 6
+2026-05-19T19:30:28.740+05:00  INFO 21152 --- [payment-service] [           main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application PAYMENT-SERVICE with eureka with status UP
+2026-05-19T19:30:28.740+05:00  INFO 21152 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1779201028740, current=UP, previous=STARTING]
+2026-05-19T19:30:28.744+05:00  INFO 21152 --- [payment-service] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PAYMENT-SERVICE/localhost:payment-service:8087: registering service...
+2026-05-19T19:30:28.770+05:00  INFO 21152 --- [payment-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8087 (http) with context path '/'
+2026-05-19T19:30:28.772+05:00  INFO 21152 --- [payment-service] [           main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8087
+2026-05-19T19:30:28.787+05:00  INFO 21152 --- [payment-service] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PAYMENT-SERVICE/localhost:payment-service:8087 - registration status: 204
+2026-05-19T19:30:29.794+05:00  INFO 21152 --- [payment-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-05-19T19:30:29.801+05:00  INFO 21152 --- [payment-service] [           main] c.r.p.PaymentServiceApplication          : Started PaymentServiceApplication in 13.099 seconds (process running for 13.999)
+2026-05-19T19:31:43.395+05:00  INFO 21152 --- [payment-service] [nio-8087-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-19T19:31:43.396+05:00  INFO 21152 --- [payment-service] [nio-8087-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-19T19:31:43.397+05:00  INFO 21152 --- [payment-service] [nio-8087-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-05-19T19:31:43.559+05:00  INFO 21152 --- [payment-service] [nio-8087-exec-1] o.a.k.clients.producer.ProducerConfig    : ProducerConfig values: 
+	acks = -1
+	auto.include.jmx.reporter = true
+	batch.size = 16384
+	bootstrap.servers = [localhost:9092]
+	buffer.memory = 33554432
+	client.dns.lookup = use_all_dns_ips
+	client.id = payment-service-producer-1
+	compression.type = none
+	connections.max.idle.ms = 540000
+	delivery.timeout.ms = 120000
+	enable.idempotence = true
+	enable.metrics.push = true
+	interceptor.classes = []
+	key.serializer = class org.apache.kafka.common.serialization.StringSerializer
+	linger.ms = 0
+	max.block.ms = 60000
+	max.in.flight.requests.per.connection = 5
+	max.request.size = 1048576
+	metadata.max.age.ms = 300000
+	metadata.max.idle.ms = 300000
+	metric.reporters = []
+	metrics.num.samples = 2
+	metrics.recording.level = INFO
+	metrics.sample.window.ms = 30000
+	partitioner.adaptive.partitioning.enable = true
+	partitioner.availability.timeout.ms = 0
+	partitioner.class = null
+	partitioner.ignore.keys = false
+	receive.buffer.bytes = 32768
+	reconnect.backoff.max.ms = 1000
+	reconnect.backoff.ms = 50
+	request.timeout.ms = 30000
+	retries = 2147483647
+	retry.backoff.max.ms = 1000
+	retry.backoff.ms = 100
+	sasl.client.callback.handler.class = null
+	sasl.jaas.config = null
+	sasl.kerberos.kinit.cmd = /usr/bin/kinit
+	sasl.kerberos.min.time.before.relogin = 60000
+	sasl.kerberos.service.name = null
+	sasl.kerberos.ticket.renew.jitter = 0.05
+	sasl.kerberos.ticket.renew.window.factor = 0.8
+	sasl.login.callback.handler.class = null
+	sasl.login.class = null
+	sasl.login.connect.timeout.ms = null
+	sasl.login.read.timeout.ms = null
+	sasl.login.refresh.buffer.seconds = 300
+	sasl.login.refresh.min.period.seconds = 60
+	sasl.login.refresh.window.factor = 0.8
+	sasl.login.refresh.window.jitter = 0.05
+	sasl.login.retry.backoff.max.ms = 10000
+	sasl.login.retry.backoff.ms = 100
+	sasl.mechanism = GSSAPI
+	sasl.oauthbearer.clock.skew.seconds = 30
+	sasl.oauthbearer.expected.audience = null
+	sasl.oauthbearer.expected.issuer = null
+	sasl.oauthbearer.jwks.endpoint.refresh.ms = 3600000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.max.ms = 10000
+	sasl.oauthbearer.jwks.endpoint.retry.backoff.ms = 100
+	sasl.oauthbearer.jwks.endpoint.url = null
+	sasl.oauthbearer.scope.claim.name = scope
+	sasl.oauthbearer.sub.claim.name = sub
+	sasl.oauthbearer.token.endpoint.url = null
+	security.protocol = PLAINTEXT
+	security.providers = null
+	send.buffer.bytes = 131072
+	socket.connection.setup.timeout.max.ms = 30000
+	socket.connection.setup.timeout.ms = 10000
+	ssl.cipher.suites = null
+	ssl.enabled.protocols = [TLSv1.2, TLSv1.3]
+	ssl.endpoint.identification.algorithm = https
+	ssl.engine.factory.class = null
+	ssl.key.password = null
+	ssl.keymanager.algorithm = SunX509
+	ssl.keystore.certificate.chain = null
+	ssl.keystore.key = null
+	ssl.keystore.location = null
+	ssl.keystore.password = null
+	ssl.keystore.type = JKS
+	ssl.protocol = TLSv1.3
+	ssl.provider = null
+	ssl.secure.random.implementation = null
+	ssl.trustmanager.algorithm = PKIX
+	ssl.truststore.certificates = null
+	ssl.truststore.location = null
+	ssl.truststore.password = null
+	ssl.truststore.type = JKS
+	transaction.timeout.ms = 60000
+	transactional.id = null
+	value.serializer = class org.springframework.kafka.support.serializer.JsonSerializer
+
+2026-05-19T19:31:43.597+05:00  INFO 21152 --- [payment-service] [nio-8087-exec-1] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-05-19T19:31:43.693+05:00  INFO 21152 --- [payment-service] [nio-8087-exec-1] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=payment-service-producer-1] Instantiated an idempotent producer.
+2026-05-19T19:31:43.729+05:00  INFO 21152 --- [payment-service] [nio-8087-exec-1] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.7.1
+2026-05-19T19:31:43.730+05:00  INFO 21152 --- [payment-service] [nio-8087-exec-1] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: e2494e6ffb89f828
+2026-05-19T19:31:43.730+05:00  INFO 21152 --- [payment-service] [nio-8087-exec-1] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1779201103728
+2026-05-19T19:31:44.048+05:00  INFO 21152 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=payment-service-producer-1] Cluster ID: 5L6g3nShT-eMCtK--X86sw
+2026-05-19T19:31:44.172+05:00  INFO 21152 --- [payment-service] [vice-producer-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=payment-service-producer-1] ProducerId set to 0 with epoch 0
+2026-05-19T19:35:28.367+05:00  INFO 21152 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-19T19:40:28.380+05:00  INFO 21152 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-19T19:40:44.130+05:00  INFO 21152 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node -1 disconnected.
+2026-05-19T19:45:28.382+05:00  INFO 21152 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-19T19:50:28.387+05:00  INFO 21152 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-19T19:50:44.121+05:00  INFO 21152 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node -1 disconnected.
+2026-05-19T19:55:28.392+05:00  INFO 21152 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-19T20:00:28.394+05:00  INFO 21152 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-19T20:05:28.395+05:00  INFO 21152 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration

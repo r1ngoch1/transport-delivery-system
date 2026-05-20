@@ -1,0 +1,3 @@
+app:
+  jwt:
+    secret: "system-transport-demo-secret-must-be-at-least-32-bytes"

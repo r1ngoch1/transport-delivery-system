@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: Trip Service API
+  version: 1.0.0
+x-curl-examples:
+  listTrips:
+    description: List seeded trips.
+    command: |
+      curl http://localhost:8080/api/trips
+  getTrip:
+    description: Get seeded trip by id.
+    command: |
+      curl http://localhost:8080/api/trips/44444444-4444-4444-4444-444444444444
+  searchTrips:
+    description: Search seeded trips by route and date.
+    command: |
+      curl "http://localhost:8080/api/trips/search?routeId=33333333-3333-3333-3333-333333333333&date=2026-06-01"
+  reserveSeat:
+    description: Reserve one seat directly in Trip Service through Gateway.
+    command: |
+      curl -X POST http://localhost:8080/api/trips/44444444-4444-4444-4444-444444444444/reserve-seat \
+        -H "Authorization: Bearer $TOKEN"
+  releaseSeat:
+    description: Release one seat directly in Trip Service through Gateway.
+    command: |
+      curl -X POST http://localhost:8080/api/trips/44444444-4444-4444-4444-444444444444/release-seat \
+        -H "Authorization: Bearer $TOKEN"
+paths:
+  /api/trips:
+    get:
+      summary: List trips
+      responses:
+        '200': { description: OK }
+    post:
+      summary: Create trip
+      security: [{ bearerAuth: [] }]
+      responses:
+        '201': { description: Created }
+  /api/trips/{id}:
+    get:
+      summary: Get trip
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200': { description: OK }
+  /api/trips/search:
+    get:
+      summary: Search trips
+      parameters:
+        - name: routeId
+          in: query
+          schema: { type: string, format: uuid }
+        - name: date
+          in: query
+          schema: { type: string, format: date }
+      responses:
+        '200': { description: OK }
+  /api/trips/{id}/reserve-seat:
+    post:
+      summary: Reserve one seat
+      responses:
+        '200': { description: OK }
+  /api/trips/{id}/release-seat:
+    post:
+      summary: Release one seat
+      responses:
+        '200': { description: OK }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
