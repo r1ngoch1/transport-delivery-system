@@ -2,6 +2,8 @@ openapi: 3.0.3
 info:
   title: Booking Service API
   version: 1.0.0
+servers:
+  - url: http://localhost:8080
 x-curl-examples:
   createBooking:
     description: Create booking for seeded trip. Payment Service will emit Kafka event and Booking should become CONFIRMED.
@@ -29,12 +31,27 @@ paths:
   /api/bookings:
     post:
       summary: Create booking
+      operationId: createBooking
       security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateBookingRequest'
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /api/bookings/{id}:
     get:
       summary: Get booking
+      operationId: getBookingById
       security: [{ bearerAuth: [] }]
       parameters:
         - name: id
@@ -42,22 +59,126 @@ paths:
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/bookings/my:
     get:
       summary: List current user's bookings
+      operationId: listCurrentUserBookings
       security: [{ bearerAuth: [] }]
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
   /api/bookings/{id}/cancel:
     post:
       summary: Cancel booking
+      operationId: cancelBooking
       security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  responses:
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    BookingStatus:
+      type: string
+      enum: [PENDING, CONFIRMED, CANCELLED]
+    CreateBookingRequest:
+      type: object
+      required: [tripId, seatNumber]
+      properties:
+        tripId:
+          type: string
+          format: uuid
+        seatNumber:
+          type: string
+          example: '1'
+    Booking:
+      type: object
+      required: [id, userId, tripId, seatNumber, status, price, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        tripId:
+          type: string
+          format: uuid
+        paymentId:
+          type: string
+          format: uuid
+          nullable: true
+        seatNumber:
+          type: string
+        status:
+          $ref: '#/components/schemas/BookingStatus'
+        price:
+          type: number
+          example: 1500.00
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string

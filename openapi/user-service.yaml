@@ -2,6 +2,8 @@ openapi: 3.0.3
 info:
   title: User Service API
   version: 1.0.0
+servers:
+  - url: http://localhost:8080
 x-curl-examples:
   register:
     description: Register a passenger and receive JWT.
@@ -31,37 +33,209 @@ paths:
   /api/auth/register:
     post:
       summary: Register user
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
       responses:
-        '201': { description: Created }
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '409':
+          $ref: '#/components/responses/Conflict'
   /api/auth/login:
     post:
       summary: Login user
+      operationId: loginUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
       responses:
-        '200': { description: Authenticated }
+        '200':
+          description: Authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /api/users/me:
     get:
       summary: Current user profile
+      operationId: getCurrentUser
       security: [{ bearerAuth: [] }]
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       summary: Update current user profile
+      operationId: updateCurrentUser
       security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/users/{id}:
     get:
       summary: Get user by id
+      operationId: getUserById
       parameters:
         - name: id
           in: path
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          $ref: '#/components/responses/NotFound'
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  responses:
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    Role:
+      type: string
+      enum: [PASSENGER, DRIVER, ADMIN]
+    RegisterRequest:
+      type: object
+      required: [email, phone, password, fullName]
+      properties:
+        email:
+          type: string
+          format: email
+          example: test@example.com
+        phone:
+          type: string
+          example: '+79990000000'
+        password:
+          type: string
+          format: password
+          example: pass12345
+        fullName:
+          type: string
+          example: Test User
+        role:
+          $ref: '#/components/schemas/Role'
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: test@example.com
+        password:
+          type: string
+          format: password
+          example: pass12345
+    UpdateUserRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          example: '+79990000001'
+        fullName:
+          type: string
+          example: Updated User
+    AuthResponse:
+      type: object
+      required: [accessToken, user]
+      properties:
+        accessToken:
+          type: string
+        user:
+          $ref: '#/components/schemas/User'
+    User:
+      type: object
+      required: [id, email, phone, fullName, enabled, roles, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        phone:
+          type: string
+        fullName:
+          type: string
+        enabled:
+          type: boolean
+        roles:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/Role'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string

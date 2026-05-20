@@ -27,6 +27,7 @@
         <spring-boot.version>3.3.5</spring-boot.version>
         <spring-cloud.version>2023.0.3</spring-cloud.version>
         <jjwt.version>0.12.6</jjwt.version>
+        <openapi-generator.version>7.10.0</openapi-generator.version>
     </properties>
 
     <dependencyManagement>
@@ -64,6 +65,11 @@
                         <release>${maven.compiler.release}</release>
                         <parameters>true</parameters>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openapi-generator.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>

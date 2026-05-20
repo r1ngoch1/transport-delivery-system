@@ -2,6 +2,8 @@ openapi: 3.0.3
 info:
   title: Route Service API
   version: 1.0.0
+servers:
+  - url: http://localhost:8080
 x-curl-examples:
   listCities:
     description: List seeded cities.
@@ -34,56 +36,161 @@ paths:
   /api/cities:
     get:
       summary: List cities
+      operationId: listCities
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/City'
     post:
       summary: Create city
+      operationId: createCity
       security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CityRequest'
       responses:
-        '201': { description: Created }
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/City'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /api/cities/{id}:
     get:
       summary: Get city
+      operationId: getCityById
       parameters:
         - name: id
           in: path
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/City'
+        '404':
+          $ref: '#/components/responses/NotFound'
     patch:
       summary: Update city
+      operationId: updateCity
       security: [{ bearerAuth: [] }]
       parameters:
         - name: id
           in: path
           required: true
           schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CityRequest'
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/City'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/routes:
     get:
       summary: List routes
+      operationId: listRoutes
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Route'
     post:
       summary: Create route
+      operationId: createRoute
       security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteRequest'
       responses:
-        '201': { description: Created }
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/routes/{id}:
     get:
       summary: Get route
+      operationId: getRouteById
       parameters:
         - name: id
           in: path
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      summary: Update route
+      operationId: updateRoute
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RouteRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Route'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/routes/search:
     get:
       summary: Search routes
+      operationId: searchRoutes
       parameters:
         - name: fromCityId
           in: query
@@ -92,10 +199,99 @@ paths:
           in: query
           schema: { type: string, format: uuid }
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Route'
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  responses:
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    CityRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Tyumen
+        region:
+          type: string
+          example: Tyumen Oblast
+        country:
+          type: string
+          example: Russia
+        active:
+          type: boolean
+          default: true
+    City:
+      allOf:
+        - $ref: '#/components/schemas/CityRequest'
+        - type: object
+          required: [id, active]
+          properties:
+            id:
+              type: string
+              format: uuid
+    RouteRequest:
+      type: object
+      properties:
+        fromCityId:
+          type: string
+          format: uuid
+        toCityId:
+          type: string
+          format: uuid
+        distanceKm:
+          type: integer
+          format: int32
+          minimum: 0
+        estimatedDurationMinutes:
+          type: integer
+          format: int32
+          minimum: 0
+        active:
+          type: boolean
+          default: true
+    Route:
+      allOf:
+        - $ref: '#/components/schemas/RouteRequest'
+        - type: object
+          required: [id, active]
+          properties:
+            id:
+              type: string
+              format: uuid
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string

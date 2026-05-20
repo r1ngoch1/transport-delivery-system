@@ -30,6 +30,8 @@ public class PaymentEventConsumer {
             } else if ("PaymentFailed".equals(event.eventType())) {
                 booking.setStatus(BookingStatus.CANCELLED);
                 tripClient.releaseSeat(booking.getTripId());
+            } else {
+                return;
             }
             booking.setUpdatedAt(Instant.now());
             bookings.save(booking);
