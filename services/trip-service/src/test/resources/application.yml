@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: trip-service
+  datasource:
+    url: jdbc:postgresql://localhost:1/test
+    username: test
+    password: test
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false

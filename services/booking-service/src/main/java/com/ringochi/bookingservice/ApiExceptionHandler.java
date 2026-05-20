@@ -1,4 +1,4 @@
-package com.ringochi.userservice;
+package com.ringochi.bookingservice;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.time.Instant;

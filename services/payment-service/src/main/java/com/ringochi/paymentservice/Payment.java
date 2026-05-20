@@ -18,6 +18,7 @@ public class Payment {
     private TargetType targetType;
     private UUID targetId;
     private UUID userId;
+    private String idempotencyKey;
     private BigDecimal amount;
     private String currency = "RUB";
     @Enumerated(EnumType.STRING)
@@ -32,6 +33,8 @@ public class Payment {
     public void setTargetId(UUID targetId) { this.targetId = targetId; }
     public UUID getUserId() { return userId; }
     public void setUserId(UUID userId) { this.userId = userId; }
+    public String getIdempotencyKey() { return idempotencyKey; }
+    public void setIdempotencyKey(String idempotencyKey) { this.idempotencyKey = idempotencyKey; }
     public BigDecimal getAmount() { return amount; }
     public void setAmount(BigDecimal amount) { this.amount = amount; }
     public String getCurrency() { return currency; }

@@ -100,28 +100,28 @@
   - [x] Покрыть `BookingController`: создание booking, вызовы Trip/Payment clients, просмотр своих booking, запрет чужих booking, cancel.
   - [x] Покрыть `PaymentEventConsumer`: `PaymentSucceeded`, `PaymentFailed`, неизвестный booking/payment event.
   - [x] Запустить `mvn test` и зафиксировать зеленый результат.
-- [ ] Добавить integration-тесты с PostgreSQL и Kafka.
-  - [ ] Подключить Testcontainers dependencies для PostgreSQL и Kafka.
-  - [ ] Добавить общий test profile с отключением Config Server/Eureka для integration-тестов.
-  - [ ] Проверить Flyway migrations на реальном PostgreSQL container для User, Route, Trip, Booking, Payment.
-  - [ ] Написать integration-тест Payment Service: создание платежа публикует `PaymentSucceeded` в Kafka.
-  - [ ] Написать integration-тест Booking Service: Kafka event подтверждает booking.
-  - [ ] Написать integration-тест Booking Service: `PaymentFailed` отменяет booking и вызывает release-seat.
-  - [ ] Запустить targeted integration-тесты и затем общий `mvn verify`.
-- [ ] Добавить единый `ApiExceptionHandler` во все бизнес-сервисы.
-  - [ ] Зафиксировать единый JSON-формат ошибки: `timestamp`, `status`, `error`, `message`, `path`.
-  - [ ] Вынести/повторить `ApiExceptionHandler` для Route, Trip, Booking, Payment сервисов.
-  - [ ] Обработать `ResponseStatusException`.
-  - [ ] Обработать validation errors после появления DTO validation.
-  - [ ] Обновить OpenAPI `ErrorResponse`, если фактический формат изменится.
-  - [ ] Добавить unit-тесты handler для основных HTTP статусов.
-- [ ] Добавить idempotency key для Payment Service.
-  - [ ] Добавить поле `idempotency_key` в таблицу `payments` через Flyway migration.
-  - [ ] Добавить unique constraint по `user_id` + `idempotency_key`.
-  - [ ] Принимать `Idempotency-Key` header в `POST /api/payments`.
-  - [ ] При повторном запросе с тем же ключом возвращать уже созданный payment без повторной Kafka-публикации.
-  - [ ] Описать header и response behavior в `openapi/payment-service.yaml`.
-  - [ ] Добавить unit/integration-тесты на повторный запрос и конфликт ключей.
+- [x] Добавить integration-тесты с PostgreSQL и Kafka.
+  - [x] Подключить Testcontainers dependencies для PostgreSQL и Kafka.
+  - [x] Добавить общий test profile с отключением Config Server/Eureka для integration-тестов.
+  - [x] Проверить Flyway migrations на реальном PostgreSQL container для User, Route, Trip, Booking, Payment.
+  - [x] Написать integration-тест Payment Service: создание платежа публикует `PaymentSucceeded` в Kafka.
+  - [x] Написать integration-тест Booking Service: Kafka event подтверждает booking.
+  - [x] Написать integration-тест Booking Service: `PaymentFailed` отменяет booking и вызывает release-seat.
+  - [x] Запустить targeted integration-тесты и затем общий `mvn verify`.
+- [x] Добавить единый `ApiExceptionHandler` во все бизнес-сервисы.
+  - [x] Зафиксировать единый JSON-формат ошибки: `timestamp`, `status`, `error`, `message`, `path`.
+  - [x] Вынести/повторить `ApiExceptionHandler` для Route, Trip, Booking, Payment сервисов.
+  - [x] Обработать `ResponseStatusException`.
+  - [x] Обработать validation errors после появления DTO validation.
+  - [x] Обновить OpenAPI `ErrorResponse`, если фактический формат изменится.
+  - [x] Добавить unit-тесты handler для основных HTTP статусов.
+- [x] Добавить idempotency key для Payment Service.
+  - [x] Добавить поле `idempotency_key` в таблицу `payments` через Flyway migration.
+  - [x] Добавить unique constraint по `user_id` + `idempotency_key`.
+  - [x] Принимать `Idempotency-Key` header в `POST /api/payments`.
+  - [x] При повторном запросе с тем же ключом возвращать уже созданный payment без повторной Kafka-публикации.
+  - [x] Описать header и response behavior в `openapi/payment-service.yaml`.
+  - [x] Добавить unit/integration-тесты на повторный запрос и конфликт ключей.
 - [ ] Добавить сохранение обработанных Kafka event id в Booking Service.
   - [ ] Добавить таблицу `processed_payment_events` через Flyway migration.
   - [ ] Сохранять `eventId` перед/после обработки в одной транзакции с изменением booking.

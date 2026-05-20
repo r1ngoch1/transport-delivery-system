@@ -1,12 +1,15 @@
 package com.ringochi.paymentservice;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,7 +18,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(MockitoExtension.class)
 class PaymentControllerTest {
@@ -45,7 +50,7 @@ class PaymentControllerTest {
             return payment;
         });
 
-        Payment result = controller.create(request);
+        Payment result = controller.create(null, request);
 
         ArgumentCaptor<Payment> paymentCaptor = ArgumentCaptor.forClass(Payment.class);
         verify(payments, org.mockito.Mockito.times(2)).save(paymentCaptor.capture());
@@ -63,6 +68,41 @@ class PaymentControllerTest {
         assertThat(event.targetId()).isEqualTo(request.getTargetId());
         assertThat(event.userId()).isEqualTo(request.getUserId());
         assertThat(event.amount()).isEqualByComparingTo(request.getAmount());
+    }
+
+    @Test
+    void repeatedCreateWithSameIdempotencyKeyReturnsExistingPaymentWithoutPublishingKafkaEvent() {
+        String idempotencyKey = "payment-key-1";
+        Payment request = payment(TargetType.BOOKING, UUID.randomUUID(), UUID.randomUUID(), "1200.00");
+        Payment existing = payment(request.getTargetType(), request.getTargetId(), request.getUserId(), "1200.00");
+        existing.setIdempotencyKey(idempotencyKey);
+        existing.setStatus(PaymentStatus.SUCCESS);
+        when(payments.findByUserIdAndIdempotencyKey(request.getUserId(), idempotencyKey)).thenReturn(Optional.of(existing));
+
+        Payment result = controller.create(idempotencyKey, request);
+
+        assertThat(result).isSameAs(existing);
+        verify(payments, never()).save(any(Payment.class));
+        verify(kafkaTemplate, never()).send(any(), any(), any());
+    }
+
+    @Test
+    void repeatedCreateWithSameIdempotencyKeyAndDifferentRequestFailsWithConflict() {
+        String idempotencyKey = "payment-key-1";
+        Payment request = payment(TargetType.BOOKING, UUID.randomUUID(), UUID.randomUUID(), "1200.00");
+        Payment existing = payment(TargetType.BOOKING, UUID.randomUUID(), request.getUserId(), "1200.00");
+        existing.setIdempotencyKey(idempotencyKey);
+        existing.setStatus(PaymentStatus.SUCCESS);
+        when(payments.findByUserIdAndIdempotencyKey(request.getUserId(), idempotencyKey)).thenReturn(Optional.of(existing));
+
+        assertThatThrownBy(() -> controller.create(idempotencyKey, request))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
+                    assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+                    assertThat(exception.getReason()).isEqualTo("Idempotency key already used for a different payment request");
+                });
+
+        verify(payments, never()).save(any(Payment.class));
+        verify(kafkaTemplate, never()).send(any(), any(), any());
     }
 
     @Test

@@ -11,6 +11,7 @@ x-curl-examples:
       curl -X POST http://localhost:8080/api/payments \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $TOKEN" \
+        -H "Idempotency-Key: payment-REPLACE_WITH_CLIENT_KEY" \
         -d '{"targetType":"BOOKING","targetId":"REPLACE_WITH_BOOKING_ID","userId":"REPLACE_WITH_USER_ID","amount":1500.00,"currency":"RUB"}'
   getPayment:
     description: Get payment by id.
@@ -28,6 +29,14 @@ paths:
       summary: Create payment
       operationId: createPayment
       security: [{ bearerAuth: [] }]
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: Optional client-generated key. Repeating the same request with the same userId and key returns the existing payment without publishing another payment event; reusing the key for different payment data returns 409.
+          schema:
+            type: string
+            maxLength: 128
       requestBody:
         required: true
         content:
@@ -41,6 +50,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Payment'
+        '409':
+          description: Idempotency key conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     get:
       summary: Find payments
       operationId: findPayments
@@ -115,6 +130,10 @@ components:
         userId:
           type: string
           format: uuid
+        idempotencyKey:
+          type: string
+          maxLength: 128
+          readOnly: true
         amount:
           type: number
           example: 1500.00
