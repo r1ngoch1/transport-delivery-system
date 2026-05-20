@@ -7,17 +7,51 @@
 [INFO] 
 [INFO] >>> spring-boot:3.3.5:run (default-cli) > test-compile @ route-service >>>
 [INFO] 
+[INFO] --- openapi-generator:7.10.0:generate (generate-route-service-api) @ route-service ---
+[INFO] Generating with dryRun=false
+[INFO] No .openapi-generator-ignore file found.
+[INFO] OpenAPI Generator: spring (server)
+[INFO] Generator 'spring' is considered stable.
+[INFO] ----------------------------------
+[INFO] Environment variable JAVA_POST_PROCESS_FILE not defined so the Java code may not be properly formatted. To define it, try 'export JAVA_POST_PROCESS_FILE="/usr/local/bin/clang-format -i"' (Linux/Mac)
+[INFO] NOTE: To enable file post-processing, 'enablePostProcessFile' must be set to `true` (--enable-post-process-file for CLI).
+[INFO] Invoker Package Name, originally not set, is now derived from api package name: com.ringochi.routeservice.generated
+[INFO] Processing operation listCities
+[INFO] Processing operation createCity
+[INFO] Processing operation getCityById
+[INFO] Processing operation updateCity
+[INFO] Processing operation listRoutes
+[INFO] Processing operation createRoute
+[INFO] Processing operation getRouteById
+[INFO] Processing operation updateRoute
+[INFO] Processing operation searchRoutes
+[INFO] writing file C:\Users\sholo\IdeaProjects\system-transport-architecture\services\route-service\target\generated-sources\openapi\src\main\java\com\ringochi\routeservice\generated\dto\City.java
+[INFO] writing file C:\Users\sholo\IdeaProjects\system-transport-architecture\services\route-service\target\generated-sources\openapi\src\main\java\com\ringochi\routeservice\generated\dto\CityRequest.java
+[INFO] writing file C:\Users\sholo\IdeaProjects\system-transport-architecture\services\route-service\target\generated-sources\openapi\src\main\java\com\ringochi\routeservice\generated\dto\ErrorResponse.java
+[INFO] writing file C:\Users\sholo\IdeaProjects\system-transport-architecture\services\route-service\target\generated-sources\openapi\src\main\java\com\ringochi\routeservice\generated\dto\Route.java
+[INFO] writing file C:\Users\sholo\IdeaProjects\system-transport-architecture\services\route-service\target\generated-sources\openapi\src\main\java\com\ringochi\routeservice\generated\dto\RouteRequest.java
+[INFO] writing file C:\Users\sholo\IdeaProjects\system-transport-architecture\services\route-service\target\generated-sources\openapi\src\main\java\com\ringochi\routeservice\generated\api\DefaultApi.java
+[INFO] Skipping generation of Webhooks.
+[INFO] Skipping generation of supporting files.
+################################################################################
+# Thanks for using OpenAPI Generator.                                          #
+# Please consider donation to help us maintain this project ?                 #
+# https://opencollective.com/openapi_generator/donate                          #
+################################################################################
+[INFO] 
 [INFO] --- resources:3.3.1:resources (default-resources) @ route-service ---
 [INFO] Copying 2 resources from src\main\resources to target\classes
 [INFO] 
 [INFO] --- compiler:3.13.0:compile (default-compile) @ route-service ---
-[INFO] Nothing to compile - all classes are up to date.
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 14 source files with javac [debug parameters release 17] to target\classes
 [INFO] 
 [INFO] --- resources:3.3.1:testResources (default-testResources) @ route-service ---
-[INFO] skip non existing resourceDirectory C:\Users\sholo\IdeaProjects\system-transport-architecture\services\route-service\src\test\resources
+[INFO] Copying 2 resources from src\test\resources to target\test-classes
 [INFO] 
 [INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ route-service ---
-[INFO] No sources to compile
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 2 source files with javac [debug parameters release 17] to target\test-classes
 [INFO] 
 [INFO] <<< spring-boot:3.3.5:run (default-cli) < test-compile @ route-service <<<
 [INFO] 
@@ -34,73 +68,81 @@
 
  :: Spring Boot ::                (v3.3.5)
 
-2026-05-19T19:30:19.228+05:00  INFO 17476 --- [route-service] [           main] c.r.r.RouteServiceApplication            : Starting RouteServiceApplication using Java 21.0.6 with PID 17476 (C:\Users\sholo\IdeaProjects\system-transport-architecture\services\route-service\target\classes started by sholo in C:\Users\sholo\IdeaProjects\system-transport-architecture\services\route-service)
-2026-05-19T19:30:19.233+05:00  INFO 17476 --- [route-service] [           main] c.r.r.RouteServiceApplication            : No active profile set, falling back to 1 default profile: "default"
-2026-05-19T19:30:19.308+05:00  INFO 17476 --- [route-service] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8889
-2026-05-19T19:30:19.309+05:00  INFO 17476 --- [route-service] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=route-service, profiles=[default], label=null, version=null, state=null
-2026-05-19T19:30:20.366+05:00  INFO 17476 --- [route-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-05-19T19:30:20.568+05:00  INFO 17476 --- [route-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 192 ms. Found 2 JPA repository interfaces.
-2026-05-19T19:30:20.961+05:00  INFO 17476 --- [route-service] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=90fce97d-b61c-31ec-bf39-0223ef4d4c1c
-2026-05-19T19:30:21.177+05:00  WARN 17476 --- [route-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
-2026-05-19T19:30:21.180+05:00  WARN 17476 --- [route-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
-2026-05-19T19:30:21.559+05:00  INFO 17476 --- [route-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8083 (http)
-2026-05-19T19:30:21.579+05:00  INFO 17476 --- [route-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-05-19T19:30:21.580+05:00  INFO 17476 --- [route-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.31]
-2026-05-19T19:30:21.691+05:00  INFO 17476 --- [route-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-05-19T19:30:21.694+05:00  INFO 17476 --- [route-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2380 ms
-2026-05-19T19:30:22.027+05:00  INFO 17476 --- [route-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-05-19T19:30:22.270+05:00  INFO 17476 --- [route-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@72f3f14c
-2026-05-19T19:30:22.273+05:00  INFO 17476 --- [route-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-05-19T19:30:22.324+05:00  INFO 17476 --- [route-service] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:15434/route_db (PostgreSQL 16.14)
-2026-05-19T19:30:22.413+05:00  INFO 17476 --- [route-service] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 1 migration (execution time 00:00.053s)
-2026-05-19T19:30:22.446+05:00  INFO 17476 --- [route-service] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 1
-2026-05-19T19:30:22.451+05:00  INFO 17476 --- [route-service] [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
-2026-05-19T19:30:22.626+05:00  INFO 17476 --- [route-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-05-19T19:30:22.788+05:00  INFO 17476 --- [route-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
-2026-05-19T19:30:22.849+05:00  INFO 17476 --- [route-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-05-19T19:30:23.371+05:00  INFO 17476 --- [route-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-05-19T19:30:24.797+05:00  INFO 17476 --- [route-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-05-19T19:30:24.851+05:00  INFO 17476 --- [route-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-05-19T19:30:25.489+05:00  WARN 17476 --- [route-service] [           main] .s.s.UserDetailsServiceAutoConfiguration : 
+2026-05-21T01:02:42.824+05:00  INFO 5924 --- [route-service] [           main] c.r.r.RouteServiceApplication            : Starting RouteServiceApplication using Java 21.0.6 with PID 5924 (C:\Users\sholo\IdeaProjects\system-transport-architecture\services\route-service\target\classes started by sholo in C:\Users\sholo\IdeaProjects\system-transport-architecture\services\route-service)
+2026-05-21T01:02:42.831+05:00  INFO 5924 --- [route-service] [           main] c.r.r.RouteServiceApplication            : No active profile set, falling back to 1 default profile: "default"
+2026-05-21T01:02:42.918+05:00  INFO 5924 --- [route-service] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8889
+2026-05-21T01:02:42.919+05:00  INFO 5924 --- [route-service] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=route-service, profiles=[default], label=null, version=null, state=null
+2026-05-21T01:02:44.414+05:00  INFO 5924 --- [route-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-21T01:02:44.684+05:00  INFO 5924 --- [route-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 260 ms. Found 2 JPA repository interfaces.
+2026-05-21T01:02:45.083+05:00  INFO 5924 --- [route-service] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=112f8f7d-79e4-3ca9-8b56-20e5bddda99d
+2026-05-21T01:02:45.268+05:00  WARN 5924 --- [route-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-05-21T01:02:45.271+05:00  WARN 5924 --- [route-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
+2026-05-21T01:02:45.790+05:00  INFO 5924 --- [route-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8083 (http)
+2026-05-21T01:02:45.819+05:00  INFO 5924 --- [route-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-21T01:02:45.819+05:00  INFO 5924 --- [route-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.31]
+2026-05-21T01:02:45.995+05:00  INFO 5924 --- [route-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-21T01:02:45.997+05:00  INFO 5924 --- [route-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 3073 ms
+2026-05-21T01:02:46.551+05:00  INFO 5924 --- [route-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-21T01:02:46.922+05:00  INFO 5924 --- [route-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@a0d875d
+2026-05-21T01:02:46.925+05:00  INFO 5924 --- [route-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-21T01:02:47.000+05:00  INFO 5924 --- [route-service] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:15434/route_db (PostgreSQL 16.14)
+2026-05-21T01:02:47.091+05:00  INFO 5924 --- [route-service] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "public"."flyway_schema_history" does not exist yet
+2026-05-21T01:02:47.102+05:00  INFO 5924 --- [route-service] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 1 migration (execution time 00:00.051s)
+2026-05-21T01:02:47.173+05:00  INFO 5924 --- [route-service] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "public"."flyway_schema_history" ...
+2026-05-21T01:02:47.309+05:00  INFO 5924 --- [route-service] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
+2026-05-21T01:02:47.336+05:00  INFO 5924 --- [route-service] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - create routes"
+2026-05-21T01:02:47.446+05:00  INFO 5924 --- [route-service] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 1 migration to schema "public", now at version v1 (execution time 00:00.068s)
+2026-05-21T01:02:47.676+05:00  INFO 5924 --- [route-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-21T01:02:47.810+05:00  INFO 5924 --- [route-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2026-05-21T01:02:47.902+05:00  INFO 5924 --- [route-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-21T01:02:48.473+05:00  INFO 5924 --- [route-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-21T01:02:50.533+05:00  INFO 5924 --- [route-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-21T01:02:50.589+05:00  INFO 5924 --- [route-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-21T01:02:51.328+05:00  WARN 5924 --- [route-service] [           main] .s.s.UserDetailsServiceAutoConfiguration : 
 
-Using generated security password: a55febef-46a1-4e7d-83d6-895041a0f931
+Using generated security password: b9d52625-8729-4702-ba7a-28743cbb7830
 
 This generated password is for development use only. Your security configuration must be updated before running your application in production.
 
-2026-05-19T19:30:25.509+05:00  INFO 17476 --- [route-service] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
-2026-05-19T19:30:27.203+05:00  INFO 17476 --- [route-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
-2026-05-19T19:30:28.264+05:00  INFO 17476 --- [route-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
-2026-05-19T19:30:28.287+05:00  INFO 17476 --- [route-service] [           main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestTemplate.
-2026-05-19T19:30:28.326+05:00  WARN 17476 --- [route-service] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
-2026-05-19T19:30:28.352+05:00  INFO 17476 --- [route-service] [           main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
-2026-05-19T19:30:28.382+05:00  INFO 17476 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
-2026-05-19T19:30:28.386+05:00  INFO 17476 --- [route-service] [           main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
-2026-05-19T19:30:28.400+05:00  INFO 17476 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
-2026-05-19T19:30:28.401+05:00  INFO 17476 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
-2026-05-19T19:30:28.401+05:00  INFO 17476 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
-2026-05-19T19:30:28.401+05:00  INFO 17476 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Application is null : false
-2026-05-19T19:30:28.402+05:00  INFO 17476 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
-2026-05-19T19:30:28.402+05:00  INFO 17476 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
-2026-05-19T19:30:28.402+05:00  INFO 17476 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
-2026-05-19T19:30:28.787+05:00  INFO 17476 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : The response status is 200
-2026-05-19T19:30:28.790+05:00  INFO 17476 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
-2026-05-19T19:30:28.793+05:00  INFO 17476 --- [route-service] [           main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
-2026-05-19T19:30:28.794+05:00  INFO 17476 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1779201028794 with initial instances count: 6
-2026-05-19T19:30:28.799+05:00  INFO 17476 --- [route-service] [           main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application ROUTE-SERVICE with eureka with status UP
-2026-05-19T19:30:28.800+05:00  INFO 17476 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1779201028800, current=UP, previous=STARTING]
-2026-05-19T19:30:28.802+05:00  INFO 17476 --- [route-service] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_ROUTE-SERVICE/localhost:route-service:8083: registering service...
-2026-05-19T19:30:28.830+05:00  INFO 17476 --- [route-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8083 (http) with context path '/'
-2026-05-19T19:30:28.831+05:00  INFO 17476 --- [route-service] [           main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8083
-2026-05-19T19:30:28.849+05:00  INFO 17476 --- [route-service] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_ROUTE-SERVICE/localhost:route-service:8083 - registration status: 204
-2026-05-19T19:30:29.855+05:00  INFO 17476 --- [route-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
-2026-05-19T19:30:29.861+05:00  INFO 17476 --- [route-service] [           main] c.r.r.RouteServiceApplication            : Started RouteServiceApplication in 13.155 seconds (process running for 14.034)
-2026-05-19T19:31:42.457+05:00  INFO 17476 --- [route-service] [nio-8083-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-05-19T19:31:42.458+05:00  INFO 17476 --- [route-service] [nio-8083-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-05-19T19:31:42.459+05:00  INFO 17476 --- [route-service] [nio-8083-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
-2026-05-19T19:35:28.413+05:00  INFO 17476 --- [route-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
-2026-05-19T19:40:28.425+05:00  INFO 17476 --- [route-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
-2026-05-19T19:45:28.428+05:00  INFO 17476 --- [route-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
-2026-05-19T19:50:28.432+05:00  INFO 17476 --- [route-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
-2026-05-19T19:55:28.438+05:00  INFO 17476 --- [route-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
-2026-05-19T20:00:28.440+05:00  INFO 17476 --- [route-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
-2026-05-19T20:05:28.441+05:00  INFO 17476 --- [route-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-21T01:02:51.362+05:00  INFO 5924 --- [route-service] [           main] r$InitializeUserDetailsManagerConfigurer : Global AuthenticationManager configured with UserDetailsService bean with name inMemoryUserDetailsManager
+2026-05-21T01:02:53.384+05:00  INFO 5924 --- [route-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-05-21T01:02:54.485+05:00  INFO 5924 --- [route-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-05-21T01:02:54.543+05:00  INFO 5924 --- [route-service] [           main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestTemplate.
+2026-05-21T01:02:54.632+05:00  WARN 5924 --- [route-service] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-05-21T01:02:54.668+05:00  INFO 5924 --- [route-service] [           main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-05-21T01:02:54.709+05:00  INFO 5924 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-05-21T01:02:54.716+05:00  INFO 5924 --- [route-service] [           main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-21T01:02:54.730+05:00  INFO 5924 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-05-21T01:02:54.730+05:00  INFO 5924 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-05-21T01:02:54.731+05:00  INFO 5924 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-05-21T01:02:54.731+05:00  INFO 5924 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-05-21T01:02:54.731+05:00  INFO 5924 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-05-21T01:02:54.731+05:00  INFO 5924 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2026-05-21T01:02:54.732+05:00  INFO 5924 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-05-21T01:02:55.146+05:00  INFO 5924 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-05-21T01:02:55.151+05:00  INFO 5924 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+2026-05-21T01:02:55.155+05:00  INFO 5924 --- [route-service] [           main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-05-21T01:02:55.157+05:00  INFO 5924 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1779307375157 with initial instances count: 0
+2026-05-21T01:02:55.163+05:00  INFO 5924 --- [route-service] [           main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application ROUTE-SERVICE with eureka with status UP
+2026-05-21T01:02:55.164+05:00  INFO 5924 --- [route-service] [           main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1779307375164, current=UP, previous=STARTING]
+2026-05-21T01:02:55.167+05:00  INFO 5924 --- [route-service] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_ROUTE-SERVICE/localhost:route-service:8083: registering service...
+2026-05-21T01:02:55.196+05:00  INFO 5924 --- [route-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8083 (http) with context path '/'
+2026-05-21T01:02:55.200+05:00  INFO 5924 --- [route-service] [           main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8083
+2026-05-21T01:02:55.219+05:00  INFO 5924 --- [route-service] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_ROUTE-SERVICE/localhost:route-service:8083 - registration status: 204
+2026-05-21T01:02:56.212+05:00  INFO 5924 --- [route-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-05-21T01:02:56.230+05:00  INFO 5924 --- [route-service] [           main] c.r.r.RouteServiceApplication            : Started RouteServiceApplication in 16.725 seconds (process running for 17.669)
+2026-05-21T01:03:25.159+05:00  INFO 5924 --- [route-service] [reshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-05-21T01:03:25.160+05:00  INFO 5924 --- [route-service] [reshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-05-21T01:03:25.160+05:00  INFO 5924 --- [route-service] [reshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-05-21T01:03:25.160+05:00  INFO 5924 --- [route-service] [reshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-05-21T01:03:25.160+05:00  INFO 5924 --- [route-service] [reshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-05-21T01:03:25.160+05:00  INFO 5924 --- [route-service] [reshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Application version is -1: false
+2026-05-21T01:03:25.160+05:00  INFO 5924 --- [route-service] [reshExecutor-%d] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-05-21T01:03:25.184+05:00  INFO 5924 --- [route-service] [reshExecutor-%d] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-05-21T01:04:12.562+05:00  INFO 5924 --- [route-service] [nio-8083-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-21T01:04:12.562+05:00  INFO 5924 --- [route-service] [nio-8083-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-21T01:04:12.563+05:00  INFO 5924 --- [route-service] [nio-8083-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
+2026-05-21T01:07:54.738+05:00  INFO 5924 --- [route-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-21T01:12:54.751+05:00  INFO 5924 --- [route-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-21T01:17:54.765+05:00  INFO 5924 --- [route-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-21T01:22:54.773+05:00  INFO 5924 --- [route-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration

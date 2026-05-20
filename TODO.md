@@ -90,23 +90,108 @@
 
 ## Осталось улучшить
 
-- [ ] Добавить полноценные request/response schemas в OpenAPI, а не только paths.
-- [ ] Подключить OpenAPI Generator к Maven и генерировать DTO/API interfaces.
-- [ ] Добавить unit-тесты User, Trip, Payment, Booking.
-- [ ] Добавить integration-тесты с PostgreSQL и Kafka.
-- [ ] Добавить единый `ApiExceptionHandler` во все бизнес-сервисы.
-- [ ] Добавить idempotency key для Payment Service.
+- [x] Добавить полноценные request/response schemas в OpenAPI, а не только paths.
+- [x] Подключить OpenAPI Generator к Maven и генерировать DTO/API interfaces.
+- [x] Добавить unit-тесты User, Trip, Payment, Booking.
+  - [x] Добавить/проверить test dependencies во всех бизнес-сервисах: JUnit 5, Spring Boot Test, Mockito.
+  - [x] Покрыть `UserController`: регистрация, конфликт email/phone, login, bad credentials, `me`, `updateMe`.
+  - [x] Покрыть `TripController`: поиск по маршруту/дате, admin create/update, reserve-seat, release-seat, conflict cases.
+  - [x] Покрыть `PaymentController`: создание платежа, перевод `PENDING -> SUCCESS`, публикация Kafka event, поиск по target.
+  - [x] Покрыть `BookingController`: создание booking, вызовы Trip/Payment clients, просмотр своих booking, запрет чужих booking, cancel.
+  - [x] Покрыть `PaymentEventConsumer`: `PaymentSucceeded`, `PaymentFailed`, неизвестный booking/payment event.
+  - [x] Запустить `mvn test` и зафиксировать зеленый результат.
+- [x] Добавить integration-тесты с PostgreSQL и Kafka.
+  - [x] Подключить Testcontainers dependencies для PostgreSQL и Kafka.
+  - [x] Добавить общий test profile с отключением Config Server/Eureka для integration-тестов.
+  - [x] Проверить Flyway migrations на реальном PostgreSQL container для User, Route, Trip, Booking, Payment.
+  - [x] Написать integration-тест Payment Service: создание платежа публикует `PaymentSucceeded` в Kafka.
+  - [x] Написать integration-тест Booking Service: Kafka event подтверждает booking.
+  - [x] Написать integration-тест Booking Service: `PaymentFailed` отменяет booking и вызывает release-seat.
+  - [x] Запустить targeted integration-тесты и затем общий `mvn verify`.
+- [x] Добавить единый `ApiExceptionHandler` во все бизнес-сервисы.
+  - [x] Зафиксировать единый JSON-формат ошибки: `timestamp`, `status`, `error`, `message`, `path`.
+  - [x] Вынести/повторить `ApiExceptionHandler` для Route, Trip, Booking, Payment сервисов.
+  - [x] Обработать `ResponseStatusException`.
+  - [x] Обработать validation errors после появления DTO validation.
+  - [x] Обновить OpenAPI `ErrorResponse`, если фактический формат изменится.
+  - [x] Добавить unit-тесты handler для основных HTTP статусов.
+- [x] Добавить idempotency key для Payment Service.
+  - [x] Добавить поле `idempotency_key` в таблицу `payments` через Flyway migration.
+  - [x] Добавить unique constraint по `user_id` + `idempotency_key`.
+  - [x] Принимать `Idempotency-Key` header в `POST /api/payments`.
+  - [x] При повторном запросе с тем же ключом возвращать уже созданный payment без повторной Kafka-публикации.
+  - [x] Описать header и response behavior в `openapi/payment-service.yaml`.
+  - [x] Добавить unit/integration-тесты на повторный запрос и конфликт ключей.
 - [ ] Добавить сохранение обработанных Kafka event id в Booking Service.
+  - [ ] Добавить таблицу `processed_payment_events` через Flyway migration.
+  - [ ] Сохранять `eventId` перед/после обработки в одной транзакции с изменением booking.
+  - [ ] Игнорировать повторный Kafka event с уже обработанным `eventId`.
+  - [ ] Добавить обработку гонки при параллельной доставке одного события.
+  - [ ] Добавить unit-тест consumer на duplicate event.
+  - [ ] Добавить integration-тест с повторной публикацией одного события в Kafka.
 - [ ] Добавить HTTP-файл или Postman collection для smoke-сценария.
+  - [ ] Выбрать формат: `.http` файл в репозитории или Postman collection JSON.
+  - [ ] Описать register/login и сохранение JWT token.
+  - [ ] Описать запросы cities/routes/trips через Gateway.
+  - [ ] Описать создание booking и получение booking status.
+  - [ ] Описать поиск payment по booking id.
+  - [ ] Добавить README-ссылку на smoke artifact и порядок запуска.
 - [ ] Проверить полный runtime-сценарий через Docker Compose и запущенные сервисы.
+  - [ ] Запустить `docker compose up -d` для PostgreSQL и Kafka.
+  - [ ] Собрать проект через `mvn clean package`.
+  - [ ] Запустить Config Server и проверить `/actuator/health`.
+  - [ ] Запустить Discovery Server и проверить Eureka UI/API.
+  - [ ] Запустить API Gateway и бизнес-сервисы.
+  - [ ] Пройти smoke-сценарий через Gateway: register, login, list routes/trips, create booking, confirm booking.
+  - [ ] Собрать runtime logs и зафиксировать найденные проблемы отдельными TODO.
 - [ ] Расширить Docker Compose application-сервисами после стабилизации запуска.
+  - [ ] Добавить Dockerfile или Spring Boot image build strategy для каждого сервиса.
+  - [ ] Добавить compose services для Config Server, Discovery Server, Gateway.
+  - [ ] Добавить compose services для User, Route, Trip, Booking, Payment.
+  - [ ] Настроить environment variables для Config Server, Eureka, PostgreSQL, Kafka.
+  - [ ] Добавить healthchecks и `depends_on` conditions.
+  - [ ] Проверить полный старт одной командой `docker compose up --build`.
 
 ## Не входит в MVP
 
 - [ ] Driver Service.
+  - [ ] Описать OpenAPI contract для профиля водителя.
+  - [ ] Добавить Maven module `driver-service`.
+  - [ ] Добавить сущности driver profile, license, availability.
+  - [ ] Добавить admin/user endpoints для управления профилем.
+  - [ ] Интегрировать Trip Service с driver availability.
 - [ ] Cargo Service.
+  - [ ] Описать OpenAPI contract для cargo orders.
+  - [ ] Добавить Maven module `cargo-service`.
+  - [ ] Добавить сущности cargo order, cargo dimensions, cargo status.
+  - [ ] Добавить расчет доступного cargo volume по trip.
+  - [ ] Интегрировать оплату cargo order через Payment Service.
 - [ ] Admin Service.
+  - [ ] Определить admin API facade поверх business services.
+  - [ ] Добавить агрегированные endpoints для пользователей, маршрутов, рейсов, бронирований, платежей.
+  - [ ] Добавить RBAC только для `ADMIN`.
+  - [ ] Добавить audit log для admin actions.
 - [ ] Notification Service.
+  - [ ] Определить Kafka topics для booking/payment notifications.
+  - [ ] Добавить Maven module `notification-service`.
+  - [ ] Добавить email/SMS provider abstraction.
+  - [ ] Реализовать MVP logging notification adapter.
+  - [ ] Добавить retry/dead-letter strategy.
 - [ ] Frontend.
+  - [ ] Выбрать frontend stack и структуру приложения.
+  - [ ] Добавить auth flow: register, login, token storage, logout.
+  - [ ] Добавить просмотр cities/routes/trips.
+  - [ ] Добавить booking flow и страницу моих бронирований.
+  - [ ] Добавить admin screens для CRUD после стабилизации admin API.
 - [ ] Реальная платежная интеграция.
+  - [ ] Выбрать payment provider и sandbox account.
+  - [ ] Спроектировать payment lifecycle вместо MVP auto-success.
+  - [ ] Добавить provider payment id и webhook endpoint.
+  - [ ] Проверять подпись webhook events.
+  - [ ] Обработать success, failure, refund, timeout.
 - [ ] Kubernetes.
+  - [ ] Подготовить container images для всех сервисов.
+  - [ ] Добавить manifests или Helm chart для infrastructure и application services.
+  - [ ] Настроить ConfigMaps/Secrets.
+  - [ ] Настроить probes, resources, service discovery.
+  - [ ] Описать local cluster запуск через minikube/kind.

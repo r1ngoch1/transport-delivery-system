@@ -2,6 +2,8 @@ openapi: 3.0.3
 info:
   title: Payment Service API
   version: 1.0.0
+servers:
+  - url: http://localhost:8080
 x-curl-examples:
   createPayment:
     description: Create payment for an existing booking. Normally Booking Service does this.
@@ -9,6 +11,7 @@ x-curl-examples:
       curl -X POST http://localhost:8080/api/payments \
         -H "Content-Type: application/json" \
         -H "Authorization: Bearer $TOKEN" \
+        -H "Idempotency-Key: payment-REPLACE_WITH_CLIENT_KEY" \
         -d '{"targetType":"BOOKING","targetId":"REPLACE_WITH_BOOKING_ID","userId":"REPLACE_WITH_USER_ID","amount":1500.00,"currency":"RUB"}'
   getPayment:
     description: Get payment by id.
@@ -24,17 +27,62 @@ paths:
   /api/payments:
     post:
       summary: Create payment
+      operationId: createPayment
       security: [{ bearerAuth: [] }]
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          description: Optional client-generated key. Repeating the same request with the same userId and key returns the existing payment without publishing another payment event; reusing the key for different payment data returns 409.
+          schema:
+            type: string
+            maxLength: 128
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePaymentRequest'
       responses:
-        '201': { description: Created }
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '409':
+          description: Idempotency key conflict
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     get:
       summary: Find payments
+      operationId: findPayments
       security: [{ bearerAuth: [] }]
+      parameters:
+        - name: targetType
+          in: query
+          schema:
+            $ref: '#/components/schemas/TargetType'
+        - name: targetId
+          in: query
+          schema:
+            type: string
+            format: uuid
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Payment'
   /api/payments/{id}:
     get:
       summary: Get payment
+      operationId: getPaymentById
       security: [{ bearerAuth: [] }]
       parameters:
         - name: id
@@ -42,10 +90,86 @@ paths:
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '404':
+          $ref: '#/components/responses/NotFound'
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  responses:
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    TargetType:
+      type: string
+      enum: [BOOKING, CARGO_ORDER]
+    PaymentStatus:
+      type: string
+      enum: [PENDING, SUCCESS, FAILED, REFUNDED]
+    CreatePaymentRequest:
+      type: object
+      required: [targetType, targetId, userId, amount]
+      properties:
+        targetType:
+          $ref: '#/components/schemas/TargetType'
+        targetId:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        idempotencyKey:
+          type: string
+          maxLength: 128
+          readOnly: true
+        amount:
+          type: number
+          example: 1500.00
+        currency:
+          type: string
+          default: RUB
+          example: RUB
+    Payment:
+      allOf:
+        - $ref: '#/components/schemas/CreatePaymentRequest'
+        - type: object
+          required: [id, currency, status, createdAt, updatedAt]
+          properties:
+            id:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/PaymentStatus'
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string

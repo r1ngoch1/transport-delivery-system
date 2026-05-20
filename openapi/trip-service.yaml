@@ -2,6 +2,8 @@ openapi: 3.0.3
 info:
   title: Trip Service API
   version: 1.0.0
+servers:
+  - url: http://localhost:8080
 x-curl-examples:
   listTrips:
     description: List seeded trips.
@@ -29,26 +31,85 @@ paths:
   /api/trips:
     get:
       summary: List trips
+      operationId: listTrips
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trip'
     post:
       summary: Create trip
+      operationId: createTrip
       security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripRequest'
       responses:
-        '201': { description: Created }
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trip'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/trips/{id}:
     get:
       summary: Get trip
+      operationId: getTripById
       parameters:
         - name: id
           in: path
           required: true
           schema: { type: string, format: uuid }
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trip'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      summary: Update trip status or driver
+      operationId: updateTrip
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTripRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trip'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/trips/search:
     get:
       summary: Search trips
+      operationId: searchTrips
       parameters:
         - name: routeId
           in: query
@@ -57,20 +118,152 @@ paths:
           in: query
           schema: { type: string, format: date }
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Trip'
   /api/trips/{id}/reserve-seat:
     post:
       summary: Reserve one seat
+      operationId: reserveSeat
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trip'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
   /api/trips/{id}/release-seat:
     post:
       summary: Release one seat
+      operationId: releaseSeat
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
       responses:
-        '200': { description: OK }
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Trip'
+        '404':
+          $ref: '#/components/responses/NotFound'
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
+  responses:
+    Conflict:
+      description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    TripStatus:
+      type: string
+      enum: [SCHEDULED, IN_PROGRESS, COMPLETED, CANCELLED]
+    TripRequest:
+      type: object
+      required: [routeId, departureTime, arrivalTime, totalSeats, totalCargoVolume, price]
+      properties:
+        routeId:
+          type: string
+          format: uuid
+        driverId:
+          type: string
+          format: uuid
+        departureTime:
+          type: string
+          format: date-time
+        arrivalTime:
+          type: string
+          format: date-time
+        totalSeats:
+          type: integer
+          format: int32
+          minimum: 0
+        availableSeats:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Defaults to totalSeats when omitted or zero in the service.
+        totalCargoVolume:
+          type: number
+          format: double
+          minimum: 0
+        availableCargoVolume:
+          type: number
+          format: double
+          minimum: 0
+          description: Defaults to totalCargoVolume when omitted or zero in the service.
+        price:
+          type: number
+          example: 1500.00
+        status:
+          $ref: '#/components/schemas/TripStatus'
+    UpdateTripRequest:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/TripStatus'
+        driverId:
+          type: string
+          format: uuid
+    Trip:
+      allOf:
+        - $ref: '#/components/schemas/TripRequest'
+        - type: object
+          required: [id, availableSeats, availableCargoVolume, status, version]
+          properties:
+            id:
+              type: string
+              format: uuid
+            version:
+              type: integer
+              format: int64
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+          format: int32
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
