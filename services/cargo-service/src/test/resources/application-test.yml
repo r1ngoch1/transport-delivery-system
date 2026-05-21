@@ -1,0 +1,23 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+  config:
+    import: ""
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+
+eureka:
+  client:
+    enabled: false
+
+cargo:
+  max-weight-kg: 1000.00
+  max-volume-m3: 20.0000
+  base-price: 500.00
+  price-per-kg: 20.00
+  price-per-m3: 300.00

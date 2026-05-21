@@ -1,0 +1,7 @@
+﻿[compose] 6 services:
+  transport-delivery-system-kafka-1 (kafka:3.7.1) Up 7 minutes [9092]
+  transport-delivery-system-postgres-booking-1 (postgres:16) Up 7 minutes [15436]
+  transport-delivery-system-postgres-payment-1 (postgres:16) Up 7 minutes [15437]
+  transport-delivery-system-postgres-route-1 (postgres:16) Up 7 minutes [15434]
+  transport-delivery-system-postgres-trip-1 (postgres:16) Up 7 minutes [15435]
+  transport-delivery-system-postgres-user-1 (postgres:16) Up 7 minutes [15433]

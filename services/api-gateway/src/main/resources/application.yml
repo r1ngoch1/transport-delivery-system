@@ -35,6 +35,18 @@ spring:
           uri: lb://trip-service
           predicates:
             - Path=/api/trips/**
+        - id: driver-service
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/drivers/**
+        - id: cargo-service
+          uri: lb://cargo-service
+          predicates:
+            - Path=/api/cargo-orders/**
+        - id: admin-service
+          uri: lb://admin-service
+          predicates:
+            - Path=/api/admin/**
         - id: booking-service
           uri: lb://booking-service
           predicates:

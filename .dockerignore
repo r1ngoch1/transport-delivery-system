@@ -1,0 +1,9 @@
+.git
+.idea
+.mvn
+**/target
+**/.settings
+**/.classpath
+**/.project
+*.iml
+docs/superpowers

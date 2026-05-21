@@ -9,10 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class PaymentEventConsumer {
     private final BookingRepository bookings;
     private final TripClient tripClient;
+    private final ProcessedPaymentEventRepository processedEvents;
 
-    public PaymentEventConsumer(BookingRepository bookings, TripClient tripClient) {
+    public PaymentEventConsumer(BookingRepository bookings, TripClient tripClient,
+                                ProcessedPaymentEventRepository processedEvents) {
         this.bookings = bookings;
         this.tripClient = tripClient;
+        this.processedEvents = processedEvents;
     }
 
     @Transactional
@@ -21,17 +24,21 @@ public class PaymentEventConsumer {
         if (!"BOOKING".equals(event.targetType())) {
             return;
         }
+        if (!"PaymentSucceeded".equals(event.eventType()) && !"PaymentFailed".equals(event.eventType())) {
+            return;
+        }
         bookings.findById(event.targetId()).or(() -> bookings.findByPaymentId(event.paymentId())).ifPresent(booking -> {
             if (booking.getStatus() != BookingStatus.PENDING) {
                 return;
             }
+            if (processedEvents.insertIfAbsent(event.eventId()) == 0) {
+                return;
+            }
             if ("PaymentSucceeded".equals(event.eventType())) {
                 booking.setStatus(BookingStatus.CONFIRMED);
-            } else if ("PaymentFailed".equals(event.eventType())) {
+            } else {
                 booking.setStatus(BookingStatus.CANCELLED);
                 tripClient.releaseSeat(booking.getTripId());
-            } else {
-                return;
             }
             booking.setUpdatedAt(Instant.now());
             bookings.save(booking);

@@ -28,12 +28,14 @@ class TripControllerTest {
     private TripRepository trips;
     @Mock
     private RouteClient routeClient;
+    @Mock
+    private DriverClient driverClient;
 
     private TripController controller;
 
     @BeforeEach
     void setUp() {
-        controller = new TripController(trips, routeClient);
+        controller = new TripController(trips, routeClient, driverClient);
     }
 
     @Test
@@ -66,19 +68,79 @@ class TripControllerTest {
     void adminCreateValidatesRouteAndDefaultsAvailability() {
         UUID routeId = UUID.randomUUID();
         Trip request = trip(routeId, 12, 0);
+        UUID driverId = UUID.randomUUID();
+        request.setDriverId(driverId);
         request.setTotalCargoVolume(40.0);
         request.setAvailableCargoVolume(0.0);
         when(routeClient.getRoute(routeId)).thenReturn(new RouteClient.RouteDto(
                 routeId, UUID.randomUUID(), UUID.randomUUID(), 100, 120, true));
+        when(driverClient.getDriver(driverId)).thenReturn(new DriverClient.DriverDto(
+                driverId, UUID.randomUUID(), "Ivan Driver", true, DriverClient.AvailabilityStatus.AVAILABLE));
         when(trips.save(any(Trip.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Trip result = controller.create("PASSENGER,ADMIN", request);
 
         ArgumentCaptor<Trip> tripCaptor = ArgumentCaptor.forClass(Trip.class);
+        verify(driverClient).getDriver(driverId);
         verify(trips).save(tripCaptor.capture());
         assertThat(tripCaptor.getValue().getAvailableSeats()).isEqualTo(12);
         assertThat(tripCaptor.getValue().getAvailableCargoVolume()).isEqualTo(40.0);
         assertThat(result).isSameAs(request);
+    }
+
+    @Test
+    void adminCreateAllowsTripWithoutDriver() {
+        UUID routeId = UUID.randomUUID();
+        Trip request = trip(routeId, 12, 0);
+        when(routeClient.getRoute(routeId)).thenReturn(new RouteClient.RouteDto(
+                routeId, UUID.randomUUID(), UUID.randomUUID(), 100, 120, true));
+        when(trips.save(any(Trip.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Trip result = controller.create("ADMIN", request);
+
+        assertThat(result).isSameAs(request);
+        verify(driverClient, never()).getDriver(any(UUID.class));
+        verify(trips).save(request);
+    }
+
+    @Test
+    void adminCreateRejectsUnavailableDriver() {
+        UUID routeId = UUID.randomUUID();
+        UUID driverId = UUID.randomUUID();
+        Trip request = trip(routeId, 12, 0);
+        request.setDriverId(driverId);
+        when(routeClient.getRoute(routeId)).thenReturn(new RouteClient.RouteDto(
+                routeId, UUID.randomUUID(), UUID.randomUUID(), 100, 120, true));
+        when(driverClient.getDriver(driverId)).thenReturn(new DriverClient.DriverDto(
+                driverId, UUID.randomUUID(), "Ivan Driver", true, DriverClient.AvailabilityStatus.ON_TRIP));
+
+        assertThatThrownBy(() -> controller.create("ADMIN", request))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
+                    assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+                    assertThat(exception.getReason()).isEqualTo("Driver is not available");
+                });
+
+        verify(trips, never()).save(any(Trip.class));
+    }
+
+    @Test
+    void adminCreateRejectsInactiveDriver() {
+        UUID routeId = UUID.randomUUID();
+        UUID driverId = UUID.randomUUID();
+        Trip request = trip(routeId, 12, 0);
+        request.setDriverId(driverId);
+        when(routeClient.getRoute(routeId)).thenReturn(new RouteClient.RouteDto(
+                routeId, UUID.randomUUID(), UUID.randomUUID(), 100, 120, true));
+        when(driverClient.getDriver(driverId)).thenReturn(new DriverClient.DriverDto(
+                driverId, UUID.randomUUID(), "Ivan Driver", false, DriverClient.AvailabilityStatus.AVAILABLE));
+
+        assertThatThrownBy(() -> controller.create("ADMIN", request))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
+                    assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+                    assertThat(exception.getReason()).isEqualTo("Driver is not available");
+                });
+
+        verify(trips, never()).save(any(Trip.class));
     }
 
     @Test
@@ -101,13 +163,35 @@ class TripControllerTest {
         request.setStatus(TripStatus.CANCELLED);
         request.setDriverId(driverId);
         when(trips.findById(existing.getId())).thenReturn(Optional.of(existing));
+        when(driverClient.getDriver(driverId)).thenReturn(new DriverClient.DriverDto(
+                driverId, UUID.randomUUID(), "Ivan Driver", true, DriverClient.AvailabilityStatus.AVAILABLE));
         when(trips.save(existing)).thenReturn(existing);
 
         Trip result = controller.update("ADMIN", existing.getId(), request);
 
         assertThat(result.getStatus()).isEqualTo(TripStatus.CANCELLED);
         assertThat(result.getDriverId()).isEqualTo(driverId);
+        verify(driverClient).getDriver(driverId);
         verify(trips).save(existing);
+    }
+
+    @Test
+    void adminUpdateRejectsUnavailableDriver() {
+        Trip existing = trip(UUID.randomUUID(), 12, 8);
+        UUID driverId = UUID.randomUUID();
+        Trip request = new Trip();
+        request.setDriverId(driverId);
+        when(trips.findById(existing.getId())).thenReturn(Optional.of(existing));
+        when(driverClient.getDriver(driverId)).thenReturn(new DriverClient.DriverDto(
+                driverId, UUID.randomUUID(), "Ivan Driver", true, DriverClient.AvailabilityStatus.SUSPENDED));
+
+        assertThatThrownBy(() -> controller.update("ADMIN", existing.getId(), request))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
+                    assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+                    assertThat(exception.getReason()).isEqualTo("Driver is not available");
+                });
+
+        verify(trips, never()).save(any(Trip.class));
     }
 
     @Test

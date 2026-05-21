@@ -14,7 +14,7 @@
 [INFO] Nothing to compile - all classes are up to date.
 [INFO] 
 [INFO] --- resources:3.3.1:testResources (default-testResources) @ config-server ---
-[INFO] skip non existing resourceDirectory C:\Users\sholo\IdeaProjects\system-transport-architecture\services\config-server\src\test\resources
+[INFO] skip non existing resourceDirectory C:\Users\sholo\IdeaProjects\transport-delivery-system\services\config-server\src\test\resources
 [INFO] 
 [INFO] --- compiler:3.13.0:testCompile (default-testCompile) @ config-server ---
 [INFO] No sources to compile
@@ -34,19 +34,32 @@
 
  :: Spring Boot ::                (v3.3.5)
 
-2026-05-21T01:01:31.540+05:00  INFO 10880 --- [config-server] [           main] c.r.c.ConfigServerApplication            : Starting ConfigServerApplication using Java 21.0.6 with PID 10880 (C:\Users\sholo\IdeaProjects\system-transport-architecture\services\config-server\target\classes started by sholo in C:\Users\sholo\IdeaProjects\system-transport-architecture\services\config-server)
-2026-05-21T01:01:31.542+05:00  INFO 10880 --- [config-server] [           main] c.r.c.ConfigServerApplication            : The following 1 profile is active: "native"
-2026-05-21T01:01:32.418+05:00  INFO 10880 --- [config-server] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=efaa556a-801e-33ac-a6e3-fac140a4f246
-2026-05-21T01:01:32.675+05:00  INFO 10880 --- [config-server] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8889 (http)
-2026-05-21T01:01:32.686+05:00  INFO 10880 --- [config-server] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-05-21T01:01:32.687+05:00  INFO 10880 --- [config-server] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.31]
-2026-05-21T01:01:32.738+05:00  INFO 10880 --- [config-server] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-05-21T01:01:32.739+05:00  INFO 10880 --- [config-server] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1157 ms
-2026-05-21T01:01:34.415+05:00  INFO 10880 --- [config-server] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
-2026-05-21T01:01:34.535+05:00  INFO 10880 --- [config-server] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
-2026-05-21T01:01:34.585+05:00  INFO 10880 --- [config-server] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8889 (http) with context path '/'
-2026-05-21T01:01:35.606+05:00  INFO 10880 --- [config-server] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
-2026-05-21T01:01:35.617+05:00  INFO 10880 --- [config-server] [           main] c.r.c.ConfigServerApplication            : Started ConfigServerApplication in 5.482 seconds (process running for 5.817)
-2026-05-21T01:01:45.875+05:00  INFO 10880 --- [config-server] [nio-8889-exec-1] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-05-21T01:01:45.876+05:00  INFO 10880 --- [config-server] [nio-8889-exec-1] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-05-21T01:01:45.876+05:00  INFO 10880 --- [config-server] [nio-8889-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+2026-05-21T12:27:26.295+05:00  INFO 20220 --- [config-server] [           main] c.r.c.ConfigServerApplication            : Starting ConfigServerApplication using Java 21.0.6 with PID 20220 (C:\Users\sholo\IdeaProjects\transport-delivery-system\services\config-server\target\classes started by sholo in C:\Users\sholo\IdeaProjects\transport-delivery-system\services\config-server)
+2026-05-21T12:27:26.295+05:00  INFO 20220 --- [config-server] [           main] c.r.c.ConfigServerApplication            : The following 1 profile is active: "native"
+2026-05-21T12:27:27.193+05:00  INFO 20220 --- [config-server] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=efaa556a-801e-33ac-a6e3-fac140a4f246
+2026-05-21T12:27:27.444+05:00  INFO 20220 --- [config-server] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8889 (http)
+2026-05-21T12:27:27.455+05:00  INFO 20220 --- [config-server] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-21T12:27:27.455+05:00  INFO 20220 --- [config-server] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.31]
+2026-05-21T12:27:27.512+05:00  INFO 20220 --- [config-server] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-21T12:27:27.512+05:00  INFO 20220 --- [config-server] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1185 ms
+2026-05-21T12:27:29.006+05:00  INFO 20220 --- [config-server] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-05-21T12:27:29.116+05:00  INFO 20220 --- [config-server] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-05-21T12:27:29.165+05:00  INFO 20220 --- [config-server] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8889 (http) with context path '/'
+2026-05-21T12:27:30.193+05:00  INFO 20220 --- [config-server] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-05-21T12:27:30.194+05:00  INFO 20220 --- [config-server] [           main] c.r.c.ConfigServerApplication            : Started ConfigServerApplication in 5.283 seconds (process running for 5.593)
+2026-05-21T12:27:34.968+05:00  INFO 20220 --- [config-server] [nio-8889-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-21T12:27:34.968+05:00  INFO 20220 --- [config-server] [nio-8889-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-21T12:27:34.968+05:00  INFO 20220 --- [config-server] [nio-8889-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 0 ms
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  29:30 min
+[INFO] Finished at: 2026-05-21T12:56:53+05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.3.5:run (default-cli) on project config-server: Process terminated with exit code: -1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException

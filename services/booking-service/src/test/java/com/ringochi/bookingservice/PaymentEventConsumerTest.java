@@ -21,12 +21,14 @@ class PaymentEventConsumerTest {
     private BookingRepository bookings;
     @Mock
     private TripClient tripClient;
+    @Mock
+    private ProcessedPaymentEventRepository processedEvents;
 
     private PaymentEventConsumer consumer;
 
     @BeforeEach
     void setUp() {
-        consumer = new PaymentEventConsumer(bookings, tripClient);
+        consumer = new PaymentEventConsumer(bookings, tripClient, processedEvents);
     }
 
     @Test
@@ -34,6 +36,7 @@ class PaymentEventConsumerTest {
         Booking booking = booking(BookingStatus.PENDING);
         PaymentEvent event = event("PaymentSucceeded", "BOOKING", booking.getId(), UUID.randomUUID());
         when(bookings.findById(booking.getId())).thenReturn(Optional.of(booking));
+        when(processedEvents.insertIfAbsent(event.eventId())).thenReturn(1);
 
         consumer.onPaymentEvent(event);
 
@@ -46,6 +49,7 @@ class PaymentEventConsumerTest {
         Booking booking = booking(BookingStatus.PENDING);
         PaymentEvent event = event("PaymentFailed", "BOOKING", booking.getId(), UUID.randomUUID());
         when(bookings.findById(booking.getId())).thenReturn(Optional.of(booking));
+        when(processedEvents.insertIfAbsent(event.eventId())).thenReturn(1);
 
         consumer.onPaymentEvent(event);
 
@@ -60,6 +64,7 @@ class PaymentEventConsumerTest {
 
         consumer.onPaymentEvent(event);
 
+        verify(processedEvents, never()).insertIfAbsent(event.eventId());
         verify(bookings, never()).findById(event.targetId());
     }
 
@@ -67,7 +72,22 @@ class PaymentEventConsumerTest {
     void unknownPaymentEventTypeIsIgnored() {
         Booking booking = booking(BookingStatus.PENDING);
         PaymentEvent event = event("PaymentExpired", "BOOKING", booking.getId(), UUID.randomUUID());
+
+        consumer.onPaymentEvent(event);
+
+        assertThat(booking.getStatus()).isEqualTo(BookingStatus.PENDING);
+        verify(processedEvents, never()).insertIfAbsent(event.eventId());
+        verify(bookings, never()).findById(booking.getId());
+        verify(bookings, never()).save(booking);
+        verify(tripClient, never()).releaseSeat(booking.getTripId());
+    }
+
+    @Test
+    void duplicatePaymentEventIsIgnored() {
+        Booking booking = booking(BookingStatus.PENDING);
+        PaymentEvent event = event("PaymentSucceeded", "BOOKING", booking.getId(), UUID.randomUUID());
         when(bookings.findById(booking.getId())).thenReturn(Optional.of(booking));
+        when(processedEvents.insertIfAbsent(event.eventId())).thenReturn(0);
 
         consumer.onPaymentEvent(event);
 

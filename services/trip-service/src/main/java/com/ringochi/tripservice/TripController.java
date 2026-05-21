@@ -22,10 +22,12 @@ import org.springframework.web.server.ResponseStatusException;
 public class TripController {
     private final TripRepository trips;
     private final RouteClient routeClient;
+    private final DriverClient driverClient;
 
-    public TripController(TripRepository trips, RouteClient routeClient) {
+    public TripController(TripRepository trips, RouteClient routeClient, DriverClient driverClient) {
         this.trips = trips;
         this.routeClient = routeClient;
+        this.driverClient = driverClient;
     }
 
     @GetMapping
@@ -52,6 +54,7 @@ public class TripController {
     public Trip create(@RequestHeader(value = "X-User-Roles", required = false) String roles, @RequestBody Trip trip) {
         requireAdmin(roles);
         routeClient.getRoute(trip.getRouteId());
+        requireAvailableDriver(trip.getDriverId());
         if (trip.getAvailableSeats() == 0) {
             trip.setAvailableSeats(trip.getTotalSeats());
         }
@@ -67,7 +70,10 @@ public class TripController {
         requireAdmin(roles);
         Trip trip = byId(id);
         if (request.getStatus() != null) trip.setStatus(request.getStatus());
-        if (request.getDriverId() != null) trip.setDriverId(request.getDriverId());
+        if (request.getDriverId() != null) {
+            requireAvailableDriver(request.getDriverId());
+            trip.setDriverId(request.getDriverId());
+        }
         return trips.save(trip);
     }
 
@@ -97,6 +103,16 @@ public class TripController {
 
     private ResponseStatusException notFound(String message) {
         return new ResponseStatusException(HttpStatus.NOT_FOUND, message);
+    }
+
+    private void requireAvailableDriver(UUID driverId) {
+        if (driverId == null) {
+            return;
+        }
+        DriverClient.DriverDto driver = driverClient.getDriver(driverId);
+        if (!driver.active() || driver.availabilityStatus() != DriverClient.AvailabilityStatus.AVAILABLE) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Driver is not available");
+        }
     }
 
     private void requireAdmin(String roles) {

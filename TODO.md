@@ -122,61 +122,65 @@
   - [x] При повторном запросе с тем же ключом возвращать уже созданный payment без повторной Kafka-публикации.
   - [x] Описать header и response behavior в `openapi/payment-service.yaml`.
   - [x] Добавить unit/integration-тесты на повторный запрос и конфликт ключей.
-- [ ] Добавить сохранение обработанных Kafka event id в Booking Service.
-  - [ ] Добавить таблицу `processed_payment_events` через Flyway migration.
-  - [ ] Сохранять `eventId` перед/после обработки в одной транзакции с изменением booking.
-  - [ ] Игнорировать повторный Kafka event с уже обработанным `eventId`.
-  - [ ] Добавить обработку гонки при параллельной доставке одного события.
-  - [ ] Добавить unit-тест consumer на duplicate event.
-  - [ ] Добавить integration-тест с повторной публикацией одного события в Kafka.
-- [ ] Добавить HTTP-файл или Postman collection для smoke-сценария.
-  - [ ] Выбрать формат: `.http` файл в репозитории или Postman collection JSON.
-  - [ ] Описать register/login и сохранение JWT token.
-  - [ ] Описать запросы cities/routes/trips через Gateway.
-  - [ ] Описать создание booking и получение booking status.
-  - [ ] Описать поиск payment по booking id.
-  - [ ] Добавить README-ссылку на smoke artifact и порядок запуска.
-- [ ] Проверить полный runtime-сценарий через Docker Compose и запущенные сервисы.
-  - [ ] Запустить `docker compose up -d` для PostgreSQL и Kafka.
-  - [ ] Собрать проект через `mvn clean package`.
-  - [ ] Запустить Config Server и проверить `/actuator/health`.
-  - [ ] Запустить Discovery Server и проверить Eureka UI/API.
-  - [ ] Запустить API Gateway и бизнес-сервисы.
-  - [ ] Пройти smoke-сценарий через Gateway: register, login, list routes/trips, create booking, confirm booking.
-  - [ ] Собрать runtime logs и зафиксировать найденные проблемы отдельными TODO.
-- [ ] Расширить Docker Compose application-сервисами после стабилизации запуска.
-  - [ ] Добавить Dockerfile или Spring Boot image build strategy для каждого сервиса.
-  - [ ] Добавить compose services для Config Server, Discovery Server, Gateway.
-  - [ ] Добавить compose services для User, Route, Trip, Booking, Payment.
-  - [ ] Настроить environment variables для Config Server, Eureka, PostgreSQL, Kafka.
-  - [ ] Добавить healthchecks и `depends_on` conditions.
-  - [ ] Проверить полный старт одной командой `docker compose up --build`.
+- [x] Добавить сохранение обработанных Kafka event id в Booking Service.
+  - [x] Добавить таблицу `processed_payment_events` через Flyway migration.
+  - [x] Сохранять `eventId` перед/после обработки в одной транзакции с изменением booking.
+  - [x] Игнорировать повторный Kafka event с уже обработанным `eventId`.
+  - [x] Добавить обработку гонки при параллельной доставке одного события.
+  - [x] Добавить unit-тест consumer на duplicate event.
+  - [x] Добавить integration-тест с повторной публикацией одного события в Kafka.
+- [x] Добавить HTTP-файл или Postman collection для smoke-сценария.
+  - [x] Выбрать формат: `.http` файл в репозитории или Postman collection JSON.
+  - [x] Описать register/login и сохранение JWT token.
+  - [x] Описать запросы cities/routes/trips через Gateway.
+  - [x] Описать создание booking и получение booking status.
+  - [x] Описать поиск payment по booking id.
+  - [x] Добавить README-ссылку на smoke artifact и порядок запуска.
+- [x] Проверить полный runtime-сценарий через Docker Compose и запущенные сервисы.
+  - [x] Запустить `docker compose up -d` для PostgreSQL и Kafka.
+  - [x] Собрать проект через `mvn clean package`.
+  - [x] Запустить Config Server и проверить `/actuator/health`.
+  - [x] Запустить Discovery Server и проверить Eureka UI/API.
+  - [x] Запустить API Gateway и бизнес-сервисы.
+  - [x] Пройти smoke-сценарий через Gateway: register, login, list routes/trips, create booking, confirm booking.
+  - [x] Собрать runtime logs и зафиксировать найденные проблемы отдельными TODO.
+- [x] Включить health endpoints для application-сервисов перед Docker Compose healthchecks.
+  - [x] Добавить или проверить Spring Boot Actuator dependency для User, Route, Trip, Booking, Payment.
+  - [x] Настроить exposure `/actuator/health` в business services.
+  - [x] Проверить `GET /actuator/health` на портах `8081`, `8083`, `8084`, `8085`, `8087`.
+- [x] Расширить Docker Compose application-сервисами после стабилизации запуска.
+  - [x] Добавить Dockerfile или Spring Boot image build strategy для каждого сервиса.
+  - [x] Добавить compose services для Config Server, Discovery Server, Gateway.
+  - [x] Добавить compose services для User, Route, Trip, Booking, Payment.
+  - [x] Настроить environment variables для Config Server, Eureka, PostgreSQL, Kafka.
+  - [x] Добавить healthchecks и `depends_on` conditions.
+  - [x] Проверить полный старт одной командой `docker compose up --build`.
 
 ## Не входит в MVP
 
-- [ ] Driver Service.
-  - [ ] Описать OpenAPI contract для профиля водителя.
-  - [ ] Добавить Maven module `driver-service`.
-  - [ ] Добавить сущности driver profile, license, availability.
-  - [ ] Добавить admin/user endpoints для управления профилем.
-  - [ ] Интегрировать Trip Service с driver availability.
-- [ ] Cargo Service.
-  - [ ] Описать OpenAPI contract для cargo orders.
-  - [ ] Добавить Maven module `cargo-service`.
-  - [ ] Добавить сущности cargo order, cargo dimensions, cargo status.
-  - [ ] Добавить расчет доступного cargo volume по trip.
-  - [ ] Интегрировать оплату cargo order через Payment Service.
-- [ ] Admin Service.
-  - [ ] Определить admin API facade поверх business services.
-  - [ ] Добавить агрегированные endpoints для пользователей, маршрутов, рейсов, бронирований, платежей.
-  - [ ] Добавить RBAC только для `ADMIN`.
-  - [ ] Добавить audit log для admin actions.
-- [ ] Notification Service.
-  - [ ] Определить Kafka topics для booking/payment notifications.
-  - [ ] Добавить Maven module `notification-service`.
-  - [ ] Добавить email/SMS provider abstraction.
-  - [ ] Реализовать MVP logging notification adapter.
-  - [ ] Добавить retry/dead-letter strategy.
+- [x] Driver Service.
+  - [x] Описать OpenAPI contract для профиля водителя.
+  - [x] Добавить Maven module `driver-service`.
+  - [x] Добавить сущности driver profile, license, availability.
+  - [x] Добавить admin/user endpoints для управления профилем.
+  - [x] Интегрировать Trip Service с driver availability.
+- [x] Cargo Service.
+  - [x] Описать OpenAPI contract для cargo orders.
+  - [x] Добавить Maven module `cargo-service`.
+  - [x] Добавить сущности cargo order, cargo dimensions, cargo status.
+  - [x] Добавить расчет доступного cargo volume по trip.
+  - [x] Интегрировать оплату cargo order через Payment Service.
+- [x] Admin Service.
+  - [x] Определить admin API facade поверх business services.
+  - [x] Добавить агрегированные endpoints для пользователей, маршрутов, рейсов, бронирований, платежей.
+  - [x] Добавить RBAC только для `ADMIN`.
+  - [x] Добавить audit log для admin actions.
+- [x] Notification Service.
+  - [x] Определить Kafka topics для booking/payment notifications.
+  - [x] Добавить Maven module `notification-service`.
+  - [x] Добавить email/SMS provider abstraction.
+  - [x] Реализовать MVP logging notification adapter.
+  - [x] Добавить retry/dead-letter strategy.
 - [ ] Frontend.
   - [ ] Выбрать frontend stack и структуру приложения.
   - [ ] Добавить auth flow: register, login, token storage, logout.

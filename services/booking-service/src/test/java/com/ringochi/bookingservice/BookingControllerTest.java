@@ -121,6 +121,34 @@ class BookingControllerTest {
         verify(bookings).save(booking);
     }
 
+    @Test
+    void allReturnsBookingsForAdmin() {
+        Booking first = booking(UUID.randomUUID(), UUID.randomUUID(), BookingStatus.CONFIRMED);
+        Booking second = booking(UUID.randomUUID(), UUID.randomUUID(), BookingStatus.PENDING);
+        when(bookings.findAll()).thenReturn(List.of(first, second));
+
+        List<Booking> result = controller.all("ADMIN");
+
+        assertThat(result).containsExactly(first, second);
+    }
+
+    @Test
+    void allRejectsNonAdmin() {
+        assertThatThrownBy(() -> controller.all("PASSENGER"))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception ->
+                        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN));
+    }
+
+    @Test
+    void adminByIdReturnsBookingForAdmin() {
+        Booking booking = booking(UUID.randomUUID(), UUID.randomUUID(), BookingStatus.CONFIRMED);
+        when(bookings.findById(booking.getId())).thenReturn(Optional.of(booking));
+
+        Booking result = controller.adminById("ADMIN", booking.getId());
+
+        assertThat(result).isEqualTo(booking);
+    }
+
     private static TripClient.TripDto trip(UUID tripId, BigDecimal price) {
         return new TripClient.TripDto(tripId, UUID.randomUUID(), Instant.parse("2026-05-20T08:00:00Z"),
                 Instant.parse("2026-05-20T10:00:00Z"), 12, 8, price, "SCHEDULED");

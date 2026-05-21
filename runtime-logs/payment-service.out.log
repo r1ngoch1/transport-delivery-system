@@ -19,12 +19,12 @@
 [INFO] Processing operation findPayments
 [INFO] Processing operation createPayment
 [INFO] Processing operation getPaymentById
-[INFO] writing file C:\Users\sholo\IdeaProjects\system-transport-architecture\services\payment-service\target\generated-sources\openapi\src\main\java\com\ringochi\paymentservice\generated\dto\CreatePaymentRequest.java
-[INFO] writing file C:\Users\sholo\IdeaProjects\system-transport-architecture\services\payment-service\target\generated-sources\openapi\src\main\java\com\ringochi\paymentservice\generated\dto\ErrorResponse.java
-[INFO] writing file C:\Users\sholo\IdeaProjects\system-transport-architecture\services\payment-service\target\generated-sources\openapi\src\main\java\com\ringochi\paymentservice\generated\dto\Payment.java
-[INFO] writing file C:\Users\sholo\IdeaProjects\system-transport-architecture\services\payment-service\target\generated-sources\openapi\src\main\java\com\ringochi\paymentservice\generated\dto\PaymentStatus.java
-[INFO] writing file C:\Users\sholo\IdeaProjects\system-transport-architecture\services\payment-service\target\generated-sources\openapi\src\main\java\com\ringochi\paymentservice\generated\dto\TargetType.java
-[INFO] writing file C:\Users\sholo\IdeaProjects\system-transport-architecture\services\payment-service\target\generated-sources\openapi\src\main\java\com\ringochi\paymentservice\generated\api\DefaultApi.java
+[INFO] writing file C:\Users\sholo\IdeaProjects\transport-delivery-system\services\payment-service\target\generated-sources\openapi\src\main\java\com\ringochi\paymentservice\generated\dto\CreatePaymentRequest.java
+[INFO] writing file C:\Users\sholo\IdeaProjects\transport-delivery-system\services\payment-service\target\generated-sources\openapi\src\main\java\com\ringochi\paymentservice\generated\dto\ErrorResponse.java
+[INFO] writing file C:\Users\sholo\IdeaProjects\transport-delivery-system\services\payment-service\target\generated-sources\openapi\src\main\java\com\ringochi\paymentservice\generated\dto\Payment.java
+[INFO] writing file C:\Users\sholo\IdeaProjects\transport-delivery-system\services\payment-service\target\generated-sources\openapi\src\main\java\com\ringochi\paymentservice\generated\dto\PaymentStatus.java
+[INFO] writing file C:\Users\sholo\IdeaProjects\transport-delivery-system\services\payment-service\target\generated-sources\openapi\src\main\java\com\ringochi\paymentservice\generated\dto\TargetType.java
+[INFO] writing file C:\Users\sholo\IdeaProjects\transport-delivery-system\services\payment-service\target\generated-sources\openapi\src\main\java\com\ringochi\paymentservice\generated\api\DefaultApi.java
 [INFO] Skipping generation of Webhooks.
 [INFO] Skipping generation of supporting files.
 ################################################################################
@@ -62,67 +62,64 @@
 
  :: Spring Boot ::                (v3.3.5)
 
-2026-05-21T01:02:57.487+05:00  INFO 2144 --- [payment-service] [           main] c.r.p.PaymentServiceApplication          : Starting PaymentServiceApplication using Java 21.0.6 with PID 2144 (C:\Users\sholo\IdeaProjects\system-transport-architecture\services\payment-service\target\classes started by sholo in C:\Users\sholo\IdeaProjects\system-transport-architecture\services\payment-service)
-2026-05-21T01:02:57.490+05:00  INFO 2144 --- [payment-service] [           main] c.r.p.PaymentServiceApplication          : No active profile set, falling back to 1 default profile: "default"
-2026-05-21T01:02:57.537+05:00  INFO 2144 --- [payment-service] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8889
-2026-05-21T01:02:57.538+05:00  INFO 2144 --- [payment-service] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=payment-service, profiles=[default], label=null, version=null, state=null
-2026-05-21T01:02:58.208+05:00  INFO 2144 --- [payment-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-05-21T01:02:58.360+05:00  INFO 2144 --- [payment-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 143 ms. Found 1 JPA repository interface.
-2026-05-21T01:02:58.674+05:00  INFO 2144 --- [payment-service] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=dd8f3c65-9acd-3deb-98a5-8ad8ee5ccc79
-2026-05-21T01:02:58.842+05:00  WARN 2144 --- [payment-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
-2026-05-21T01:02:58.844+05:00  WARN 2144 --- [payment-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
-2026-05-21T01:02:59.131+05:00  INFO 2144 --- [payment-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8087 (http)
-2026-05-21T01:02:59.149+05:00  INFO 2144 --- [payment-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
-2026-05-21T01:02:59.150+05:00  INFO 2144 --- [payment-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.31]
-2026-05-21T01:02:59.237+05:00  INFO 2144 --- [payment-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
-2026-05-21T01:02:59.238+05:00  INFO 2144 --- [payment-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1697 ms
-2026-05-21T01:02:59.472+05:00  INFO 2144 --- [payment-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
-2026-05-21T01:02:59.650+05:00  INFO 2144 --- [payment-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@2a631049
-2026-05-21T01:02:59.653+05:00  INFO 2144 --- [payment-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
-2026-05-21T01:02:59.691+05:00  INFO 2144 --- [payment-service] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:15437/payment_db (PostgreSQL 16.14)
-2026-05-21T01:02:59.742+05:00  INFO 2144 --- [payment-service] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "public"."flyway_schema_history" does not exist yet
-2026-05-21T01:02:59.748+05:00  INFO 2144 --- [payment-service] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.023s)
-2026-05-21T01:02:59.770+05:00  INFO 2144 --- [payment-service] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "public"."flyway_schema_history" ...
-2026-05-21T01:02:59.830+05:00  INFO 2144 --- [payment-service] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
-2026-05-21T01:02:59.840+05:00  INFO 2144 --- [payment-service] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - create payments"
-2026-05-21T01:02:59.880+05:00  INFO 2144 --- [payment-service] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - add payment idempotency key"
-2026-05-21T01:02:59.908+05:00  INFO 2144 --- [payment-service] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 2 migrations to schema "public", now at version v2 (execution time 00:00.026s)
-2026-05-21T01:03:00.006+05:00  INFO 2144 --- [payment-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
-2026-05-21T01:03:00.069+05:00  INFO 2144 --- [payment-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
-2026-05-21T01:03:00.106+05:00  INFO 2144 --- [payment-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
-2026-05-21T01:03:00.450+05:00  INFO 2144 --- [payment-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-05-21T01:03:01.418+05:00  INFO 2144 --- [payment-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-05-21T01:03:01.456+05:00  INFO 2144 --- [payment-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-05-21T01:03:03.234+05:00  INFO 2144 --- [payment-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
-2026-05-21T01:03:04.292+05:00  INFO 2144 --- [payment-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
-2026-05-21T01:03:04.311+05:00  INFO 2144 --- [payment-service] [           main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestTemplate.
-2026-05-21T01:03:04.352+05:00  WARN 2144 --- [payment-service] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
-2026-05-21T01:03:04.378+05:00  INFO 2144 --- [payment-service] [           main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
-2026-05-21T01:03:04.404+05:00  INFO 2144 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
-2026-05-21T01:03:04.408+05:00  INFO 2144 --- [payment-service] [           main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
-2026-05-21T01:03:04.417+05:00  INFO 2144 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
-2026-05-21T01:03:04.417+05:00  INFO 2144 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
-2026-05-21T01:03:04.418+05:00  INFO 2144 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
-2026-05-21T01:03:04.418+05:00  INFO 2144 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Application is null : false
-2026-05-21T01:03:04.418+05:00  INFO 2144 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
-2026-05-21T01:03:04.418+05:00  INFO 2144 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
-2026-05-21T01:03:04.418+05:00  INFO 2144 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
-2026-05-21T01:03:04.699+05:00  INFO 2144 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : The response status is 200
-2026-05-21T01:03:04.701+05:00  INFO 2144 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
-2026-05-21T01:03:04.703+05:00  INFO 2144 --- [payment-service] [           main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
-2026-05-21T01:03:04.705+05:00  INFO 2144 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1779307384705 with initial instances count: 4
-2026-05-21T01:03:04.710+05:00  INFO 2144 --- [payment-service] [           main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application PAYMENT-SERVICE with eureka with status UP
-2026-05-21T01:03:04.710+05:00  INFO 2144 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1779307384710, current=UP, previous=STARTING]
-2026-05-21T01:03:04.712+05:00  INFO 2144 --- [payment-service] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PAYMENT-SERVICE/localhost:payment-service:8087: registering service...
-2026-05-21T01:03:04.731+05:00  INFO 2144 --- [payment-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8087 (http) with context path '/'
-2026-05-21T01:03:04.733+05:00  INFO 2144 --- [payment-service] [           main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8087
-2026-05-21T01:03:04.743+05:00  INFO 2144 --- [payment-service] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PAYMENT-SERVICE/localhost:payment-service:8087 - registration status: 204
-2026-05-21T01:03:05.741+05:00  INFO 2144 --- [payment-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
-2026-05-21T01:03:05.749+05:00  INFO 2144 --- [payment-service] [           main] c.r.p.PaymentServiceApplication          : Started PaymentServiceApplication in 10.489 seconds (process running for 11.18)
-2026-05-21T01:04:13.200+05:00  INFO 2144 --- [payment-service] [nio-8087-exec-2] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-05-21T01:04:13.201+05:00  INFO 2144 --- [payment-service] [nio-8087-exec-2] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
-2026-05-21T01:04:13.202+05:00  INFO 2144 --- [payment-service] [nio-8087-exec-2] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms
-2026-05-21T01:04:13.383+05:00  INFO 2144 --- [payment-service] [nio-8087-exec-2] o.a.k.clients.producer.ProducerConfig    : ProducerConfig values: 
+2026-05-21T12:29:19.709+05:00  INFO 2248 --- [payment-service] [           main] c.r.p.PaymentServiceApplication          : Starting PaymentServiceApplication using Java 21.0.6 with PID 2248 (C:\Users\sholo\IdeaProjects\transport-delivery-system\services\payment-service\target\classes started by sholo in C:\Users\sholo\IdeaProjects\transport-delivery-system\services\payment-service)
+2026-05-21T12:29:19.725+05:00  INFO 2248 --- [payment-service] [           main] c.r.p.PaymentServiceApplication          : No active profile set, falling back to 1 default profile: "default"
+2026-05-21T12:29:19.741+05:00  INFO 2248 --- [payment-service] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Fetching config from server at : http://localhost:8889
+2026-05-21T12:29:19.741+05:00  INFO 2248 --- [payment-service] [           main] o.s.c.c.c.ConfigServerConfigDataLoader   : Located environment: name=payment-service, profiles=[default], label=null, version=null, state=null
+2026-05-21T12:29:20.453+05:00  INFO 2248 --- [payment-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-05-21T12:29:20.557+05:00  INFO 2248 --- [payment-service] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 101 ms. Found 1 JPA repository interface.
+2026-05-21T12:29:20.746+05:00  INFO 2248 --- [payment-service] [           main] o.s.cloud.context.scope.GenericScope     : BeanFactory id=1179d9e7-5a74-30bb-98a1-a4882d73bb18
+2026-05-21T12:29:21.001+05:00  WARN 2248 --- [payment-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig' of type [org.springframework.cloud.client.loadbalancer.LoadBalancerAutoConfiguration$DeferringLoadBalancerInterceptorConfig] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). The currently created BeanPostProcessor [lbRestClientPostProcessor] is declared through a non-static factory method on that class; consider declaring it as static instead.
+2026-05-21T12:29:21.001+05:00  WARN 2248 --- [payment-service] [           main] trationDelegate$BeanPostProcessorChecker : Bean 'deferringLoadBalancerInterceptor' of type [org.springframework.cloud.client.loadbalancer.DeferringLoadBalancerInterceptor] is not eligible for getting processed by all BeanPostProcessors (for example: not eligible for auto-proxying). Is this bean getting eagerly injected/applied to a currently created BeanPostProcessor [lbRestClientPostProcessor]? Check the corresponding BeanPostProcessor declaration and its dependencies/advisors. If this bean does not have to be post-processed, declare it with ROLE_INFRASTRUCTURE.
+2026-05-21T12:29:21.224+05:00  INFO 2248 --- [payment-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8087 (http)
+2026-05-21T12:29:21.240+05:00  INFO 2248 --- [payment-service] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-05-21T12:29:21.240+05:00  INFO 2248 --- [payment-service] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.31]
+2026-05-21T12:29:21.341+05:00  INFO 2248 --- [payment-service] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-05-21T12:29:21.341+05:00  INFO 2248 --- [payment-service] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1600 ms
+2026-05-21T12:29:21.652+05:00  INFO 2248 --- [payment-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-05-21T12:29:21.790+05:00  INFO 2248 --- [payment-service] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@4895e8f6
+2026-05-21T12:29:21.792+05:00  INFO 2248 --- [payment-service] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-05-21T12:29:21.818+05:00  INFO 2248 --- [payment-service] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:15437/payment_db (PostgreSQL 16.14)
+2026-05-21T12:29:21.866+05:00  INFO 2248 --- [payment-service] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.024s)
+2026-05-21T12:29:21.897+05:00  INFO 2248 --- [payment-service] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 2
+2026-05-21T12:29:21.899+05:00  INFO 2248 --- [payment-service] [           main] o.f.core.internal.command.DbMigrate      : Schema "public" is up to date. No migration necessary.
+2026-05-21T12:29:21.974+05:00  INFO 2248 --- [payment-service] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-05-21T12:29:22.006+05:00  INFO 2248 --- [payment-service] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2026-05-21T12:29:22.044+05:00  INFO 2248 --- [payment-service] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-05-21T12:29:22.257+05:00  INFO 2248 --- [payment-service] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-05-21T12:29:22.986+05:00  INFO 2248 --- [payment-service] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-05-21T12:29:23.025+05:00  INFO 2248 --- [payment-service] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-05-21T12:29:24.747+05:00  INFO 2248 --- [payment-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-05-21T12:29:26.020+05:00  INFO 2248 --- [payment-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-05-21T12:29:26.036+05:00  INFO 2248 --- [payment-service] [           main] DiscoveryClientOptionalArgsConfiguration : Eureka HTTP Client uses RestTemplate.
+2026-05-21T12:29:26.084+05:00  WARN 2248 --- [payment-service] [           main] iguration$LoadBalancerCaffeineWarnLogger : Spring Cloud LoadBalancer is currently working with the default cache. While this cache implementation is useful for development and tests, it's recommended to use Caffeine cache in production.You can switch to using Caffeine cache, by adding it and org.springframework.cache.caffeine.CaffeineCacheManager to the classpath.
+2026-05-21T12:29:26.084+05:00  INFO 2248 --- [payment-service] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-05-21T12:29:26.147+05:00  INFO 2248 --- [payment-service] [           main] o.s.c.n.eureka.InstanceInfoFactory       : Setting initial instance status as: STARTING
+2026-05-21T12:29:26.163+05:00  INFO 2248 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Initializing Eureka in region us-east-1
+2026-05-21T12:29:26.179+05:00  INFO 2248 --- [payment-service] [           main] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-21T12:29:26.179+05:00  INFO 2248 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Disable delta property : false
+2026-05-21T12:29:26.179+05:00  INFO 2248 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Single vip registry refresh property : null
+2026-05-21T12:29:26.179+05:00  INFO 2248 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Force full registry fetch : false
+2026-05-21T12:29:26.179+05:00  INFO 2248 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Application is null : false
+2026-05-21T12:29:26.179+05:00  INFO 2248 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Registered Applications size is zero : true
+2026-05-21T12:29:26.179+05:00  INFO 2248 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Application version is -1: true
+2026-05-21T12:29:26.179+05:00  INFO 2248 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Getting all instance registry info from the eureka server
+2026-05-21T12:29:26.421+05:00  INFO 2248 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : The response status is 200
+2026-05-21T12:29:26.421+05:00  INFO 2248 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Starting heartbeat executor: renew interval is: 30
+2026-05-21T12:29:26.437+05:00  INFO 2248 --- [payment-service] [           main] c.n.discovery.InstanceInfoReplicator     : InstanceInfoReplicator onDemand update allowed rate per min is 4
+2026-05-21T12:29:26.438+05:00  INFO 2248 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Discovery Client initialized at timestamp 1779348566438 with initial instances count: 4
+2026-05-21T12:29:26.445+05:00  INFO 2248 --- [payment-service] [           main] o.s.c.n.e.s.EurekaServiceRegistry        : Registering application PAYMENT-SERVICE with eureka with status UP
+2026-05-21T12:29:26.446+05:00  INFO 2248 --- [payment-service] [           main] com.netflix.discovery.DiscoveryClient    : Saw local status change event StatusChangeEvent [timestamp=1779348566446, current=UP, previous=STARTING]
+2026-05-21T12:29:26.447+05:00  INFO 2248 --- [payment-service] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PAYMENT-SERVICE/localhost:payment-service:8087: registering service...
+2026-05-21T12:29:26.465+05:00  INFO 2248 --- [payment-service] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8087 (http) with context path '/'
+2026-05-21T12:29:26.466+05:00  INFO 2248 --- [payment-service] [           main] .s.c.n.e.s.EurekaAutoServiceRegistration : Updating port to 8087
+2026-05-21T12:29:26.474+05:00  INFO 2248 --- [payment-service] [foReplicator-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PAYMENT-SERVICE/localhost:payment-service:8087 - registration status: 204
+2026-05-21T12:29:27.481+05:00  INFO 2248 --- [payment-service] [           main] o.s.cloud.commons.util.InetUtils         : Cannot determine local hostname
+2026-05-21T12:29:27.491+05:00  INFO 2248 --- [payment-service] [           main] c.r.p.PaymentServiceApplication          : Started PaymentServiceApplication in 9.525 seconds (process running for 9.899)
+2026-05-21T12:29:45.494+05:00  INFO 2248 --- [payment-service] [nio-8087-exec-3] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-05-21T12:29:45.494+05:00  INFO 2248 --- [payment-service] [nio-8087-exec-3] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-05-21T12:29:45.496+05:00  INFO 2248 --- [payment-service] [nio-8087-exec-3] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2026-05-21T12:30:09.535+05:00  INFO 2248 --- [payment-service] [nio-8087-exec-4] o.a.k.clients.producer.ProducerConfig    : ProducerConfig values: 
 	acks = -1
 	auto.include.jmx.reporter = true
 	batch.size = 16384
@@ -214,16 +211,270 @@
 	transactional.id = null
 	value.serializer = class org.springframework.kafka.support.serializer.JsonSerializer
 
-2026-05-21T01:04:13.429+05:00  INFO 2144 --- [payment-service] [nio-8087-exec-2] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
-2026-05-21T01:04:13.531+05:00  INFO 2144 --- [payment-service] [nio-8087-exec-2] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=payment-service-producer-1] Instantiated an idempotent producer.
-2026-05-21T01:04:13.568+05:00  INFO 2144 --- [payment-service] [nio-8087-exec-2] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.7.1
-2026-05-21T01:04:13.568+05:00  INFO 2144 --- [payment-service] [nio-8087-exec-2] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: e2494e6ffb89f828
-2026-05-21T01:04:13.568+05:00  INFO 2144 --- [payment-service] [nio-8087-exec-2] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1779307453567
-2026-05-21T01:04:13.818+05:00  INFO 2144 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=payment-service-producer-1] Cluster ID: 5L6g3nShT-eMCtK--X86sw
-2026-05-21T01:04:13.932+05:00  INFO 2144 --- [payment-service] [vice-producer-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=payment-service-producer-1] ProducerId set to 0 with epoch 0
-2026-05-21T01:08:04.423+05:00  INFO 2144 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
-2026-05-21T01:13:04.433+05:00  INFO 2144 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
-2026-05-21T01:13:13.885+05:00  INFO 2144 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node -1 disconnected.
-2026-05-21T01:18:04.445+05:00  INFO 2144 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
-2026-05-21T01:23:04.454+05:00  INFO 2144 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
-2026-05-21T01:23:13.874+05:00  INFO 2144 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node -1 disconnected.
+2026-05-21T12:30:09.570+05:00  INFO 2248 --- [payment-service] [nio-8087-exec-4] o.a.k.c.t.i.KafkaMetricsCollector        : initializing Kafka metrics collector
+2026-05-21T12:30:09.583+05:00  INFO 2248 --- [payment-service] [nio-8087-exec-4] o.a.k.clients.producer.KafkaProducer     : [Producer clientId=payment-service-producer-1] Instantiated an idempotent producer.
+2026-05-21T12:30:09.616+05:00  INFO 2248 --- [payment-service] [nio-8087-exec-4] o.a.kafka.common.utils.AppInfoParser     : Kafka version: 3.7.1
+2026-05-21T12:30:09.616+05:00  INFO 2248 --- [payment-service] [nio-8087-exec-4] o.a.kafka.common.utils.AppInfoParser     : Kafka commitId: e2494e6ffb89f828
+2026-05-21T12:30:09.616+05:00  INFO 2248 --- [payment-service] [nio-8087-exec-4] o.a.kafka.common.utils.AppInfoParser     : Kafka startTimeMs: 1779348609614
+2026-05-21T12:30:09.873+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.Metadata        : [Producer clientId=payment-service-producer-1] Cluster ID: 5L6g3nShT-eMCtK--X86sw
+2026-05-21T12:30:09.874+05:00  INFO 2248 --- [payment-service] [vice-producer-1] o.a.k.c.p.internals.TransactionManager   : [Producer clientId=payment-service-producer-1] ProducerId set to 1 with epoch 0
+2026-05-21T12:34:26.227+05:00  INFO 2248 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-21T12:39:09.982+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node -1 disconnected.
+2026-05-21T12:39:26.257+05:00  INFO 2248 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-21T12:44:26.297+05:00  INFO 2248 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-21T12:49:09.988+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node -1 disconnected.
+2026-05-21T12:49:26.333+05:00  INFO 2248 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-21T12:54:26.363+05:00  INFO 2248 --- [payment-service] [rap-executor-%d] c.n.d.s.r.aws.ConfigClusterResolver      : Resolving eureka endpoints via configuration
+2026-05-21T12:56:13.040+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node 1 disconnected.
+2026-05-21T12:56:13.101+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node 1 disconnected.
+2026-05-21T12:56:13.101+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 17 due to node 1 being disconnected (elapsed time since creation: 2ms, elapsed time since send: 2ms, request timeout: 30000ms)
+2026-05-21T12:56:13.224+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node 1 disconnected.
+2026-05-21T12:56:13.225+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 18 due to node 1 being disconnected (elapsed time since creation: 1ms, elapsed time since send: 1ms, request timeout: 30000ms)
+2026-05-21T12:56:13.442+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node 1 disconnected.
+2026-05-21T12:56:13.442+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 19 due to node 1 being disconnected (elapsed time since creation: 2ms, elapsed time since send: 2ms, request timeout: 30000ms)
+2026-05-21T12:56:13.922+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node 1 disconnected.
+2026-05-21T12:56:13.923+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 20 due to node 1 being disconnected (elapsed time since creation: 1ms, elapsed time since send: 1ms, request timeout: 30000ms)
+2026-05-21T12:56:14.822+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node 1 disconnected.
+2026-05-21T12:56:14.822+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 21 due to node 1 being disconnected (elapsed time since creation: 1ms, elapsed time since send: 1ms, request timeout: 30000ms)
+2026-05-21T12:56:15.785+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node 1 disconnected.
+2026-05-21T12:56:15.786+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 22 due to node 1 being disconnected (elapsed time since creation: 1ms, elapsed time since send: 1ms, request timeout: 30000ms)
+2026-05-21T12:56:16.791+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node 1 disconnected.
+2026-05-21T12:56:16.792+05:00  WARN 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-05-21T12:56:17.801+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node 1 disconnected.
+2026-05-21T12:56:17.802+05:00  WARN 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Connection to node 1 (localhost/127.0.0.1:9092) could not be established. Node may not be available.
+2026-05-21T12:56:18.813+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node 1 disconnected.
+2026-05-21T12:56:18.813+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 23 due to node 1 being disconnected (elapsed time since creation: 2ms, elapsed time since send: 2ms, request timeout: 30000ms)
+2026-05-21T12:56:19.819+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node 1 disconnected.
+2026-05-21T12:56:19.820+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 24 due to node 1 being disconnected (elapsed time since creation: 1ms, elapsed time since send: 1ms, request timeout: 30000ms)
+2026-05-21T12:56:20.830+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Node 1 disconnected.
+2026-05-21T12:56:20.831+05:00  INFO 2248 --- [payment-service] [vice-producer-1] org.apache.kafka.clients.NetworkClient   : [Producer clientId=payment-service-producer-1] Cancelled in-flight API_VERSIONS request with correlation id 25 due to node 1 being disconnected (elapsed time since creation: 1ms, elapsed time since send: 1ms, request timeout: 30000ms)
+2026-05-21T12:57:58.057+05:00  INFO 2248 --- [payment-service] [reshExecutor-%d] o.a.h.c.h.i.c.HttpRequestRetryExec       : Recoverable I/O exception (org.apache.hc.core5.http.NoHttpResponseException) caught when processing request to {}->http://localhost:8761
+2026-05-21T12:57:58.068+05:00  INFO 2248 --- [payment-service] [reshExecutor-%d] c.n.d.s.t.d.RedirectingEurekaHttpClient  : Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/} exception=I/O error on GET request for "http://localhost:8761/eureka/apps/delta": localhost:8761 failed to respond stacktrace=org.springframework.web.client.ResourceAccessException: I/O error on GET request for "http://localhost:8761/eureka/apps/delta": localhost:8761 failed to respond
+	at org.springframework.web.client.RestTemplate.createResourceAccessException(RestTemplate.java:915)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:895)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:790)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:672)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateEurekaHttpClient.getApplicationsInternal(RestTemplateEurekaHttpClient.java:145)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateEurekaHttpClient.getDelta(RestTemplateEurekaHttpClient.java:155)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$7.execute(EurekaHttpClientDecorator.java:152)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:91)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getDelta(EurekaHttpClientDecorator.java:149)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$7.execute(EurekaHttpClientDecorator.java:152)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getDelta(EurekaHttpClientDecorator.java:149)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$7.execute(EurekaHttpClientDecorator.java:152)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:76)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getDelta(EurekaHttpClientDecorator.java:149)
+	at com.netflix.discovery.DiscoveryClient.getAndUpdateDelta(DiscoveryClient.java:1080)
+	at com.netflix.discovery.DiscoveryClient.fetchRegistry(DiscoveryClient.java:963)
+	at com.netflix.discovery.DiscoveryClient.refreshRegistry(DiscoveryClient.java:1473)
+	at com.netflix.discovery.DiscoveryClient$CacheRefreshThread.run(DiscoveryClient.java:1441)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: org.apache.hc.core5.http.NoHttpResponseException: localhost:8761 failed to respond
+	at org.apache.hc.core5.http.impl.io.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:306)
+	at org.apache.hc.core5.http.impl.io.HttpRequestExecutor.execute(HttpRequestExecutor.java:175)
+	at org.apache.hc.core5.http.impl.io.HttpRequestExecutor.execute(HttpRequestExecutor.java:218)
+	at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager$InternalConnectionEndpoint.execute(PoolingHttpClientConnectionManager.java:717)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.execute(InternalExecRuntime.java:216)
+	at org.apache.hc.client5.http.impl.classic.MainClientExec.execute(MainClientExec.java:116)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:188)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:192)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:113)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:152)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:116)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:170)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:87)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:55)
+	at org.apache.hc.client5.http.classic.HttpClient.executeOpen(HttpClient.java:183)
+	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:99)
+	at org.springframework.http.client.AbstractStreamingClientHttpRequest.executeInternal(AbstractStreamingClientHttpRequest.java:70)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:112)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateTransportClientFactory.lambda$restTemplate$3(RestTemplateTransportClientFactory.java:170)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:88)
+	at org.springframework.http.client.InterceptingClientHttpRequest.executeInternal(InterceptingClientHttpRequest.java:72)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:889)
+	... 22 more
+
+2026-05-21T12:57:58.069+05:00  INFO 2248 --- [payment-service] [beatExecutor-%d] o.a.h.c.h.i.c.HttpRequestRetryExec       : Recoverable I/O exception (org.apache.hc.core5.http.NoHttpResponseException) caught when processing request to {}->http://localhost:8761
+2026-05-21T12:57:58.069+05:00  WARN 2248 --- [payment-service] [reshExecutor-%d] c.n.d.s.t.d.RetryableEurekaHttpClient    : Request execution failed with message: I/O error on GET request for "http://localhost:8761/eureka/apps/delta": localhost:8761 failed to respond
+2026-05-21T12:57:58.073+05:00  INFO 2248 --- [payment-service] [beatExecutor-%d] c.n.d.s.t.d.RedirectingEurekaHttpClient  : Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/}, exception=I/O error on PUT request for "http://localhost:8761/eureka/apps/PAYMENT-SERVICE/localhost:payment-service:8087": localhost:8761 failed to respond stacktrace=org.springframework.web.client.ResourceAccessException: I/O error on PUT request for "http://localhost:8761/eureka/apps/PAYMENT-SERVICE/localhost:payment-service:8087": localhost:8761 failed to respond
+	at org.springframework.web.client.RestTemplate.createResourceAccessException(RestTemplate.java:915)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:895)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:790)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:672)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateEurekaHttpClient.sendHeartBeat(RestTemplateEurekaHttpClient.java:99)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.executeOnNewServer(RedirectingEurekaHttpClient.java:121)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:80)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:76)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89)
+	at com.netflix.discovery.DiscoveryClient.renew(DiscoveryClient.java:845)
+	at com.netflix.discovery.DiscoveryClient$HeartbeatThread.run(DiscoveryClient.java:1402)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: org.apache.hc.core5.http.NoHttpResponseException: localhost:8761 failed to respond
+	at org.apache.hc.core5.http.impl.io.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:306)
+	at org.apache.hc.core5.http.impl.io.HttpRequestExecutor.execute(HttpRequestExecutor.java:175)
+	at org.apache.hc.core5.http.impl.io.HttpRequestExecutor.execute(HttpRequestExecutor.java:218)
+	at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager$InternalConnectionEndpoint.execute(PoolingHttpClientConnectionManager.java:717)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.execute(InternalExecRuntime.java:216)
+	at org.apache.hc.client5.http.impl.classic.MainClientExec.execute(MainClientExec.java:116)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:188)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:192)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:113)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:152)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:116)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:170)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:87)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:55)
+	at org.apache.hc.client5.http.classic.HttpClient.executeOpen(HttpClient.java:183)
+	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:99)
+	at org.springframework.http.client.AbstractStreamingClientHttpRequest.executeInternal(AbstractStreamingClientHttpRequest.java:70)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:112)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateTransportClientFactory.lambda$restTemplate$3(RestTemplateTransportClientFactory.java:170)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:88)
+	at org.springframework.http.client.InterceptingClientHttpRequest.executeInternal(InterceptingClientHttpRequest.java:72)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:889)
+	... 20 more
+
+2026-05-21T12:57:58.074+05:00  WARN 2248 --- [payment-service] [beatExecutor-%d] c.n.d.s.t.d.RetryableEurekaHttpClient    : Request execution failed with message: I/O error on PUT request for "http://localhost:8761/eureka/apps/PAYMENT-SERVICE/localhost:payment-service:8087": localhost:8761 failed to respond
+2026-05-21T12:57:58.074+05:00 ERROR 2248 --- [payment-service] [beatExecutor-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PAYMENT-SERVICE/localhost:payment-service:8087 - was unable to send heartbeat!
+
+com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:112) ~[eureka-client-2.0.3.jar:2.0.3]
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89) ~[eureka-client-2.0.3.jar:2.0.3]
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$3.execute(EurekaHttpClientDecorator.java:92) ~[eureka-client-2.0.3.jar:2.0.3]
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:76) ~[eureka-client-2.0.3.jar:2.0.3]
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.sendHeartBeat(EurekaHttpClientDecorator.java:89) ~[eureka-client-2.0.3.jar:2.0.3]
+	at com.netflix.discovery.DiscoveryClient.renew(DiscoveryClient.java:845) ~[eureka-client-2.0.3.jar:2.0.3]
+	at com.netflix.discovery.DiscoveryClient$HeartbeatThread.run(DiscoveryClient.java:1402) ~[eureka-client-2.0.3.jar:2.0.3]
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572) ~[na:na]
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144) ~[na:na]
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642) ~[na:na]
+	at java.base/java.lang.Thread.run(Thread.java:1583) ~[na:na]
+
+2026-05-21T12:57:58.085+05:00  INFO 2248 --- [payment-service] [reshExecutor-%d] o.a.h.c.h.i.c.HttpRequestRetryExec       : Recoverable I/O exception (org.apache.hc.core5.http.NoHttpResponseException) caught when processing request to {}->http://localhost:8761
+2026-05-21T12:57:58.089+05:00  INFO 2248 --- [payment-service] [reshExecutor-%d] c.n.d.s.t.d.RedirectingEurekaHttpClient  : Request execution error. endpoint=DefaultEndpoint{ serviceUrl='http://localhost:8761/eureka/}, exception=I/O error on GET request for "http://localhost:8761/eureka/apps/delta": localhost:8761 failed to respond stacktrace=org.springframework.web.client.ResourceAccessException: I/O error on GET request for "http://localhost:8761/eureka/apps/delta": localhost:8761 failed to respond
+	at org.springframework.web.client.RestTemplate.createResourceAccessException(RestTemplate.java:915)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:895)
+	at org.springframework.web.client.RestTemplate.execute(RestTemplate.java:790)
+	at org.springframework.web.client.RestTemplate.exchange(RestTemplate.java:672)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateEurekaHttpClient.getApplicationsInternal(RestTemplateEurekaHttpClient.java:145)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateEurekaHttpClient.getDelta(RestTemplateEurekaHttpClient.java:155)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$7.execute(EurekaHttpClientDecorator.java:152)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.executeOnNewServer(RedirectingEurekaHttpClient.java:121)
+	at com.netflix.discovery.shared.transport.decorator.RedirectingEurekaHttpClient.execute(RedirectingEurekaHttpClient.java:80)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getDelta(EurekaHttpClientDecorator.java:149)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$7.execute(EurekaHttpClientDecorator.java:152)
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:120)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getDelta(EurekaHttpClientDecorator.java:149)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$7.execute(EurekaHttpClientDecorator.java:152)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:76)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getDelta(EurekaHttpClientDecorator.java:149)
+	at com.netflix.discovery.DiscoveryClient.getAndUpdateDelta(DiscoveryClient.java:1080)
+	at com.netflix.discovery.DiscoveryClient.fetchRegistry(DiscoveryClient.java:963)
+	at com.netflix.discovery.DiscoveryClient.refreshRegistry(DiscoveryClient.java:1473)
+	at com.netflix.discovery.DiscoveryClient$CacheRefreshThread.run(DiscoveryClient.java:1441)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+Caused by: org.apache.hc.core5.http.NoHttpResponseException: localhost:8761 failed to respond
+	at org.apache.hc.core5.http.impl.io.DefaultBHttpClientConnection.receiveResponseHeader(DefaultBHttpClientConnection.java:306)
+	at org.apache.hc.core5.http.impl.io.HttpRequestExecutor.execute(HttpRequestExecutor.java:175)
+	at org.apache.hc.core5.http.impl.io.HttpRequestExecutor.execute(HttpRequestExecutor.java:218)
+	at org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManager$InternalConnectionEndpoint.execute(PoolingHttpClientConnectionManager.java:717)
+	at org.apache.hc.client5.http.impl.classic.InternalExecRuntime.execute(InternalExecRuntime.java:216)
+	at org.apache.hc.client5.http.impl.classic.MainClientExec.execute(MainClientExec.java:116)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ConnectExec.execute(ConnectExec.java:188)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ProtocolExec.execute(ProtocolExec.java:192)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.HttpRequestRetryExec.execute(HttpRequestRetryExec.java:113)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.ContentCompressionExec.execute(ContentCompressionExec.java:152)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.RedirectExec.execute(RedirectExec.java:116)
+	at org.apache.hc.client5.http.impl.classic.ExecChainElement.execute(ExecChainElement.java:51)
+	at org.apache.hc.client5.http.impl.classic.InternalHttpClient.doExecute(InternalHttpClient.java:170)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:87)
+	at org.apache.hc.client5.http.impl.classic.CloseableHttpClient.execute(CloseableHttpClient.java:55)
+	at org.apache.hc.client5.http.classic.HttpClient.executeOpen(HttpClient.java:183)
+	at org.springframework.http.client.HttpComponentsClientHttpRequest.executeInternal(HttpComponentsClientHttpRequest.java:99)
+	at org.springframework.http.client.AbstractStreamingClientHttpRequest.executeInternal(AbstractStreamingClientHttpRequest.java:70)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:112)
+	at org.springframework.cloud.netflix.eureka.http.RestTemplateTransportClientFactory.lambda$restTemplate$3(RestTemplateTransportClientFactory.java:170)
+	at org.springframework.http.client.InterceptingClientHttpRequest$InterceptingRequestExecution.execute(InterceptingClientHttpRequest.java:88)
+	at org.springframework.http.client.InterceptingClientHttpRequest.executeInternal(InterceptingClientHttpRequest.java:72)
+	at org.springframework.http.client.AbstractBufferingClientHttpRequest.executeInternal(AbstractBufferingClientHttpRequest.java:48)
+	at org.springframework.http.client.AbstractClientHttpRequest.execute(AbstractClientHttpRequest.java:66)
+	at org.springframework.web.client.RestTemplate.doExecute(RestTemplate.java:889)
+	... 23 more
+
+2026-05-21T12:57:58.089+05:00  WARN 2248 --- [payment-service] [reshExecutor-%d] c.n.d.s.t.d.RetryableEurekaHttpClient    : Request execution failed with message: I/O error on GET request for "http://localhost:8761/eureka/apps/delta": localhost:8761 failed to respond
+2026-05-21T12:57:58.090+05:00  INFO 2248 --- [payment-service] [reshExecutor-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PAYMENT-SERVICE/localhost:payment-service:8087 - was unable to refresh its cache! This periodic background refresh will be retried in 30 seconds. status = Cannot execute request on any known server stacktrace = com.netflix.discovery.shared.transport.TransportException: Cannot execute request on any known server
+	at com.netflix.discovery.shared.transport.decorator.RetryableEurekaHttpClient.execute(RetryableEurekaHttpClient.java:112)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getDelta(EurekaHttpClientDecorator.java:149)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator$7.execute(EurekaHttpClientDecorator.java:152)
+	at com.netflix.discovery.shared.transport.decorator.SessionedEurekaHttpClient.execute(SessionedEurekaHttpClient.java:76)
+	at com.netflix.discovery.shared.transport.decorator.EurekaHttpClientDecorator.getDelta(EurekaHttpClientDecorator.java:149)
+	at com.netflix.discovery.DiscoveryClient.getAndUpdateDelta(DiscoveryClient.java:1080)
+	at com.netflix.discovery.DiscoveryClient.fetchRegistry(DiscoveryClient.java:963)
+	at com.netflix.discovery.DiscoveryClient.refreshRegistry(DiscoveryClient.java:1473)
+	at com.netflix.discovery.DiscoveryClient$CacheRefreshThread.run(DiscoveryClient.java:1441)
+	at java.base/java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:572)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:317)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1144)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:642)
+	at java.base/java.lang.Thread.run(Thread.java:1583)
+
+2026-05-21T12:58:28.111+05:00  INFO 2248 --- [payment-service] [beatExecutor-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PAYMENT-SERVICE/localhost:payment-service:8087 - Re-registering apps/PAYMENT-SERVICE
+2026-05-21T12:58:28.112+05:00  INFO 2248 --- [payment-service] [beatExecutor-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PAYMENT-SERVICE/localhost:payment-service:8087: registering service...
+2026-05-21T12:58:28.125+05:00  INFO 2248 --- [payment-service] [beatExecutor-%d] com.netflix.discovery.DiscoveryClient    : DiscoveryClient_PAYMENT-SERVICE/localhost:payment-service:8087 - registration status: 204
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  29:32 min
+[INFO] Finished at: 2026-05-21T12:58:42+05:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.3.5:run (default-cli) on project payment-service: Process terminated with exit code: -1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
