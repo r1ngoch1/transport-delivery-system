@@ -182,11 +182,33 @@
   - [x] Реализовать MVP logging notification adapter.
   - [x] Добавить retry/dead-letter strategy.
 - [ ] Frontend.
-  - [ ] Выбрать frontend stack и структуру приложения.
-  - [ ] Добавить auth flow: register, login, token storage, logout.
-  - [ ] Добавить просмотр cities/routes/trips.
-  - [ ] Добавить booking flow и страницу моих бронирований.
-  - [ ] Добавить admin screens для CRUD после стабилизации admin API.
+  - [x] Frontend foundation.
+    - [x] Создать отдельное Node-приложение в корневой папке `frontend/`, не смешивая его с Maven modules в `services/`.
+    - [x] Выбрать и зафиксировать stack: React, Vite, TypeScript, React Router, TanStack Query.
+    - [x] Настроить `.env.example` и dev proxy/base URL для API Gateway `http://localhost:8080`.
+    - [x] Добавить базовую структуру `src/app`, `src/pages`, `src/features`, `src/shared`, `src/api`.
+    - [x] Настроить app shell, routing, protected routes и auth state.
+    - [x] Подключить базовый API client и schema-aligned TypeScript types.
+    - [x] Добавить генерацию frontend API client/types из OpenAPI contracts.
+  - [ ] Passenger booking MVP.
+    - [x] Добавить auth flow: register, login, JWT token storage, logout.
+    - [x] Добавить страницу профиля текущего пользователя.
+    - [x] Добавить просмотр cities/routes.
+    - [x] Добавить поиск trips по route/date.
+    - [ ] Добавить booking flow: выбор trip, создание booking, отображение pending/confirmed/cancelled status.
+    - [ ] Добавить страницу моих бронирований.
+    - [ ] Добавить отображение payment/status по booking.
+  - [ ] Frontend quality gates.
+    - [ ] Добавить единое отображение API errors в формате backend `ApiExceptionHandler`.
+    - [ ] Добавить loading, empty и error states для основных экранов.
+    - [ ] Добавить frontend smoke/e2e сценарий пассажира через Gateway.
+    - [ ] Добавить проверку `npm run build` и frontend tests.
+    - [ ] После стабилизации добавить frontend в Docker Compose.
+  - [ ] Next frontend stages.
+    - [ ] Добавить admin screens для CRUD после passenger MVP.
+    - [ ] Добавить driver profile/availability screens.
+    - [ ] Добавить cargo order flow.
+    - [ ] Добавить notification UX для booking/cargo/payment событий.
 - [ ] Реальная платежная интеграция.
   - [ ] Выбрать payment provider и sandbox account.
   - [ ] Спроектировать payment lifecycle вместо MVP auto-success.
