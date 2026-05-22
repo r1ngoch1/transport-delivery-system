@@ -1,0 +1,117 @@
+@gatewayUrl = http://localhost:8080
+@seedFromCityId = 11111111-1111-1111-1111-111111111111
+@seedToCityId = 22222222-2222-2222-2222-222222222222
+@seedRouteId = 33333333-3333-3333-3333-333333333333
+@seedTripId = 44444444-4444-4444-4444-444444444444
+@email = smoke-{{$timestamp}}@example.com
+@phone = +7999{{$timestamp}}
+@adminEmail = smoke-admin-{{$timestamp}}@example.com
+@adminPhone = +7888{{$timestamp}}
+@password = pass12345
+@seatNumber = 1
+
+### Register passenger and store JWT
+# @name register
+POST {{gatewayUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "phone": "{{phone}}",
+  "password": "{{password}}",
+  "fullName": "Smoke Test User",
+  "role": "PASSENGER"
+}
+
+> {%
+    client.global.set("accessToken", response.body.accessToken);
+    client.global.set("userId", response.body.user.id);
+%}
+
+### Register admin and store admin JWT
+# @name registerAdmin
+POST {{gatewayUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "{{adminEmail}}",
+  "phone": "{{adminPhone}}",
+  "password": "{{password}}",
+  "fullName": "Smoke Test Admin",
+  "role": "ADMIN"
+}
+
+> {%
+    client.global.set("adminAccessToken", response.body.accessToken);
+    client.global.set("adminUserId", response.body.user.id);
+%}
+
+### Login and refresh stored JWT
+# @name login
+POST {{gatewayUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{email}}",
+  "password": "{{password}}"
+}
+
+> {%
+    client.global.set("accessToken", response.body.accessToken);
+    client.global.set("userId", response.body.user.id);
+%}
+
+### Current user profile through Gateway
+GET {{gatewayUrl}}/api/users/me
+Authorization: Bearer {{accessToken}}
+
+### List seeded cities
+GET {{gatewayUrl}}/api/cities
+
+### Search seeded route from Ekaterinburg to Chelyabinsk
+GET {{gatewayUrl}}/api/routes/search?fromCityId={{seedFromCityId}}&toCityId={{seedToCityId}}
+
+### List seeded routes
+GET {{gatewayUrl}}/api/routes
+
+### Search seeded trip by route and date
+GET {{gatewayUrl}}/api/trips/search?routeId={{seedRouteId}}&date=2026-06-01
+
+### Get seeded trip
+GET {{gatewayUrl}}/api/trips/{{seedTripId}}
+
+### Create booking and store booking/payment ids
+# @name createBooking
+POST {{gatewayUrl}}/api/bookings
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "tripId": "{{seedTripId}}",
+  "seatNumber": "{{seatNumber}}"
+}
+
+> {%
+    client.global.set("bookingId", response.body.id);
+    client.global.set("paymentId", response.body.paymentId);
+%}
+
+### Get booking status
+GET {{gatewayUrl}}/api/bookings/{{bookingId}}
+Authorization: Bearer {{accessToken}}
+
+### List current user's bookings
+GET {{gatewayUrl}}/api/bookings/my
+Authorization: Bearer {{accessToken}}
+
+### Find payment by booking id
+GET {{gatewayUrl}}/api/payments?targetType=BOOKING&targetId={{bookingId}}
+Authorization: Bearer {{accessToken}}
+
+### Get payment by id
+GET {{gatewayUrl}}/api/payments/{{paymentId}}
+Authorization: Bearer {{accessToken}}
+
+### Admin aggregate users through Admin Service
+GET {{gatewayUrl}}/api/admin/users
+Authorization: Bearer {{adminAccessToken}}

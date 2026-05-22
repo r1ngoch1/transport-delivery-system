@@ -1,0 +1,15 @@
+spring:
+  config:
+    import: ""
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+eureka:
+  client:
+    enabled: false

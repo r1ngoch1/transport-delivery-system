@@ -1,0 +1,36 @@
+server:
+  port: 8088
+
+spring:
+  application:
+    name: cargo-service
+  config:
+    import: optional:configserver:http://localhost:8889
+  datasource:
+    url: jdbc:postgresql://localhost:15439/cargo_db
+    username: cargo_service
+    password: cargo_service
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+cargo:
+  max-weight-kg: 1000.00
+  max-volume-m3: 20.0000
+  base-price: 500.00
+  price-per-kg: 20.00
+  price-per-m3: 300.00

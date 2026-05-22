@@ -1,0 +1,244 @@
+openapi: 3.0.3
+info:
+  title: Driver Service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8086
+security:
+  - bearerAuth: []
+paths:
+  /api/drivers/me:
+    get:
+      tags: [Drivers]
+      summary: Get current driver profile
+      operationId: getCurrentDriverProfile
+      responses:
+        '200':
+          description: Current driver profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverProfile'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [Drivers]
+      summary: Update current driver profile
+      operationId: updateCurrentDriverProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateDriverProfileRequest'
+      responses:
+        '200':
+          description: Updated driver profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverProfile'
+  /api/drivers:
+    get:
+      tags: [Drivers]
+      summary: List driver profiles
+      operationId: listDriverProfiles
+      responses:
+        '200':
+          description: Driver profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DriverProfile'
+    post:
+      tags: [Drivers]
+      summary: Create driver profile
+      operationId: createDriverProfile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDriverProfileRequest'
+      responses:
+        '201':
+          description: Created driver profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverProfile'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/drivers/available:
+    get:
+      tags: [Drivers]
+      summary: List active available driver profiles
+      operationId: listAvailableDriverProfiles
+      responses:
+        '200':
+          description: Available driver profiles
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DriverProfile'
+  /api/drivers/{id}:
+    get:
+      tags: [Drivers]
+      summary: Get driver profile by id
+      operationId: getDriverProfile
+      parameters:
+        - $ref: '#/components/parameters/DriverId'
+      responses:
+        '200':
+          description: Driver profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverProfile'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      tags: [Drivers]
+      summary: Update driver profile by id
+      operationId: updateDriverProfile
+      parameters:
+        - $ref: '#/components/parameters/DriverId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminUpdateDriverProfileRequest'
+      responses:
+        '200':
+          description: Updated driver profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverProfile'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    DriverId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Request conflicts with current state
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    DriverAvailabilityStatus:
+      type: string
+      enum: [AVAILABLE, UNAVAILABLE, ON_TRIP, SUSPENDED]
+    DriverProfile:
+      type: object
+      required: [id, userId, fullName, phone, licenseNumber, licenseCategory, licenseExpiresAt, availabilityStatus, active, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        fullName:
+          type: string
+        phone:
+          type: string
+        licenseNumber:
+          type: string
+        licenseCategory:
+          type: string
+        licenseExpiresAt:
+          type: string
+          format: date
+        availabilityStatus:
+          $ref: '#/components/schemas/DriverAvailabilityStatus'
+        active:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateDriverProfileRequest:
+      type: object
+      required: [userId, fullName, phone, licenseNumber, licenseCategory, licenseExpiresAt]
+      properties:
+        userId:
+          type: string
+          format: uuid
+        fullName:
+          type: string
+        phone:
+          type: string
+        licenseNumber:
+          type: string
+        licenseCategory:
+          type: string
+        licenseExpiresAt:
+          type: string
+          format: date
+        availabilityStatus:
+          $ref: '#/components/schemas/DriverAvailabilityStatus'
+        active:
+          type: boolean
+    UpdateDriverProfileRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+        licenseNumber:
+          type: string
+        licenseCategory:
+          type: string
+        licenseExpiresAt:
+          type: string
+          format: date
+        availabilityStatus:
+          $ref: '#/components/schemas/DriverAvailabilityStatus'
+    AdminUpdateDriverProfileRequest:
+      allOf:
+        - $ref: '#/components/schemas/UpdateDriverProfileRequest'
+        - type: object
+          properties:
+            fullName:
+              type: string
+            active:
+              type: boolean
+    ErrorResponse:
+      type: object
+      required: [timestamp, status, error, message, path]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string

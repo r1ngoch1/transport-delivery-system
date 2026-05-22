@@ -75,6 +75,20 @@ class BookingKafkaIT {
         verify(tripClient, timeout(20_000)).releaseSeat(eq(booking.getTripId()));
     }
 
+    @Test
+    void repeatedPaymentFailedEventIsProcessedOnce() {
+        Booking booking = bookings.save(booking());
+        PaymentEvent event = event("PaymentFailed", booking);
+
+        publish(event);
+        publish(event);
+
+        Awaitility.await().atMost(20, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertThat(bookings.findById(booking.getId()))
+                        .get().extracting(Booking::getStatus).isEqualTo(BookingStatus.CANCELLED));
+        verify(tripClient, timeout(20_000).times(1)).releaseSeat(eq(booking.getTripId()));
+    }
+
     private void publish(PaymentEvent event) {
         Map<String, Object> producerProps = Map.of(
                 "bootstrap.servers", kafka.getBootstrapServers(),

@@ -65,6 +65,18 @@ public class BookingController {
         return bookings.findByUserId(userId);
     }
 
+    @GetMapping("/admin")
+    public List<Booking> all(@RequestHeader(value = "X-User-Roles", required = false) String roles) {
+        requireAdmin(roles);
+        return bookings.findAll();
+    }
+
+    @GetMapping("/admin/{id}")
+    public Booking adminById(@RequestHeader(value = "X-User-Roles", required = false) String roles, @PathVariable UUID id) {
+        requireAdmin(roles);
+        return bookings.findById(id).orElseThrow(() -> notFound());
+    }
+
     @PostMapping("/{id}/cancel")
     public Booking cancel(@RequestHeader("X-User-Id") UUID userId, @PathVariable UUID id) {
         Booking booking = byId(userId, id);
@@ -78,6 +90,12 @@ public class BookingController {
 
     private ResponseStatusException notFound() {
         return new ResponseStatusException(HttpStatus.NOT_FOUND, "Booking not found");
+    }
+
+    private void requireAdmin(String roles) {
+        if (roles == null || !roles.contains("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ADMIN role required");
+        }
     }
 
     public record CreateBookingRequest(UUID tripId, String seatNumber) {}

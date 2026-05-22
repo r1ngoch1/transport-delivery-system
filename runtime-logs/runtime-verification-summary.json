@@ -1,0 +1,54 @@
+﻿{
+    "checkedAt":  "2026-05-21T12:30:39.8903331+05:00",
+    "compose":  "Kafka and five PostgreSQL containers Up",
+    "ports":  [
+                  8889,
+                  8761,
+                  8080,
+                  8081,
+                  8083,
+                  8084,
+                  8085,
+                  8087
+              ],
+    "health":  {
+                   "config":  "UP",
+                   "user":  "UP",
+                   "trip":  "UP",
+                   "booking":  "UP",
+                   "payment":  "UP",
+                   "route":  "UP",
+                   "gateway":  "UP",
+                   "discovery":  "UP"
+               },
+    "eurekaApps":  [
+                       "API-GATEWAY",
+                       "USER-SERVICE",
+                       "ROUTE-SERVICE",
+                       "TRIP-SERVICE",
+                       "BOOKING-SERVICE",
+                       "PAYMENT-SERVICE"
+                   ],
+    "smoke":  {
+                  "bookingId":  "aef1f0ff-53c8-4800-806c-b1c521c5a329",
+                  "paymentId":  "8379ceee-e0ba-45c0-87ac-c88e78fcbe45",
+                  "email":  "smoke-1779348608140@example.com",
+                  "userId":  "d20ee5d2-372e-49a2-8d42-70b1e61ce1e1",
+                  "paymentsFound":  1,
+                  "bookingStatus":  "CONFIRMED"
+              },
+    "notes":  [
+                  "Business service health endpoints were initially 404; actuator dependency and health exposure were added, then verified UP.",
+                  "Spring Boot stdout/stderr files are empty because services were started through rtk-filtered Maven output; Docker Compose logs are captured separately."
+              ],
+    "maven":  {
+                  "cleanPackage":  "PASS",
+                  "test":  "PASS",
+                  "verify":  "PASS",
+                  "reportFiles":  17,
+                  "tests":  76,
+                  "failures":  0,
+                  "errors":  0,
+                  "skipped":  0
+              }
+}

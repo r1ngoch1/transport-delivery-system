@@ -1,6 +1,7 @@
 package com.ringochi.userservice;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -72,8 +73,18 @@ public class UserController {
         if (request.phone() != null) {
             user.setPhone(request.phone());
         }
-        user.setUpdatedAt(Instant.now());
+        Instant updatedAt = Instant.now();
+        if (!updatedAt.isAfter(user.getCreatedAt())) {
+            updatedAt = user.getCreatedAt().plusNanos(1);
+        }
+        user.setUpdatedAt(updatedAt);
         return toDto(users.save(user));
+    }
+
+    @GetMapping("/users")
+    public List<UserDto> all(@RequestHeader(value = "X-User-Roles", required = false) String roles) {
+        requireAdmin(roles);
+        return users.findAll().stream().map(this::toDto).toList();
     }
 
     @GetMapping("/users/{id}")
@@ -85,6 +96,12 @@ public class UserController {
     private UserDto toDto(User user) {
         return new UserDto(user.getId(), user.getEmail(), user.getPhone(), user.getFullName(), user.isEnabled(),
                 user.getRoles(), user.getCreatedAt(), user.getUpdatedAt());
+    }
+
+    private void requireAdmin(String roles) {
+        if (roles == null || !roles.contains("ADMIN")) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ADMIN role required");
+        }
     }
 
     public record RegisterRequest(String email, String phone, String password, String fullName, Role role) {}

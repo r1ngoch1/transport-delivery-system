@@ -101,6 +101,28 @@ paths:
                 $ref: '#/components/schemas/User'
         '404':
           $ref: '#/components/responses/NotFound'
+  /api/users:
+    get:
+      summary: List users
+      operationId: listUsers
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: X-User-Roles
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '403':
+          $ref: '#/components/responses/Forbidden'
   /api/users/{id}:
     get:
       summary: Get user by id
@@ -128,6 +150,12 @@ components:
   responses:
     Conflict:
       description: Conflict
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Forbidden
       content:
         application/json:
           schema:

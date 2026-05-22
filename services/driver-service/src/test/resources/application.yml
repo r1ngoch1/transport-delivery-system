@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: driver-service
+  datasource:
+    url: jdbc:postgresql://localhost:1/test
+    username: test
+    password: test
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+eureka:
+  client:
+    enabled: false

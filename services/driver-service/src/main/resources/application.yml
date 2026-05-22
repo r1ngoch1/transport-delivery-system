@@ -1,0 +1,27 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: driver-service
+  config:
+    import: optional:configserver:http://localhost:8889
+  datasource:
+    url: jdbc:postgresql://localhost:15438/driver_db
+    username: driver_service
+    password: driver_service
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

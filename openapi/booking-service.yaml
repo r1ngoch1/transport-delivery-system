@@ -83,6 +83,54 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/Booking'
+  /api/bookings/admin:
+    get:
+      summary: List bookings as admin
+      operationId: listBookingsAsAdmin
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: X-User-Roles
+          in: header
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Booking'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /api/bookings/admin/{id}:
+    get:
+      summary: Get booking as admin
+      operationId: getBookingByIdAsAdmin
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: X-User-Roles
+          in: header
+          required: false
+          schema:
+            type: string
+        - name: id
+          in: path
+          required: true
+          schema: { type: string, format: uuid }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Booking'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/bookings/{id}/cancel:
     post:
       summary: Cancel booking

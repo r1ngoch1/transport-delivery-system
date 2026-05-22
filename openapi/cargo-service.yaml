@@ -1,0 +1,290 @@
+openapi: 3.0.3
+info:
+  title: Cargo Service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8088
+security:
+  - bearerAuth: []
+paths:
+  /api/cargo-orders:
+    post:
+      tags: [Cargo Orders]
+      summary: Create cargo order
+      operationId: createCargoOrder
+      parameters:
+        - $ref: '#/components/parameters/UserIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCargoOrderRequest'
+      responses:
+        '201':
+          description: Created cargo order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CargoOrder'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+    get:
+      tags: [Cargo Orders]
+      summary: List all cargo orders
+      operationId: listCargoOrders
+      parameters:
+        - $ref: '#/components/parameters/RolesHeader'
+      responses:
+        '200':
+          description: Cargo orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CargoOrder'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+  /api/cargo-orders/my:
+    get:
+      tags: [Cargo Orders]
+      summary: List current user's cargo orders
+      operationId: listMyCargoOrders
+      parameters:
+        - $ref: '#/components/parameters/UserIdHeader'
+      responses:
+        '200':
+          description: Current user's cargo orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CargoOrder'
+  /api/cargo-orders/admin/{id}:
+    get:
+      tags: [Cargo Orders]
+      summary: Get cargo order by id as admin
+      operationId: getCargoOrderAsAdmin
+      parameters:
+        - $ref: '#/components/parameters/RolesHeader'
+        - $ref: '#/components/parameters/CargoOrderId'
+      responses:
+        '200':
+          description: Cargo order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CargoOrder'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/cargo-orders/{id}:
+    get:
+      tags: [Cargo Orders]
+      summary: Get cargo order by id
+      operationId: getCargoOrder
+      parameters:
+        - $ref: '#/components/parameters/UserIdHeader'
+        - $ref: '#/components/parameters/CargoOrderId'
+      responses:
+        '200':
+          description: Cargo order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CargoOrder'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/cargo-orders/{id}/cancel:
+    post:
+      tags: [Cargo Orders]
+      summary: Cancel cargo order
+      operationId: cancelCargoOrder
+      parameters:
+        - $ref: '#/components/parameters/UserIdHeader'
+        - $ref: '#/components/parameters/CargoOrderId'
+      responses:
+        '200':
+          description: Cancelled cargo order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CargoOrder'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/cargo-orders/trips/{tripId}/capacity:
+    get:
+      tags: [Cargo Orders]
+      summary: Get cargo capacity for a trip
+      operationId: getTripCargoCapacity
+      parameters:
+        - $ref: '#/components/parameters/RolesHeader'
+        - name: tripId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Cargo capacity
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CargoCapacity'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    UserIdHeader:
+      name: X-User-Id
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+    RolesHeader:
+      name: X-User-Roles
+      in: header
+      required: false
+      schema:
+        type: string
+    CargoOrderId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Conflict:
+      description: Request conflicts with current state
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+  schemas:
+    CargoStatus:
+      type: string
+      enum: [PENDING_PAYMENT, PAID, CANCELLED]
+    CreateCargoOrderRequest:
+      type: object
+      required: [tripId, description, weightKg, lengthCm, widthCm, heightCm]
+      properties:
+        tripId:
+          type: string
+          format: uuid
+        description:
+          type: string
+        weightKg:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+        lengthCm:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+        widthCm:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+        heightCm:
+          type: number
+          minimum: 0
+          exclusiveMinimum: true
+    CargoOrder:
+      allOf:
+        - $ref: '#/components/schemas/CreateCargoOrderRequest'
+        - type: object
+          required: [id, userId, volumeM3, price, currency, status, createdAt, updatedAt]
+          properties:
+            id:
+              type: string
+              format: uuid
+            userId:
+              type: string
+              format: uuid
+            volumeM3:
+              type: number
+            price:
+              type: number
+            currency:
+              type: string
+              default: RUB
+            paymentId:
+              type: string
+              format: uuid
+            status:
+              $ref: '#/components/schemas/CargoStatus'
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+    CargoCapacity:
+      type: object
+      required: [tripId, maxWeightKg, reservedWeightKg, availableWeightKg, maxVolumeM3, reservedVolumeM3, availableVolumeM3]
+      properties:
+        tripId:
+          type: string
+          format: uuid
+        maxWeightKg:
+          type: number
+        reservedWeightKg:
+          type: number
+        availableWeightKg:
+          type: number
+        maxVolumeM3:
+          type: number
+        reservedVolumeM3:
+          type: number
+        availableVolumeM3:
+          type: number
+    ErrorResponse:
+      type: object
+      required: [timestamp, status, error, message, path]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string

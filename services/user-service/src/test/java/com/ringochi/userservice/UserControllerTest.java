@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -143,6 +144,27 @@ class UserControllerTest {
         assertThat(response.fullName()).isEqualTo(request.fullName());
         assertThat(user.getUpdatedAt()).isAfter(user.getCreatedAt());
         verify(users).save(user);
+    }
+
+    @Test
+    void allReturnsUsersForAdmin() {
+        User passenger = user("passenger@example.com", "+10000000001", "Passenger One", Role.PASSENGER);
+        User driver = user("driver@example.com", "+10000000002", "Driver One", Role.DRIVER);
+        when(users.findAll()).thenReturn(List.of(passenger, driver));
+
+        List<UserController.UserDto> response = controller.all("ADMIN");
+
+        assertThat(response).extracting(UserController.UserDto::email)
+                .containsExactly("passenger@example.com", "driver@example.com");
+    }
+
+    @Test
+    void allRejectsNonAdmin() {
+        assertThatThrownBy(() -> controller.all("PASSENGER"))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception ->
+                        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN));
+
+        verify(users, never()).findAll();
     }
 
     private static User user(String email, String phone, String fullName, Role role) {

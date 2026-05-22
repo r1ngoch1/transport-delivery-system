@@ -1,0 +1,10 @@
+logging:
+  level:
+    com.ringochi.cargoservice: info
+
+cargo:
+  max-weight-kg: 1000.00
+  max-volume-m3: 20.0000
+  base-price: 500.00
+  price-per-kg: 20.00
+  price-per-m3: 300.00

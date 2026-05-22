@@ -7,6 +7,11 @@ services:
       POSTGRES_PASSWORD: user_service
     ports:
       - "15433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user_service -d user_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   postgres-route:
     image: postgres:16
@@ -16,6 +21,11 @@ services:
       POSTGRES_PASSWORD: route_service
     ports:
       - "15434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U route_service -d route_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   postgres-trip:
     image: postgres:16
@@ -25,6 +35,11 @@ services:
       POSTGRES_PASSWORD: trip_service
     ports:
       - "15435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U trip_service -d trip_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   postgres-booking:
     image: postgres:16
@@ -34,6 +49,11 @@ services:
       POSTGRES_PASSWORD: booking_service
     ports:
       - "15436:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U booking_service -d booking_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   postgres-payment:
     image: postgres:16
@@ -43,18 +63,376 @@ services:
       POSTGRES_PASSWORD: payment_service
     ports:
       - "15437:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U payment_service -d payment_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  postgres-driver:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: driver_db
+      POSTGRES_USER: driver_service
+      POSTGRES_PASSWORD: driver_service
+    ports:
+      - "15438:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U driver_service -d driver_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  postgres-cargo:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: cargo_db
+      POSTGRES_USER: cargo_service
+      POSTGRES_PASSWORD: cargo_service
+    ports:
+      - "15439:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cargo_service -d cargo_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   kafka:
     image: apache/kafka:3.7.1
     ports:
-      - "9092:9092"
+      - "9092:9094"
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      KAFKA_LISTENERS: PLAINTEXT://:9092,CONTROLLER://:9093
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://:9092,PLAINTEXT_HOST://:9094,CONTROLLER://:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:9092
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server kafka:9092 >/dev/null 2>&1"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+
+  config-server:
+    build:
+      context: .
+      args:
+        SERVICE_MODULE: services/config-server
+    environment:
+      SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS: file:/config-repo
+    volumes:
+      - ./config-repo:/config-repo:ro
+    ports:
+      - "8889:8889"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8889/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  discovery-server:
+    build:
+      context: .
+      args:
+        SERVICE_MODULE: services/discovery-server
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+    ports:
+      - "8761:8761"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8761/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  user-service:
+    build:
+      context: .
+      args:
+        SERVICE_MODULE: services/user-service
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-user:5432/user_db
+      SPRING_DATASOURCE_USERNAME: user_service
+      SPRING_DATASOURCE_PASSWORD: user_service
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+    ports:
+      - "8081:8081"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      postgres-user:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8081/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  route-service:
+    build:
+      context: .
+      args:
+        SERVICE_MODULE: services/route-service
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-route:5432/route_db
+      SPRING_DATASOURCE_USERNAME: route_service
+      SPRING_DATASOURCE_PASSWORD: route_service
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+    ports:
+      - "8083:8083"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      postgres-route:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8083/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  trip-service:
+    build:
+      context: .
+      args:
+        SERVICE_MODULE: services/trip-service
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-trip:5432/trip_db
+      SPRING_DATASOURCE_USERNAME: trip_service
+      SPRING_DATASOURCE_PASSWORD: trip_service
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+    ports:
+      - "8084:8084"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      postgres-trip:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8084/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  driver-service:
+    build:
+      context: .
+      args:
+        SERVICE_MODULE: services/driver-service
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-driver:5432/driver_db
+      SPRING_DATASOURCE_USERNAME: driver_service
+      SPRING_DATASOURCE_PASSWORD: driver_service
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+    ports:
+      - "8086:8086"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      postgres-driver:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8086/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  cargo-service:
+    build:
+      context: .
+      args:
+        SERVICE_MODULE: services/cargo-service
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-cargo:5432/cargo_db
+      SPRING_DATASOURCE_USERNAME: cargo_service
+      SPRING_DATASOURCE_PASSWORD: cargo_service
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+    ports:
+      - "8088:8088"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      postgres-cargo:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8088/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  admin-service:
+    build:
+      context: .
+      args:
+        SERVICE_MODULE: services/admin-service
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+    ports:
+      - "8089:8089"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+      route-service:
+        condition: service_healthy
+      trip-service:
+        condition: service_healthy
+      driver-service:
+        condition: service_healthy
+      cargo-service:
+        condition: service_healthy
+      booking-service:
+        condition: service_healthy
+      payment-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8089/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  booking-service:
+    build:
+      context: .
+      args:
+        SERVICE_MODULE: services/booking-service
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-booking:5432/booking_db
+      SPRING_DATASOURCE_USERNAME: booking_service
+      SPRING_DATASOURCE_PASSWORD: booking_service
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+    ports:
+      - "8085:8085"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      postgres-booking:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8085/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  payment-service:
+    build:
+      context: .
+      args:
+        SERVICE_MODULE: services/payment-service
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-payment:5432/payment_db
+      SPRING_DATASOURCE_USERNAME: payment_service
+      SPRING_DATASOURCE_PASSWORD: payment_service
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+    ports:
+      - "8087:8087"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      postgres-payment:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8087/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  notification-service:
+    build:
+      context: .
+      args:
+        SERVICE_MODULE: services/notification-service
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+    ports:
+      - "8090:8090"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8090/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  api-gateway:
+    build:
+      context: .
+      args:
+        SERVICE_MODULE: services/api-gateway
+    environment:
+      SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
+    ports:
+      - "8080:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+      user-service:
+        condition: service_healthy
+      route-service:
+        condition: service_healthy
+      trip-service:
+        condition: service_healthy
+      driver-service:
+        condition: service_healthy
+      cargo-service:
+        condition: service_healthy
+      booking-service:
+        condition: service_healthy
+      payment-service:
+        condition: service_healthy
+      admin-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
