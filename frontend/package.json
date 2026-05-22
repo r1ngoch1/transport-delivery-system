@@ -1,0 +1,35 @@
+{
+  "name": "transport-delivery-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0",
+    "build": "tsc -b && vite build",
+    "generate:api": "openapi-typescript ../openapi/user-service.yaml -o src/api/generated/user.ts && openapi-typescript ../openapi/route-service.yaml -o src/api/generated/route.ts && openapi-typescript ../openapi/trip-service.yaml -o src/api/generated/trip.ts && openapi-typescript ../openapi/booking-service.yaml -o src/api/generated/booking.ts && openapi-typescript ../openapi/payment-service.yaml -o src/api/generated/payment.ts",
+    "preview": "vite preview --host 0.0.0.0",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "^5.80.0",
+    "openapi-fetch": "^0.17.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^22.15.21",
+    "@types/react": "^19.1.5",
+    "@types/react-dom": "^19.1.5",
+    "@vitejs/plugin-react": "^4.4.1",
+    "jsdom": "^26.1.0",
+    "openapi-typescript": "^7.13.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.1.4"
+  }
+}

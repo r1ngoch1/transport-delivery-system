@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AmplicodePersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit moduleName="booking-service" name="Default">
+        <packages>
+          <package value="com.ringochi.bookingservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="cargo-service" name="Default">
+        <packages>
+          <package value="com.ringochi.cargoservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="driver-service" name="Default">
+        <packages>
+          <package value="com.ringochi.driverservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="payment-service" name="Default">
+        <packages>
+          <package value="com.ringochi.paymentservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="route-service" name="Default">
+        <packages>
+          <package value="com.ringochi.routeservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="trip-service" name="Default">
+        <packages>
+          <package value="com.ringochi.tripservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="user-service" name="Default">
+        <packages>
+          <package value="com.ringochi.userservice" />
+        </packages>
+      </persistence-unit>
+    </persistence-units>
+  </component>
+</project>
