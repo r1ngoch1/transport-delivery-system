@@ -31,5 +31,8 @@ describe("ListRow", () => {
     expect(screen.getByRole("button", { name: "Documents cargo-1" })).toBeInTheDocument();
     expect(screen.getByText("Sender One -> Recipient One")).toBeInTheDocument();
     expect(screen.getByText("Trip trip-1 - PAID")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Documents cargo-1" })).toHaveAccessibleDescription(
+      "Sender One -> Recipient One Trip trip-1 - PAID"
+    );
   });
 });

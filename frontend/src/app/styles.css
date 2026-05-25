@@ -182,6 +182,11 @@ button.list-row:hover {
   font-size: 12px;
 }
 
+.list-row-details {
+  display: grid;
+  gap: 4px;
+}
+
 .metric-tile {
   display: grid;
   gap: 8px;
