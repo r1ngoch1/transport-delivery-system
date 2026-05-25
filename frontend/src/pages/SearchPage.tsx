@@ -8,6 +8,8 @@ import { getCityName, getRouteCatalog } from "../features/routes/routeApi";
 import { searchTrips, type Trip } from "../features/trips/tripApi";
 import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
 import { Button } from "../shared/ui/Button";
+import { PageHeader } from "../shared/ui/PageHeader";
+import { RouteMapPreview } from "../shared/ui/RouteMapPreview";
 import { ScreenState } from "../shared/ui/ScreenState";
 import { StatusChip } from "../shared/ui/StatusChip";
 
@@ -47,6 +49,18 @@ export function SearchPage() {
   });
   const cityLookup = useMemo(() => routeCatalogQuery.data?.cities ?? [], [routeCatalogQuery.data?.cities]);
   const routes = routeCatalogQuery.data?.routes ?? [];
+  const selectedRoute = routes.find(
+    (route) =>
+      getCityName(cityLookup, route.fromCityId).toLowerCase() === from.trim().toLowerCase() &&
+      getCityName(cityLookup, route.toCityId).toLowerCase() === to.trim().toLowerCase()
+  );
+  const firstTrip = tripSearch.data?.[0];
+  const capacityLabel =
+    mode === "cargo"
+      ? `${formatNumber(firstTrip?.availableCargoVolume ?? firstTrip?.totalCargoVolume ?? 0)} m3 cargo available`
+      : firstTrip
+        ? `${firstTrip.availableSeats ?? firstTrip.totalSeats} seats available`
+        : undefined;
   const bookingMutation = useMutation({
     mutationFn: (trip: Trip) => createBooking(trip.id, "1"),
     onSuccess: (booking) => {
@@ -177,19 +191,28 @@ export function SearchPage() {
         />
       </form>
       <section className="results-panel">
-        <div className="results-header">
-          <div>
-            <h1 className="page-title">Find a trip</h1>
-            <p className="page-subtitle">
+        <PageHeader
+          eyebrow={mode === "cargo" ? "Cargo route" : "Passenger route"}
+          title="Find a trip"
+          subtitle={
+            <>
               Showing {searchedRoute}
               {date ? ` on ${date}` : ""}.{" "}
               {mode === "cargo"
                 ? "Search routes, compare cargo capacity, and create cargo orders through the gateway."
                 : "Search routes, compare seats, and book through the gateway."}
-            </p>
-          </div>
+            </>
+          }
+        >
           <StatusChip status="SCHEDULED" />
-        </div>
+        </PageHeader>
+        <RouteMapPreview
+          from={from}
+          to={to}
+          distanceKm={selectedRoute?.distanceKm}
+          durationMinutes={selectedRoute?.estimatedDurationMinutes}
+          capacityLabel={capacityLabel}
+        />
         {createdBooking && (
           <div className="notice booking-created">
             <div>

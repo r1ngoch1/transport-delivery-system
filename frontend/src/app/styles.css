@@ -203,6 +203,94 @@ button.list-row:hover {
   font-size: 24px;
 }
 
+.route-map-panel {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  overflow: hidden;
+}
+
+.route-map-canvas {
+  position: relative;
+  min-height: 168px;
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  overflow: hidden;
+  background:
+    linear-gradient(
+      45deg,
+      transparent 47%,
+      rgb(75 143 140 / 16%) 48%,
+      rgb(75 143 140 / 16%) 52%,
+      transparent 53%
+    ),
+    var(--color-surface);
+}
+
+.route-path {
+  position: absolute;
+  left: 42px;
+  right: 42px;
+  top: 52%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--color-copper);
+}
+
+.route-pin {
+  position: absolute;
+  top: calc(52% - 11px);
+  z-index: 1;
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--color-surface);
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgb(42 36 29 / 18%);
+}
+
+.route-pin-start {
+  left: 34px;
+  background: var(--color-nav);
+}
+
+.route-pin-end {
+  right: 34px;
+  background: var(--color-copper);
+}
+
+.route-city {
+  position: absolute;
+  bottom: 18px;
+  max-width: 38%;
+  color: var(--color-ink);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.route-city-start {
+  left: 22px;
+}
+
+.route-city-end {
+  right: 22px;
+  text-align: right;
+}
+
+.route-map-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.route-map-stats span {
+  border-radius: 999px;
+  padding: 6px 10px;
+  color: var(--color-nav);
+  background: var(--color-route-soft);
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .button {
   min-height: 40px;
   border: 1px solid transparent;
@@ -270,8 +358,9 @@ button.list-row:hover {
 
 .search-layout {
   display: grid;
-  grid-template-columns: 300px 1fr;
+  grid-template-columns: 320px minmax(0, 1fr);
   gap: 20px;
+  align-items: start;
 }
 
 .search-panel,
@@ -426,6 +515,8 @@ select {
 
 .results-panel {
   min-width: 0;
+  display: grid;
+  gap: 16px;
 }
 
 .results-header {
@@ -443,7 +534,7 @@ select {
 
 .trip-card {
   display: grid;
-  grid-template-columns: 100px 1fr 100px 110px;
+  grid-template-columns: 100px minmax(0, 1fr) minmax(140px, auto) 120px;
   gap: 16px;
   align-items: center;
   padding: 16px;

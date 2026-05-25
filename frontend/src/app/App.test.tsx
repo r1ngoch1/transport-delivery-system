@@ -239,6 +239,10 @@ function renderApp(path: string) {
   );
 }
 
+async function waitForRouteCatalog() {
+  expect(await screen.findAllByText("330 km")).not.toHaveLength(0);
+}
+
 describe("App routes", () => {
   beforeEach(() => {
     notificationFixtures = notificationFixtures.map((notification) => ({
@@ -265,9 +269,9 @@ describe("App routes", () => {
     renderApp("/");
 
     expect(screen.getByText("Loading cities and routes")).toBeInTheDocument();
-    expect(await screen.findByText("Yekaterinburg")).toBeInTheDocument();
-    expect(screen.getByText("Tyumen")).toBeInTheDocument();
-    expect(screen.getByText("330 km")).toBeInTheDocument();
+    expect(await screen.findAllByText("Yekaterinburg")).not.toHaveLength(0);
+    expect(await screen.findAllByText("Tyumen")).not.toHaveLength(0);
+    await waitForRouteCatalog();
   });
 
   it("shows empty route catalog states on the search page", async () => {
@@ -355,7 +359,7 @@ describe("App routes", () => {
     authStore.setToken("jwt-123");
     renderApp("/");
 
-    await screen.findByText("330 km");
+    await waitForRouteCatalog();
     expect(screen.queryByRole("link", { name: "Admin" })).not.toBeInTheDocument();
   });
 
@@ -369,7 +373,7 @@ describe("App routes", () => {
       authStore.setToken("jwt-123");
     });
 
-    await screen.findByText("330 km");
+    await waitForRouteCatalog();
     expect(screen.queryByRole("link", { name: "Driver" })).not.toBeInTheDocument();
   });
 
@@ -422,7 +426,7 @@ describe("App routes", () => {
     authStore.setToken("jwt-123");
     renderApp("/");
 
-    await screen.findByText("330 km");
+    await waitForRouteCatalog();
     expect(screen.queryByRole("link", { name: "Admin" })).not.toBeInTheDocument();
 
     act(() => {
@@ -728,7 +732,7 @@ describe("App routes", () => {
     vi.stubGlobal("fetch", fetchMock);
     renderApp("/");
 
-    await screen.findByText("330 km");
+    await waitForRouteCatalog();
     await user.clear(screen.getByLabelText("From"));
     await user.type(screen.getByLabelText("From"), "Yekaterinburg");
     await user.clear(screen.getByLabelText("To"));
@@ -737,7 +741,7 @@ describe("App routes", () => {
     await user.click(screen.getByRole("button", { name: "Search" }));
 
     expect(await screen.findByText("08:20")).toBeInTheDocument();
-    expect(screen.getByText("18 seats available")).toBeInTheDocument();
+    expect(screen.getAllByText("18 seats available")).not.toHaveLength(0);
     expect(screen.getByText("1200 RUB")).toBeInTheDocument();
     expect(fetchMock.mock.calls.some(([request]) => requestUrl(request).includes("/api/trips/search"))).toBe(
       true
@@ -755,7 +759,7 @@ describe("App routes", () => {
     const user = userEvent.setup();
     renderApp("/");
 
-    await screen.findByText("330 km");
+    await waitForRouteCatalog();
     await user.type(screen.getByLabelText("Date"), "2026-06-01");
     await user.click(screen.getByRole("button", { name: "Search" }));
     await screen.findByText("08:20");
@@ -771,7 +775,7 @@ describe("App routes", () => {
     vi.stubGlobal("fetch", fetchMock);
     renderApp("/");
 
-    await screen.findByText("330 km");
+    await waitForRouteCatalog();
     await user.type(screen.getByLabelText("Date"), "2026-06-01");
     await user.click(screen.getByRole("button", { name: "Search" }));
     await screen.findByText("08:20");
@@ -793,7 +797,7 @@ describe("App routes", () => {
     vi.stubGlobal("fetch", fetchMock);
     renderApp("/");
 
-    await screen.findByText("330 km");
+    await waitForRouteCatalog();
     await user.click(screen.getByRole("button", { name: "Cargo" }));
     await user.type(screen.getByLabelText("Date"), "2026-06-01");
     await user.type(screen.getByLabelText("Description"), "Documents");
@@ -810,7 +814,7 @@ describe("App routes", () => {
     await user.type(screen.getByLabelText("Height cm"), "20");
     await user.click(screen.getByRole("button", { name: "Search cargo space" }));
 
-    expect(await screen.findByText("8 m3 cargo available")).toBeInTheDocument();
+    expect(await screen.findAllByText("8 m3 cargo available")).not.toHaveLength(0);
     expect(screen.getByText("Estimated cargo price 747.20 RUB")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Ship cargo" }));
 
@@ -874,7 +878,7 @@ describe("App routes", () => {
     vi.stubGlobal("fetch", fetchMock);
     renderApp("/");
 
-    await screen.findByText("330 km");
+    await waitForRouteCatalog();
     await user.click(screen.getByRole("button", { name: "Cargo" }));
     await user.type(screen.getByLabelText("Date"), "2026-06-01");
     await user.type(screen.getByLabelText("Description"), "Large crate");
@@ -883,7 +887,7 @@ describe("App routes", () => {
     await user.type(screen.getByLabelText("Width cm"), "400");
     await user.type(screen.getByLabelText("Height cm"), "600");
     await user.click(screen.getByRole("button", { name: "Search cargo space" }));
-    await screen.findByText("8 m3 cargo available");
+    expect(await screen.findAllByText("8 m3 cargo available")).not.toHaveLength(0);
     await user.click(screen.getByRole("button", { name: "Ship cargo" }));
 
     expect(screen.getByText("Cargo volume exceeds available trip capacity")).toBeInTheDocument();
