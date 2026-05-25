@@ -21,6 +21,30 @@ paths:
                 $ref: '#/components/schemas/DriverProfile'
         '404':
           $ref: '#/components/responses/NotFound'
+    post:
+      tags: [Drivers]
+      summary: Create current driver profile
+      operationId: createCurrentDriverProfile
+      parameters:
+        - $ref: '#/components/parameters/UserIdHeader'
+        - $ref: '#/components/parameters/RolesHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCurrentDriverProfileRequest'
+      responses:
+        '201':
+          description: Created driver profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverProfile'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
     patch:
       tags: [Drivers]
       summary: Update current driver profile
@@ -38,6 +62,92 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/DriverProfile'
+  /api/drivers/me/availability:
+    get:
+      tags: [Drivers]
+      summary: List current driver availability slots
+      operationId: listCurrentDriverAvailabilitySlots
+      parameters:
+        - $ref: '#/components/parameters/UserIdHeader'
+      responses:
+        '200':
+          description: Current driver availability slots
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DriverAvailabilitySlot'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      tags: [Drivers]
+      summary: Create current driver availability slot
+      operationId: createCurrentDriverAvailabilitySlot
+      parameters:
+        - $ref: '#/components/parameters/UserIdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverAvailabilitySlotRequest'
+      responses:
+        '201':
+          description: Created availability slot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverAvailabilitySlot'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+  /api/drivers/me/availability/{id}:
+    patch:
+      tags: [Drivers]
+      summary: Update current driver availability slot
+      operationId: updateCurrentDriverAvailabilitySlot
+      parameters:
+        - $ref: '#/components/parameters/UserIdHeader'
+        - $ref: '#/components/parameters/AvailabilitySlotId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DriverAvailabilitySlotRequest'
+      responses:
+        '200':
+          description: Updated availability slot
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DriverAvailabilitySlot'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+    delete:
+      tags: [Drivers]
+      summary: Delete current driver availability slot
+      operationId: deleteCurrentDriverAvailabilitySlot
+      parameters:
+        - $ref: '#/components/parameters/UserIdHeader'
+        - $ref: '#/components/parameters/AvailabilitySlotId'
+      responses:
+        '204':
+          description: Availability slot deleted
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
   /api/drivers:
     get:
       tags: [Drivers]
@@ -127,6 +237,19 @@ components:
       scheme: bearer
       bearerFormat: JWT
   parameters:
+    UserIdHeader:
+      name: X-User-Id
+      in: header
+      required: true
+      schema:
+        type: string
+        format: uuid
+    RolesHeader:
+      name: X-User-Roles
+      in: header
+      required: false
+      schema:
+        type: string
     DriverId:
       name: id
       in: path
@@ -134,7 +257,20 @@ components:
       schema:
         type: string
         format: uuid
+    AvailabilitySlotId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
   responses:
+    BadRequest:
+      description: Request validation failed
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
     NotFound:
       description: Resource not found
       content:
@@ -143,6 +279,12 @@ components:
             $ref: '#/components/schemas/ErrorResponse'
     Conflict:
       description: Request conflicts with current state
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    Forbidden:
+      description: Forbidden
       content:
         application/json:
           schema:
@@ -182,6 +324,42 @@ components:
         updatedAt:
           type: string
           format: date-time
+    DriverAvailabilitySlot:
+      type: object
+      required: [id, driverProfileId, startAt, endAt, createdAt, updatedAt]
+      properties:
+        id:
+          type: string
+          format: uuid
+        driverProfileId:
+          type: string
+          format: uuid
+        startAt:
+          type: string
+          format: date-time
+        endAt:
+          type: string
+          format: date-time
+        note:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    DriverAvailabilitySlotRequest:
+      type: object
+      required: [startAt, endAt]
+      properties:
+        startAt:
+          type: string
+          format: date-time
+        endAt:
+          type: string
+          format: date-time
+        note:
+          type: string
     CreateDriverProfileRequest:
       type: object
       required: [userId, fullName, phone, licenseNumber, licenseCategory, licenseExpiresAt]
@@ -204,6 +382,21 @@ components:
           $ref: '#/components/schemas/DriverAvailabilityStatus'
         active:
           type: boolean
+    CreateCurrentDriverProfileRequest:
+      type: object
+      required: [fullName, phone, licenseNumber, licenseCategory, licenseExpiresAt]
+      properties:
+        fullName:
+          type: string
+        phone:
+          type: string
+        licenseNumber:
+          type: string
+        licenseCategory:
+          type: string
+        licenseExpiresAt:
+          type: string
+          format: date
     UpdateDriverProfileRequest:
       type: object
       properties:

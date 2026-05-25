@@ -1,8 +1,9 @@
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiRequest, ApiError } from "../api/http";
+import { apiRequest } from "../api/http";
 import type { AuthResponse } from "../api/types";
 import { authStore } from "../features/auth/authStore";
+import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
 import { Button } from "../shared/ui/Button";
 
 export function LoginPage() {
@@ -12,7 +13,8 @@ export function LoginPage() {
   const [phone, setPhone] = useState("");
   const [fullName, setFullName] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [role, setRole] = useState<"PASSENGER" | "DRIVER">("PASSENGER");
+  const [error, setError] = useState<unknown>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -28,19 +30,15 @@ export function LoginPage() {
           body: JSON.stringify(
             mode === "login"
               ? { email, password }
-              : { email, phone, password, fullName, role: "PASSENGER" }
+              : { email, phone, password, fullName, role }
           )
         }
       );
 
       authStore.setToken(response.accessToken);
-      navigate("/");
+      navigate(response.user?.roles.includes("DRIVER") ? "/driver" : "/");
     } catch (caught) {
-      if (caught instanceof ApiError) {
-        setError(caught.message);
-      } else {
-        setError("Gateway is unavailable. Start backend services and try again.");
-      }
+      setError(caught);
     } finally {
       setIsSubmitting(false);
     }
@@ -49,12 +47,12 @@ export function LoginPage() {
   return (
     <main className="page auth-page">
       <section className="panel auth-panel">
-        <p className="eyebrow">Passenger access</p>
+        <p className="eyebrow">{mode === "register" && role === "DRIVER" ? "Driver access" : "Passenger access"}</p>
         <h1 className="page-title">{mode === "login" ? "Welcome back" : "Create account"}</h1>
         <p className="page-subtitle">
           {mode === "login"
             ? "Sign in to manage bookings and payment status."
-            : "Register as a passenger and start booking trips."}
+            : "Register as a passenger or driver."}
         </p>
         <div className="segmented-control" aria-label="Auth mode">
           <button
@@ -105,6 +103,13 @@ export function LoginPage() {
                   onChange={(event) => setPhone(event.target.value)}
                 />
               </label>
+              <label>
+                Account type
+                <select value={role} onChange={(event) => setRole(event.target.value as "PASSENGER" | "DRIVER")}>
+                  <option value="PASSENGER">Passenger</option>
+                  <option value="DRIVER">Driver</option>
+                </select>
+              </label>
             </>
           )}
           <label>
@@ -118,7 +123,12 @@ export function LoginPage() {
               onChange={(event) => setPassword(event.target.value)}
             />
           </label>
-          {error && <div className="form-error">{error}</div>}
+          {error !== null && (
+            <ApiErrorMessage
+              error={error}
+              fallback="Gateway is unavailable. Start backend services and try again."
+            />
+          )}
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting ? "Please wait" : mode === "login" ? "Login" : "Register"}
           </Button>

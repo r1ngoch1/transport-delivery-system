@@ -1,10 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
+import { authStore } from "../features/auth/authStore";
 import { getCurrentUser } from "../features/profile/profileApi";
+import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
+import { ScreenState } from "../shared/ui/ScreenState";
 import { StatusChip } from "../shared/ui/StatusChip";
 
 export function ProfilePage() {
   const profileQuery = useQuery({
-    queryKey: ["current-user"],
+    queryKey: ["current-user", authStore.getToken()],
     queryFn: getCurrentUser
   });
 
@@ -12,10 +15,10 @@ export function ProfilePage() {
     <main className="page">
       <section className="panel content-panel">
         <h1 className="page-title">Profile</h1>
-        {profileQuery.isLoading && <p className="page-subtitle">Loading profile</p>}
-        {profileQuery.isError && (
-          <div className="form-error">{profileQuery.error.message || "Could not load profile"}</div>
+        {profileQuery.isLoading && (
+          <ScreenState className="page-subtitle" inline kind="loading" message="Loading profile" />
         )}
+        {profileQuery.isError && <ApiErrorMessage error={profileQuery.error} fallback="Could not load profile" />}
         {profileQuery.data && (
           <div className="profile-grid">
             <div>

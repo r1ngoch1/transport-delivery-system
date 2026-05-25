@@ -37,6 +37,16 @@
           <package value="com.ringochi.userservice" />
         </packages>
       </persistence-unit>
+      <persistence-unit moduleName="admin-service" name="Default">
+        <packages>
+          <package value="com.ringochi.adminservice" />
+        </packages>
+      </persistence-unit>
+      <persistence-unit moduleName="notification-service" name="Default">
+        <packages>
+          <package value="com.ringochi.notificationservice" />
+        </packages>
+      </persistence-unit>
     </persistence-units>
   </component>
 </project>

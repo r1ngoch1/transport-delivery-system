@@ -37,6 +37,46 @@ paths:
       operationId: listCargoOrders
       parameters:
         - $ref: '#/components/parameters/RolesHeader'
+        - name: status
+          in: query
+          required: false
+          schema:
+            $ref: '#/components/schemas/CargoStatus'
+        - name: tripId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: userId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: paymentId
+          in: query
+          required: false
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+            default: 50
+            minimum: 1
+            maximum: 100
       responses:
         '200':
           description: Cargo orders
@@ -75,6 +115,25 @@ paths:
       responses:
         '200':
           description: Cargo order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CargoOrder'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /api/cargo-orders/admin/{id}/cancel:
+    post:
+      tags: [Cargo Orders]
+      summary: Cancel cargo order as admin
+      operationId: cancelCargoOrderAsAdmin
+      parameters:
+        - $ref: '#/components/parameters/RolesHeader'
+        - $ref: '#/components/parameters/CargoOrderId'
+      responses:
+        '200':
+          description: Cancelled cargo order
           content:
             application/json:
               schema:
@@ -207,6 +266,25 @@ components:
           type: string
           format: uuid
         description:
+          type: string
+        pickupCity:
+          type: string
+        pickupAddress:
+          type: string
+        dropoffCity:
+          type: string
+        dropoffAddress:
+          type: string
+        declaredValue:
+          type: number
+          minimum: 0
+        senderName:
+          type: string
+        senderPhone:
+          type: string
+        recipientName:
+          type: string
+        recipientPhone:
           type: string
         weightKg:
           type: number

@@ -24,12 +24,14 @@ import org.springframework.web.server.ResponseStatusException;
 class DriverControllerTest {
     @Mock
     private DriverProfileRepository drivers;
+    @Mock
+    private DriverAvailabilitySlotRepository availabilitySlots;
 
     private DriverController controller;
 
     @BeforeEach
     void setUp() {
-        controller = new DriverController(drivers);
+        controller = new DriverController(drivers, availabilitySlots);
     }
 
     @Test
@@ -75,6 +77,53 @@ class DriverControllerTest {
         assertThat(result.getAvailabilityStatus()).isEqualTo(DriverAvailabilityStatus.AVAILABLE);
         assertThat(result.getUpdatedAt()).isAfter(result.getCreatedAt());
         verify(drivers).save(profile);
+    }
+
+    @Test
+    void currentDriverCreatesOwnProfile() {
+        UUID userId = UUID.randomUUID();
+        DriverProfile request = profile(UUID.randomUUID());
+        request.setAvailabilityStatus(DriverAvailabilityStatus.AVAILABLE);
+        when(drivers.existsByUserId(userId)).thenReturn(false);
+        when(drivers.save(any(DriverProfile.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        DriverProfile result = controller.createMe(userId, "DRIVER", request);
+
+        assertThat(result.getUserId()).isEqualTo(userId);
+        assertThat(result.getFullName()).isEqualTo("Ivan Driver");
+        assertThat(result.getAvailabilityStatus()).isEqualTo(DriverAvailabilityStatus.UNAVAILABLE);
+        assertThat(result.isActive()).isTrue();
+        ArgumentCaptor<DriverProfile> captor = ArgumentCaptor.forClass(DriverProfile.class);
+        verify(drivers).save(captor.capture());
+        assertThat(captor.getValue().getUserId()).isEqualTo(userId);
+    }
+
+    @Test
+    void currentDriverCreateRejectsDuplicateProfile() {
+        UUID userId = UUID.randomUUID();
+        DriverProfile request = profile(userId);
+        when(drivers.existsByUserId(userId)).thenReturn(true);
+
+        assertThatThrownBy(() -> controller.createMe(userId, "DRIVER", request))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
+                    assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+                    assertThat(exception.getReason()).isEqualTo("Driver profile already exists for user");
+                });
+
+        verify(drivers, never()).save(any(DriverProfile.class));
+    }
+
+    @Test
+    void driverRoleIsRequiredForCurrentDriverCreate() {
+        DriverProfile request = profile(UUID.randomUUID());
+
+        assertThatThrownBy(() -> controller.createMe(UUID.randomUUID(), "PASSENGER", request))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
+                    assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN);
+                    assertThat(exception.getReason()).isEqualTo("DRIVER role required");
+                });
+
+        verify(drivers, never()).save(any(DriverProfile.class));
     }
 
     @Test
@@ -159,6 +208,59 @@ class DriverControllerTest {
     }
 
     @Test
+    void currentDriverManagesAvailabilitySlots() {
+        DriverProfile profile = profile(UUID.randomUUID());
+        DriverAvailabilitySlot request = slot(profile.getId());
+        when(drivers.findByUserId(profile.getUserId())).thenReturn(Optional.of(profile));
+        when(availabilitySlots.findByDriverProfileIdOrderByStartAtAsc(profile.getId())).thenReturn(List.of(request));
+        when(availabilitySlots.save(any(DriverAvailabilitySlot.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        DriverAvailabilitySlot created = controller.createAvailabilitySlot(profile.getUserId(), request);
+        List<DriverAvailabilitySlot> result = controller.myAvailability(profile.getUserId());
+
+        assertThat(created.getDriverProfileId()).isEqualTo(profile.getId());
+        assertThat(result).containsExactly(request);
+        verify(availabilitySlots).save(request);
+    }
+
+    @Test
+    void currentDriverRejectsOverlappingAvailabilitySlot() {
+        DriverProfile profile = profile(UUID.randomUUID());
+        DriverAvailabilitySlot existing = slot(profile.getId());
+        DriverAvailabilitySlot request = slot(profile.getId());
+        when(drivers.findByUserId(profile.getUserId())).thenReturn(Optional.of(profile));
+        when(availabilitySlots.findOverlappingSlots(profile.getId(), request.getStartAt(), request.getEndAt(), null))
+                .thenReturn(List.of(existing));
+
+        assertThatThrownBy(() -> controller.createAvailabilitySlot(profile.getUserId(), request))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
+                    assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+                    assertThat(exception.getReason()).isEqualTo("Driver availability overlaps existing slot");
+                });
+
+        verify(availabilitySlots, never()).save(any(DriverAvailabilitySlot.class));
+    }
+
+    @Test
+    void currentDriverUpdatesAndDeletesOwnAvailabilitySlot() {
+        DriverProfile profile = profile(UUID.randomUUID());
+        DriverAvailabilitySlot existing = slot(profile.getId());
+        DriverAvailabilitySlot request = new DriverAvailabilitySlot();
+        request.setStartAt(existing.getStartAt().plusSeconds(3600));
+        request.setEndAt(existing.getEndAt().plusSeconds(3600));
+        request.setNote("Updated");
+        when(drivers.findByUserId(profile.getUserId())).thenReturn(Optional.of(profile));
+        when(availabilitySlots.findById(existing.getId())).thenReturn(Optional.of(existing));
+        when(availabilitySlots.save(any(DriverAvailabilitySlot.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        DriverAvailabilitySlot updated = controller.updateAvailabilitySlot(profile.getUserId(), existing.getId(), request);
+        controller.deleteAvailabilitySlot(profile.getUserId(), existing.getId());
+
+        assertThat(updated.getNote()).isEqualTo("Updated");
+        verify(availabilitySlots).delete(existing);
+    }
+
+    @Test
     void byIdFailsForMissingDriverProfile() {
         UUID id = UUID.randomUUID();
         when(drivers.findById(id)).thenReturn(Optional.empty());
@@ -179,5 +281,14 @@ class DriverControllerTest {
         profile.setLicenseCategory("B");
         profile.setLicenseExpiresAt(LocalDate.of(2030, 1, 1));
         return profile;
+    }
+
+    private static DriverAvailabilitySlot slot(UUID driverProfileId) {
+        DriverAvailabilitySlot slot = new DriverAvailabilitySlot();
+        slot.setDriverProfileId(driverProfileId);
+        slot.setStartAt(java.time.Instant.parse("2026-06-01T08:00:00Z"));
+        slot.setEndAt(java.time.Instant.parse("2026-06-01T18:00:00Z"));
+        slot.setNote("Day shift");
+        return slot;
     }
 }

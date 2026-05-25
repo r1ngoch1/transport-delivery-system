@@ -1,6 +1,7 @@
 import createClient from "openapi-fetch";
 import { authStore } from "../../features/auth/authStore";
 import { API_BASE_URL } from "../config";
+import type { paths as AdminPaths } from "./admin";
 import type { paths as BookingPaths } from "./booking";
 import type { paths as PaymentPaths } from "./payment";
 import type { paths as RoutePaths } from "./route";
@@ -30,6 +31,7 @@ function createGatewayClient<TPaths extends object>() {
 }
 
 export const userClient = createGatewayClient<UserPaths>();
+export const adminClient = createGatewayClient<AdminPaths>();
 export const routeClient = createGatewayClient<RoutePaths>();
 export const tripClient = createGatewayClient<TripPaths>();
 export const bookingClient = createGatewayClient<BookingPaths>();

@@ -3,6 +3,7 @@ package com.ringochi.routeservice;
 import java.util.List;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,6 +55,17 @@ public class RouteController {
         return cities.save(city);
     }
 
+    @DeleteMapping("/cities/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteCity(@RequestHeader(value = "X-User-Roles", required = false) String roles, @PathVariable UUID id) {
+        requireAdmin(roles);
+        City city = city(id);
+        if (routes.existsByFromCityIdOrToCityId(id, id)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "City is used by a route");
+        }
+        cities.delete(city);
+    }
+
     @GetMapping("/routes")
     public List<Route> routes() {
         return routes.findAll();
@@ -89,6 +101,13 @@ public class RouteController {
         if (request.getEstimatedDurationMinutes() > 0) route.setEstimatedDurationMinutes(request.getEstimatedDurationMinutes());
         route.setActive(request.isActive());
         return routes.save(route);
+    }
+
+    @DeleteMapping("/routes/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteRoute(@RequestHeader(value = "X-User-Roles", required = false) String roles, @PathVariable UUID id) {
+        requireAdmin(roles);
+        routes.delete(route(id));
     }
 
     private ResponseStatusException notFound(String message) {

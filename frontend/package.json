@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
-    "generate:api": "openapi-typescript ../openapi/user-service.yaml -o src/api/generated/user.ts && openapi-typescript ../openapi/route-service.yaml -o src/api/generated/route.ts && openapi-typescript ../openapi/trip-service.yaml -o src/api/generated/trip.ts && openapi-typescript ../openapi/booking-service.yaml -o src/api/generated/booking.ts && openapi-typescript ../openapi/payment-service.yaml -o src/api/generated/payment.ts",
+    "generate:api": "openapi-typescript ../openapi/user-service.yaml -o src/api/generated/user.ts && openapi-typescript ../openapi/route-service.yaml -o src/api/generated/route.ts && openapi-typescript ../openapi/trip-service.yaml -o src/api/generated/trip.ts && openapi-typescript ../openapi/booking-service.yaml -o src/api/generated/booking.ts && openapi-typescript ../openapi/payment-service.yaml -o src/api/generated/payment.ts && openapi-typescript ../openapi/admin-service.yaml -o src/api/generated/admin.ts",
     "preview": "vite preview --host 0.0.0.0",
+    "smoke:gateway": "node smoke/passenger-gateway-smoke.mjs",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "verify": "npm run test && npm run build"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.80.0",

@@ -1,6 +1,6 @@
-import type { BookingStatus, PaymentStatus, TripStatus } from "../../api/types";
+import type { BookingStatus, CargoStatus, PaymentStatus, TripStatus } from "../../api/types";
 
-type Status = BookingStatus | PaymentStatus | TripStatus;
+type Status = BookingStatus | CargoStatus | PaymentStatus | TripStatus;
 
 const successStatuses: Status[] = ["CONFIRMED", "SUCCESS", "COMPLETED"];
 const dangerStatuses: Status[] = ["CANCELLED", "FAILED"];

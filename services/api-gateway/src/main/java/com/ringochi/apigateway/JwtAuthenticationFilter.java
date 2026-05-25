@@ -10,6 +10,7 @@ import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -19,7 +20,9 @@ import reactor.core.publisher.Mono;
 @Component
 public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     private static final List<String> PUBLIC_PREFIXES = List.of(
-            "/api/auth/",
+            "/api/auth/"
+    );
+    private static final List<String> PUBLIC_READ_PREFIXES = List.of(
             "/api/cities",
             "/api/routes",
             "/api/trips"
@@ -34,7 +37,8 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         String path = exchange.getRequest().getURI().getPath();
-        if (isPublic(path)) {
+        HttpMethod method = exchange.getRequest().getMethod();
+        if (isPublic(path, method)) {
             return chain.filter(exchange);
         }
 
@@ -61,8 +65,11 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         return -100;
     }
 
-    private boolean isPublic(String path) {
-        return PUBLIC_PREFIXES.stream().anyMatch(path::startsWith);
+    private boolean isPublic(String path, HttpMethod method) {
+        if (PUBLIC_PREFIXES.stream().anyMatch(path::startsWith)) {
+            return true;
+        }
+        return HttpMethod.GET.equals(method) && PUBLIC_READ_PREFIXES.stream().anyMatch(path::startsWith);
     }
 
     private Mono<Void> unauthorized(ServerWebExchange exchange, String message) {
