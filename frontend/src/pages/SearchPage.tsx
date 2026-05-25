@@ -29,6 +29,7 @@ export function SearchPage() {
   const [date, setDate] = useState("");
   const [mode, setMode] = useState<"passenger" | "cargo">("passenger");
   const [searchedRoute, setSearchedRoute] = useState("Yekaterinburg -> Tyumen");
+  const [submittedRoute, setSubmittedRoute] = useState({ from: "", mode: "passenger", to: "" });
   const [searchError, setSearchError] = useState<string | null>(null);
   const [createdBooking, setCreatedBooking] = useState<Booking | null>(null);
   const [createdCargoOrder, setCreatedCargoOrder] = useState<CargoOrder | null>(null);
@@ -55,12 +56,16 @@ export function SearchPage() {
       getCityName(cityLookup, route.toCityId).toLowerCase() === to.trim().toLowerCase()
   );
   const firstTrip = tripSearch.data?.[0];
+  const routeMatchesSubmittedSearch =
+    submittedRoute.from.toLowerCase() === from.trim().toLowerCase() &&
+    submittedRoute.to.toLowerCase() === to.trim().toLowerCase() &&
+    submittedRoute.mode === mode;
   const capacityLabel =
-    mode === "cargo"
-      ? `${formatNumber(firstTrip?.availableCargoVolume ?? firstTrip?.totalCargoVolume ?? 0)} m3 cargo available`
-      : firstTrip
-        ? `${firstTrip.availableSeats ?? firstTrip.totalSeats} seats available`
-        : undefined;
+    routeMatchesSubmittedSearch && firstTrip
+      ? mode === "cargo"
+        ? `${formatNumber(firstTrip.availableCargoVolume ?? firstTrip.totalCargoVolume ?? 0)} m3 cargo available`
+        : `${firstTrip.availableSeats ?? firstTrip.totalSeats} seats available`
+      : undefined;
   const bookingMutation = useMutation({
     mutationFn: (trip: Trip) => createBooking(trip.id, "1"),
     onSuccess: (booking) => {
@@ -114,6 +119,7 @@ export function SearchPage() {
     }
 
     tripSearch.mutate({ routeId: matchedRoute.id, tripDate: date || undefined });
+    setSubmittedRoute({ from: from.trim(), mode, to: to.trim() });
   }
 
   function handleBook(trip: Trip) {

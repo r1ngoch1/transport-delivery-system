@@ -240,7 +240,16 @@ function renderApp(path: string) {
 }
 
 async function waitForRouteCatalog() {
-  expect(await screen.findAllByText("330 km")).not.toHaveLength(0);
+  expect(await screen.findByText("Routes")).toBeInTheDocument();
+  const catalog = screen.getByText("Routes").closest("div");
+  expect(catalog).not.toBeNull();
+  expect(within(catalog as HTMLElement).getByText("330 km")).toBeInTheDocument();
+}
+
+function tripList() {
+  const list = document.querySelector(".trip-list");
+  expect(list).not.toBeNull();
+  return list as HTMLElement;
 }
 
 describe("App routes", () => {
@@ -269,9 +278,9 @@ describe("App routes", () => {
     renderApp("/");
 
     expect(screen.getByText("Loading cities and routes")).toBeInTheDocument();
-    expect(await screen.findAllByText("Yekaterinburg")).not.toHaveLength(0);
-    expect(await screen.findAllByText("Tyumen")).not.toHaveLength(0);
     await waitForRouteCatalog();
+    const catalog = screen.getByText("Routes").closest("div") as HTMLElement;
+    expect(within(catalog).getByText("Yekaterinburg -> Tyumen")).toBeInTheDocument();
   });
 
   it("shows empty route catalog states on the search page", async () => {
@@ -741,7 +750,7 @@ describe("App routes", () => {
     await user.click(screen.getByRole("button", { name: "Search" }));
 
     expect(await screen.findByText("08:20")).toBeInTheDocument();
-    expect(screen.getAllByText("18 seats available")).not.toHaveLength(0);
+    expect(within(tripList()).getByText("18 seats available")).toBeInTheDocument();
     expect(screen.getByText("1200 RUB")).toBeInTheDocument();
     expect(fetchMock.mock.calls.some(([request]) => requestUrl(request).includes("/api/trips/search"))).toBe(
       true
@@ -752,6 +761,25 @@ describe("App routes", () => {
     expect(fetchMock.mock.calls.some(([request]) => requestUrl(request).includes("date=2026-06-01"))).toBe(
       true
     );
+  });
+
+  it("does not show stale searched capacity in route preview after editing route fields", async () => {
+    const user = userEvent.setup();
+    renderApp("/");
+
+    await waitForRouteCatalog();
+    await user.type(screen.getByLabelText("Date"), "2026-06-01");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    const routePreview = await screen.findByLabelText("Route preview");
+    expect(within(routePreview).getByText("18 seats available")).toBeInTheDocument();
+
+    await user.clear(screen.getByLabelText("From"));
+    await user.type(screen.getByLabelText("From"), "Perm");
+
+    expect(within(routePreview).queryByText("18 seats available")).not.toBeInTheDocument();
+    expect(screen.getByRole("img", { name: "Route from Perm to Tyumen" })).toBeInTheDocument();
+    expect(within(tripList()).getByText("18 seats available")).toBeInTheDocument();
   });
 
 
@@ -814,7 +842,8 @@ describe("App routes", () => {
     await user.type(screen.getByLabelText("Height cm"), "20");
     await user.click(screen.getByRole("button", { name: "Search cargo space" }));
 
-    expect(await screen.findAllByText("8 m3 cargo available")).not.toHaveLength(0);
+    await screen.findByText("Ship cargo");
+    expect(within(tripList()).getByText("8 m3 cargo available")).toBeInTheDocument();
     expect(screen.getByText("Estimated cargo price 747.20 RUB")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Ship cargo" }));
 
@@ -887,7 +916,8 @@ describe("App routes", () => {
     await user.type(screen.getByLabelText("Width cm"), "400");
     await user.type(screen.getByLabelText("Height cm"), "600");
     await user.click(screen.getByRole("button", { name: "Search cargo space" }));
-    expect(await screen.findAllByText("8 m3 cargo available")).not.toHaveLength(0);
+    await screen.findByText("Ship cargo");
+    expect(within(tripList()).getByText("8 m3 cargo available")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Ship cargo" }));
 
     expect(screen.getByText("Cargo volume exceeds available trip capacity")).toBeInTheDocument();

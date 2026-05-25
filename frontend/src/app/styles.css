@@ -265,6 +265,9 @@ button.list-row:hover {
   color: var(--color-ink);
   font-size: 12px;
   font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .route-city-start {
