@@ -20,4 +20,16 @@ describe("ListRow", () => {
 
     expect(onClick).toHaveBeenCalledTimes(1);
   });
+
+  it("uses an explicit button label without hiding visible row details", () => {
+    render(
+      <ListRow ariaLabel="Documents cargo-1" title="Documents" meta="Sender One -> Recipient One" onClick={vi.fn()}>
+        <span>Trip trip-1 - PAID</span>
+      </ListRow>
+    );
+
+    expect(screen.getByRole("button", { name: "Documents cargo-1" })).toBeInTheDocument();
+    expect(screen.getByText("Sender One -> Recipient One")).toBeInTheDocument();
+    expect(screen.getByText("Trip trip-1 - PAID")).toBeInTheDocument();
+  });
 });

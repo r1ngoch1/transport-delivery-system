@@ -409,13 +409,14 @@ function CargoSection({ cargoOrders }: { cargoOrders: AdminCargoOrder[] }) {
         <div className="admin-list">
           {filteredOrders.map((order) => (
             <ListRow
+              ariaLabel={`${order.description} ${order.id}`}
               key={order.id}
-              title={<>{order.description}<span className="sr-only"> {order.id}</span></>}
-              meta={<span aria-hidden="true">{senderRecipientLabel(order)}</span>}
+              title={order.description}
+              meta={senderRecipientLabel(order)}
               onClick={() => setSelectedId(order.id)}
             >
-              <span aria-hidden="true">Trip {order.tripId} · {order.status}</span>
-              <span aria-hidden="true">{cargoSizeLabel(order)} · {order.price} {order.currency}</span>
+              <span>Trip {order.tripId} · {order.status}</span>
+              <span>{cargoSizeLabel(order)} · {order.price} {order.currency}</span>
             </ListRow>
           ))}
         </div>
