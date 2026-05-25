@@ -1,23 +1,27 @@
 :root {
-  color: #17202f;
-  background: #f4f9fb;
+  color: #2a241d;
+  background: #f8f4ed;
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --color-ink: #17202f;
-  --color-muted: #667586;
-  --color-border: #d8e4ea;
-  --color-surface: #ffffff;
-  --color-surface-blue: #eaf6f8;
-  --color-nav: #0f4c5c;
-  --color-teal: #2a9d8f;
-  --color-cyan: #38bdf8;
-  --color-orange: #f4a261;
-  --color-orange-dark: #d97828;
-  --color-danger: #d94f45;
+  --color-ink: #2a241d;
+  --color-muted: #7d7163;
+  --color-border: #e3d6c3;
+  --color-surface: #fffaf2;
+  --color-surface-raised: #ffffff;
+  --color-route-paper: #f8f4ed;
+  --color-route-soft: #efe6d8;
+  --color-nav: #24413b;
+  --color-teal: #4b8f8c;
+  --color-copper: #d77842;
+  --color-copper-dark: #a6532f;
+  --color-danger: #b64c42;
+  --color-success: #2f7d62;
+  --color-warning: #9a6a24;
+  --shadow-panel: 0 18px 42px rgb(42 36 29 / 10%);
   --radius: 8px;
 }
 
@@ -44,7 +48,8 @@ a {
 
 .app-shell {
   min-height: 100vh;
-  background: linear-gradient(180deg, #eaf6f8 0, #f7fafc 280px);
+  color: var(--color-ink);
+  background: linear-gradient(180deg, var(--color-route-soft) 0, var(--color-route-paper) 280px);
 }
 
 .top-nav {
@@ -53,7 +58,7 @@ a {
   align-items: center;
   justify-content: space-between;
   padding: 0 28px;
-  color: #ffffff;
+  color: var(--color-surface-raised);
   background: var(--color-nav);
 }
 
@@ -75,9 +80,9 @@ a {
 
 .nav-button {
   border: 1px solid rgb(255 255 255 / 28%);
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 7px 12px;
-  color: #ffffff;
+  color: var(--color-surface-raised);
   background: rgb(255 255 255 / 10%);
   cursor: pointer;
 }
@@ -97,7 +102,7 @@ a {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
-  box-shadow: 0 16px 40px rgb(15 76 92 / 8%);
+  box-shadow: var(--shadow-panel);
 }
 
 .page-title {
@@ -121,18 +126,20 @@ a {
 }
 
 .button-primary {
-  color: #17202f;
-  background: var(--color-orange);
-  border-color: var(--color-orange);
+  color: var(--color-ink);
+  background: var(--color-copper);
+  border-color: var(--color-copper);
 }
 
 .button-primary:hover {
-  background: #f0b173;
+  background: var(--color-copper-dark);
+  border-color: var(--color-copper-dark);
+  color: var(--color-surface-raised);
 }
 
 .button-secondary {
   color: var(--color-nav);
-  background: #ffffff;
+  background: var(--color-surface-raised);
   border-color: var(--color-border);
 }
 
@@ -168,7 +175,7 @@ a {
 
 .eyebrow {
   margin: 0 0 8px;
-  color: var(--color-teal);
+  color: var(--color-copper-dark);
   font-size: 12px;
   font-weight: 800;
   text-transform: uppercase;
@@ -314,20 +321,20 @@ input {
   width: 100%;
   min-height: 40px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 0 12px;
   color: var(--color-ink);
-  background: #ffffff;
+  background: var(--color-surface-raised);
 }
 
 select {
   width: 100%;
   min-height: 40px;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 0 12px;
   color: var(--color-ink);
-  background: #ffffff;
+  background: var(--color-surface-raised);
 }
 
 .results-panel {
@@ -612,7 +619,7 @@ select {
   border-radius: 999px;
   padding: 2px 7px;
   color: var(--color-nav);
-  background: var(--color-orange);
+  background: var(--color-copper);
   font-size: 12px;
   font-weight: 900;
   text-align: center;

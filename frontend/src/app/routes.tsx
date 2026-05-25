@@ -4,7 +4,6 @@ import { NavLink, Navigate, Route, Routes, useNavigate } from "react-router-dom"
 import { authStore } from "../features/auth/authStore";
 import { useAuthToken } from "../features/auth/useAuthToken";
 import { getCurrentUser } from "../features/profile/profileApi";
-import { NotificationCenter } from "../features/notifications/NotificationCenter";
 import { AdminPage } from "../pages/AdminPage";
 import { DriverPage } from "../pages/DriverPage";
 import { LoginPage } from "../pages/LoginPage";
@@ -14,6 +13,7 @@ import { NotificationsPage } from "../pages/NotificationsPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import { SearchPage } from "../pages/SearchPage";
 import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
+import { AppShell } from "../shared/ui/AppShell";
 import { ScreenState } from "../shared/ui/ScreenState";
 
 export function AppRoutes() {
@@ -34,66 +34,13 @@ export function AppRoutes() {
   }
 
   return (
-    <div className="app-shell">
-      <header className="top-nav">
-        <NavLink to="/" className="brand">
-          RouteFlow
-        </NavLink>
-        <nav className="nav-links" aria-label="Main navigation">
-          <NavLink to="/" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-            Trips
-          </NavLink>
-          <NavLink
-            to="/bookings"
-            className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
-          >
-            Bookings
-          </NavLink>
-          <NavLink
-            to="/profile"
-            className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
-          >
-            Profile
-          </NavLink>
-          {token && (
-            <NavLink
-              to="/cargo"
-              className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
-            >
-              Cargo
-            </NavLink>
-          )}
-          {isAdmin && (
-            <NavLink
-              to="/admin"
-              className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
-            >
-              Admin
-            </NavLink>
-          )}
-          {isDriver && (
-            <NavLink
-              to="/driver"
-              className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
-            >
-              Driver
-            </NavLink>
-          )}
-          <NotificationCenter enabled={Boolean(token) && currentUserQuery.isSuccess && roles.length > 0} />
-          {token ? (
-            <button className="nav-button" type="button" onClick={handleLogout}>
-              Logout
-            </button>
-          ) : (
-            <NavLink
-              to="/login"
-              className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
-            >
-              Login
-            </NavLink>
-          )}
-        </nav>
-      </header>
+    <AppShell
+      isAuthenticated={Boolean(token)}
+      isAdmin={isAdmin}
+      isDriver={isDriver}
+      notificationsEnabled={Boolean(token) && currentUserQuery.isSuccess && roles.length > 0}
+      onLogout={handleLogout}
+    >
       <Routes>
         <Route path="/" element={<SearchPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -156,7 +103,7 @@ export function AppRoutes() {
           }
         />
       </Routes>
-    </div>
+    </AppShell>
   );
 }
 
