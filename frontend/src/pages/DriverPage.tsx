@@ -18,6 +18,10 @@ import { getCityName, getRouteCatalog } from "../features/routes/routeApi";
 import { createTrip, listTrips, type CreateTripRequest, type Trip } from "../features/trips/tripApi";
 import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
 import { Button } from "../shared/ui/Button";
+import { DataPanel } from "../shared/ui/DataPanel";
+import { ListRow } from "../shared/ui/ListRow";
+import { PageHeader } from "../shared/ui/PageHeader";
+import { RouteMapPreview } from "../shared/ui/RouteMapPreview";
 import { ScreenState } from "../shared/ui/ScreenState";
 
 const availabilityOptions: DriverAvailabilityStatus[] = [
@@ -26,6 +30,15 @@ const availabilityOptions: DriverAvailabilityStatus[] = [
   "ON_TRIP",
   "SUSPENDED"
 ];
+
+type DriverCity = { id: string; name?: string };
+type DriverRoute = {
+  distanceKm?: number;
+  estimatedDurationMinutes?: number;
+  fromCityId?: string;
+  id: string;
+  toCityId?: string;
+};
 
 export function DriverPage() {
   const queryClient = useQueryClient();
@@ -126,15 +139,14 @@ export function DriverPage() {
   }
   return (
     <main className="page driver-page">
-      <section className="panel content-panel driver-content">
-        <div className="results-header">
-          <div>
-            <p className="eyebrow">Driver</p>
-            <h1 className="page-title">Driver workspace</h1>
-            <p className="page-subtitle">Manage your profile, availability, and current assignments.</p>
-          </div>
+      <DataPanel className="driver-hero-panel">
+        <PageHeader
+          eyebrow="Driver"
+          title="Driver workspace"
+          subtitle="Manage your profile, availability, and current assignments."
+        >
           <AvailabilityBadge status={profile.availabilityStatus} />
-        </div>
+        </PageHeader>
         {notice && <div className="notice">{notice}</div>}
         {updateMutation.isError && (
           <ApiErrorMessage error={updateMutation.error} fallback="Could not save driver profile" />
@@ -144,13 +156,9 @@ export function DriverPage() {
           onSubmit={(request) => updateMutation.mutate(request)}
           profile={profile}
         />
-      </section>
+      </DataPanel>
 
-      <section className="panel content-panel driver-content">
-        <div>
-          <p className="eyebrow">Trips</p>
-          <h2 className="section-title">Create trip</h2>
-        </div>
+      <DataPanel eyebrow="Trips" title="Create trip">
         {createTripMutation.isError && (
           <ApiErrorMessage error={createTripMutation.error} fallback="Could not create trip" />
         )}
@@ -160,13 +168,9 @@ export function DriverPage() {
           onSubmit={(request) => createTripMutation.mutate(request)}
           routes={routeCatalogQuery.data?.routes ?? []}
         />
-      </section>
+      </DataPanel>
 
-      <section className="panel content-panel driver-content">
-        <div>
-          <p className="eyebrow">Availability</p>
-          <h2 className="section-title">Availability</h2>
-        </div>
+      <DataPanel eyebrow="Availability" title="Availability">
         {availabilityQuery.isLoading && (
           <ScreenState className="page-subtitle" inline kind="loading" message="Loading availability" />
         )}
@@ -195,13 +199,9 @@ export function DriverPage() {
             slots={availabilityQuery.data}
           />
         )}
-      </section>
+      </DataPanel>
 
-      <section className="panel content-panel driver-content">
-        <div>
-          <p className="eyebrow">Schedule</p>
-          <h2 className="section-title">Upcoming assignments</h2>
-        </div>
+      <DataPanel eyebrow="Schedule" title="Upcoming assignments">
         {tripsQuery.isLoading && (
           <ScreenState className="page-subtitle" inline kind="loading" message="Loading assignments" />
         )}
@@ -215,7 +215,7 @@ export function DriverPage() {
             routes={routeCatalogQuery.data?.routes ?? []}
           />
         )}
-      </section>
+      </DataPanel>
     </main>
   );
 }
@@ -226,10 +226,10 @@ function DriverTripForm({
   onSubmit,
   routes
 }: {
-  cities: Array<{ id: string; name?: string }>;
+  cities: DriverCity[];
   isSaving: boolean;
   onSubmit: (request: CreateTripRequest) => void;
-  routes: Array<{ fromCityId?: string; id: string; toCityId?: string }>;
+  routes: DriverRoute[];
 }) {
   const [form, setForm] = useState({
     arrivalTime: "",
@@ -728,25 +728,39 @@ function DriverTripList({
   routes,
   trips
 }: {
-  cities: Array<{ id: string; name?: string }>;
-  routes: Array<{ fromCityId?: string; id: string; toCityId?: string }>;
+  cities: DriverCity[];
+  routes: DriverRoute[];
   trips: Trip[];
 }) {
   if (trips.length === 0) {
     return <div className="catalog-state">No assigned trips yet.</div>;
   }
   return (
-    <div className="admin-list">
+    <div className="admin-list driver-trip-list">
       {trips.map((trip) => {
         const route = routes.find((candidate) => candidate.id === trip.routeId);
         const from = getCityName(cities, route?.fromCityId);
         const to = getCityName(cities, route?.toCityId);
+        const hasRoutePreview = Boolean(route && from !== "Unknown city" && to !== "Unknown city");
         return (
-          <div key={trip.id} className="admin-list-row static">
-            <strong>{from} -&gt; {to}</strong>
-            <span>{formatDateTime(trip.departureTime)} - {formatDateTime(trip.arrivalTime)}</span>
-            <span>{trip.availableSeats}/{trip.totalSeats} seats, {trip.availableCargoVolume}/{trip.totalCargoVolume} m3 cargo</span>
-          </div>
+          <ListRow
+            key={trip.id}
+            title={`${from} -> ${to}`}
+            meta={`${formatDateTime(trip.departureTime)} - ${formatDateTime(trip.arrivalTime)}`}
+            aside={
+              hasRoutePreview ? (
+                <RouteMapPreview
+                  from={getCityName(cities, route?.fromCityId)}
+                  to={getCityName(cities, route?.toCityId)}
+                  distanceKm={route?.distanceKm}
+                  durationMinutes={route?.estimatedDurationMinutes}
+                  capacityLabel={`${trip.availableSeats ?? trip.totalSeats} seats available`}
+                />
+              ) : undefined
+            }
+          >
+            {trip.availableSeats}/{trip.totalSeats} seats, {trip.availableCargoVolume}/{trip.totalCargoVolume} m3 cargo
+          </ListRow>
         );
       })}
     </div>

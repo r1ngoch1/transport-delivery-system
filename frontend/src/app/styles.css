@@ -666,11 +666,25 @@ select {
   gap: 20px;
 }
 
+.driver-hero-panel {
+  gap: 20px;
+}
+
 .driver-two-column {
   display: grid;
   grid-template-columns: minmax(0, 0.9fr) minmax(300px, 1.1fr);
   gap: 16px;
   align-items: start;
+}
+
+.driver-trip-list .list-row {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  align-items: stretch;
+}
+
+.driver-trip-list .route-map-panel {
+  height: 100%;
+  min-height: 150px;
 }
 
 .section-title {
@@ -983,6 +997,7 @@ select {
 @media (max-width: 860px) {
   .search-layout,
   .admin-page,
+  .driver-trip-list .list-row,
   .driver-two-column,
   .admin-summary-grid,
   .admin-two-column,

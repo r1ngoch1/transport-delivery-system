@@ -571,6 +571,8 @@ describe("App routes", () => {
     expect(screen.getAllByText("AVAILABLE").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("Upcoming assignments")).toBeInTheDocument();
     expect(await screen.findByText("Yekaterinburg -> Tyumen")).toBeInTheDocument();
+    const routePreview = await screen.findByLabelText("Route preview");
+    expect(within(routePreview).getByText("18 seats available")).toBeInTheDocument();
   });
 
   it("updates current driver profile availability", async () => {
