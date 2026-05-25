@@ -467,6 +467,7 @@ describe("App routes", () => {
 
     expect(await screen.findByRole("heading", { name: "Admin dashboard" })).toBeInTheDocument();
     expect(screen.getByRole("navigation", { name: "Admin navigation" })).toBeInTheDocument();
+    expect(screen.getByText("Operational workspace backed by the Admin Service facade.")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Passenger flow" })).toHaveAttribute("href", "/");
   });
 

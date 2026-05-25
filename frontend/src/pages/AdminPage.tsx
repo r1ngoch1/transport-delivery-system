@@ -18,6 +18,10 @@ import {
 } from "../features/admin/adminApi";
 import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
 import { Button } from "../shared/ui/Button";
+import { DataPanel } from "../shared/ui/DataPanel";
+import { ListRow } from "../shared/ui/ListRow";
+import { MetricTile } from "../shared/ui/MetricTile";
+import { PageHeader } from "../shared/ui/PageHeader";
 import { ScreenState } from "../shared/ui/ScreenState";
 import { StatusChip } from "../shared/ui/StatusChip";
 
@@ -63,7 +67,7 @@ export function AdminPage() {
         </NavLink>
       </aside>
 
-      <section className="panel content-panel admin-content">
+      <section className="admin-content">
         {adminDataQuery.isLoading && (
           <ScreenState className="page-subtitle" inline kind="loading" message="Loading admin data" />
         )}
@@ -113,22 +117,19 @@ function DashboardSection({ data }: { data: AdminData }) {
   ];
 
   return (
-    <>
-      <div>
-        <p className="eyebrow">Overview</p>
-        <h1 className="page-title">Admin dashboard</h1>
-        <p className="page-subtitle">Operational workspace backed by the Admin Service facade.</p>
-      </div>
+    <DataPanel>
+      <PageHeader
+        eyebrow="Overview"
+        title="Admin dashboard"
+        subtitle="Operational workspace backed by the Admin Service facade."
+      />
       <div className="admin-summary-grid">
         {cards.map((card) => (
-          <NavLink key={card.label} to={card.path} className="admin-summary-card">
-            <strong>{card.label}</strong>
-            <span>{formatCount(card.value, card.unit)}</span>
-          </NavLink>
+          <MetricTile key={card.label} href={card.path} label={card.label} value={formatCount(card.value, card.unit)} />
         ))}
       </div>
       <div className="catalog-state">Audit log is written by Admin Service runtime logs.</div>
-    </>
+    </DataPanel>
   );
 }
 
@@ -145,7 +146,7 @@ function UsersSection({ users }: { users: AdminUser[] }) {
   const selectedUser = users.find((user) => user.id === selectedId) ?? filteredUsers[0] ?? users[0];
 
   return (
-    <>
+    <DataPanel>
       <SectionHeader eyebrow="Identity" title="Users" subtitle="Search users, inspect profile fields, and review roles." />
       <label className="admin-filter">
         Search users
@@ -154,10 +155,7 @@ function UsersSection({ users }: { users: AdminUser[] }) {
       <div className="admin-two-column">
         <div className="admin-list">
           {filteredUsers.map((user) => (
-            <button key={user.id} className="admin-list-row" type="button" onClick={() => setSelectedId(user.id)}>
-              <strong>{user.fullName}</strong>
-              <span>{user.email}</span>
-            </button>
+            <ListRow key={user.id} title={user.fullName} meta={user.email} onClick={() => setSelectedId(user.id)} />
           ))}
         </div>
         {selectedId && selectedUser && (
@@ -174,7 +172,7 @@ function UsersSection({ users }: { users: AdminUser[] }) {
           </div>
         )}
       </div>
-    </>
+    </DataPanel>
   );
 }
 
@@ -206,7 +204,7 @@ function RoutesSection({ cities, routes }: { cities: AdminCity[]; routes: AdminR
   });
 
   return (
-    <>
+    <DataPanel>
       <SectionHeader eyebrow="Network" title="Cities and routes" subtitle="Create route catalog records and review active paths." />
       {notice && <div className="notice">{notice}</div>}
       {cityMutation.isError && <ApiErrorMessage error={cityMutation.error} fallback="Could not save city" />}
@@ -272,7 +270,7 @@ function RoutesSection({ cities, routes }: { cities: AdminCity[]; routes: AdminR
       </div>
       <DataGrid title="Cities" rows={cities.map((city) => [city.name, city.region, city.country, city.active ? "Active" : "Inactive"])} />
       <DataGrid title="Routes" rows={routes.map((route) => [route.id, `${route.distanceKm} km`, `${route.estimatedDurationMinutes} min`, route.active ? "Active" : "Inactive"])} />
-    </>
+    </DataPanel>
   );
 }
 
@@ -292,7 +290,7 @@ function TripsSection({ trips, routes }: { trips: AdminTrip[]; routes: AdminRout
   });
 
   return (
-    <>
+    <DataPanel>
       <SectionHeader eyebrow="Operations" title="Trips" subtitle="Review trips and update supported status/driver fields." />
       {notice && <div className="notice">{notice}</div>}
       {updateMutation.isError && <ApiErrorMessage error={updateMutation.error} fallback="Could not update trip" />}
@@ -334,46 +332,46 @@ function TripsSection({ trips, routes }: { trips: AdminTrip[]; routes: AdminRout
         </div>
       </div>
       <DataGrid title="Route assignments" rows={routes.map((route) => [route.id, route.fromCityId, route.toCityId])} />
-    </>
+    </DataPanel>
   );
 }
 
 function BookingsSection({ bookings, payments }: { bookings: AdminBooking[]; payments: AdminPayment[] }) {
   return (
-    <>
+    <DataPanel>
       <SectionHeader eyebrow="Reservations" title="Bookings" subtitle="Inspect passenger bookings and linked payment state." />
       <div className="admin-list">
         {bookings.map((booking) => {
           const payment = payments.find((candidate) => candidate.id === booking.paymentId);
           return (
-            <div key={booking.id} className="admin-list-row static">
-              <strong>Booking {booking.id}</strong>
-              <span>User {booking.userId} · Trip {booking.tripId} · Seat {booking.seatNumber}</span>
+            <ListRow
+              key={booking.id}
+              title={`Booking ${booking.id}`}
+              meta={`User ${booking.userId} - Trip ${booking.tripId} - Seat ${booking.seatNumber}`}
+              aside={<Button type="button" disabled variant="secondary">Cancel booking unavailable</Button>}
+            >
               <span>Payment {payment?.status ?? "not found"}</span>
-              <Button type="button" disabled variant="secondary">Cancel booking unavailable</Button>
-            </div>
+            </ListRow>
           );
         })}
       </div>
-    </>
+    </DataPanel>
   );
 }
 
 function PaymentsSection({ payments }: { payments: AdminPayment[] }) {
   return (
-    <>
+    <DataPanel>
       <SectionHeader eyebrow="Money" title="Payments" subtitle="Review payment targets, status, and idempotency metadata." />
       <div className="admin-list">
         {payments.map((payment) => (
-          <div key={payment.id} className="admin-list-row static">
-            <strong>Payment {payment.status}</strong>
-            <span>{payment.targetType} {payment.targetId}</span>
+          <ListRow key={payment.id} title={`Payment ${payment.status}`} meta={`${payment.targetType} ${payment.targetId}`}>
             <span>{payment.amount} {payment.currency}</span>
             <span>{payment.idempotencyKey ?? "Idempotency key not provided"}</span>
-          </div>
+          </ListRow>
         ))}
       </div>
-    </>
+    </DataPanel>
   );
 }
 
@@ -397,7 +395,7 @@ function CargoSection({ cargoOrders }: { cargoOrders: AdminCargoOrder[] }) {
   });
 
   return (
-    <>
+    <DataPanel>
       <SectionHeader eyebrow="Freight" title="Cargo orders" subtitle="Inspect cargo orders, trip assignment, dimensions, and payment status." />
       {notice && <div className="notice">{notice}</div>}
       {cancelMutation.isError && <ApiErrorMessage error={cancelMutation.error} fallback="Could not cancel cargo order" />}
@@ -410,18 +408,15 @@ function CargoSection({ cargoOrders }: { cargoOrders: AdminCargoOrder[] }) {
       <div className="admin-two-column">
         <div className="admin-list">
           {filteredOrders.map((order) => (
-            <button
+            <ListRow
               key={order.id}
-              aria-label={`${order.description} ${order.id}`}
-              className="admin-list-row"
-              type="button"
+              title={<>{order.description}<span className="sr-only"> {order.id}</span></>}
+              meta={<span aria-hidden="true">{senderRecipientLabel(order)}</span>}
               onClick={() => setSelectedId(order.id)}
             >
-              <strong>{order.description}</strong>
-              <span>{senderRecipientLabel(order)}</span>
-              <span>Trip {order.tripId} · {order.status}</span>
-              <span>{cargoSizeLabel(order)} · {order.price} {order.currency}</span>
-            </button>
+              <span aria-hidden="true">Trip {order.tripId} · {order.status}</span>
+              <span aria-hidden="true">{cargoSizeLabel(order)} · {order.price} {order.currency}</span>
+            </ListRow>
           ))}
         </div>
         {selectedOrder && (
@@ -451,16 +446,16 @@ function CargoSection({ cargoOrders }: { cargoOrders: AdminCargoOrder[] }) {
           </div>
         )}
       </div>
-    </>
+    </DataPanel>
   );
 }
 
 function AuditSection() {
   return (
-    <>
+    <DataPanel>
       <SectionHeader eyebrow="Audit" title="Audit log" subtitle="Audit records are currently emitted by the backend logger." />
       <div className="catalog-state">Use service logs filtered by admin_audit until an audit query endpoint exists.</div>
-    </>
+    </DataPanel>
   );
 }
 
@@ -480,13 +475,7 @@ function DataGrid({ rows, title }: { rows: string[][]; title: string }) {
 }
 
 function SectionHeader({ eyebrow, subtitle, title }: { eyebrow: string; subtitle: string; title: string }) {
-  return (
-    <div>
-      <p className="eyebrow">{eyebrow}</p>
-      <h1 className="page-title">{title}</h1>
-      <p className="page-subtitle">{subtitle}</p>
-    </div>
-  );
+  return <PageHeader eyebrow={eyebrow} title={title} subtitle={subtitle} />;
 }
 
 function getSectionId(pathname: string): AdminSectionId {
