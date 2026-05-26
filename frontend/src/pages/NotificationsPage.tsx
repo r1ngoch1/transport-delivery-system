@@ -11,6 +11,9 @@ import {
 } from "../features/notifications/notificationApi";
 import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
 import { Button } from "../shared/ui/Button";
+import { DataPanel } from "../shared/ui/DataPanel";
+import { ListRow } from "../shared/ui/ListRow";
+import { PageHeader } from "../shared/ui/PageHeader";
 import { ScreenState } from "../shared/ui/ScreenState";
 import { StatusChip } from "../shared/ui/StatusChip";
 
@@ -43,16 +46,16 @@ export function NotificationsPage() {
 
   return (
     <main className="page">
-      <section className="panel content-panel notification-page">
-        <div className="results-header compact">
-          <div>
-            <h1 className="page-title">All notifications</h1>
-            <p className="page-subtitle">Booking, cargo, and payment events delivered through Notification Service.</p>
-          </div>
+      <DataPanel className="notification-page">
+        <PageHeader
+          eyebrow="Notifications"
+          title="All notifications"
+          subtitle="Booking, cargo, and payment events delivered through Notification Service."
+        >
           <Button type="button" variant="secondary" onClick={() => readAllMutation.mutate()}>
             Mark all as read
           </Button>
-        </div>
+        </PageHeader>
         {notice && <div className="notice">{notice}</div>}
         <div className="notification-filters">
           <label>
@@ -93,30 +96,36 @@ export function NotificationsPage() {
         {notificationsQuery.isSuccess && notificationsQuery.data.length > 0 && (
           <div className="notification-list">
             {notificationsQuery.data.map((notification) => (
-              <article className="notification-page-row" key={notification.id}>
-                <div className="notification-copy">
-                  <strong>{notification.title}</strong>
-                  <span>{notification.body}</span>
-                  <span>{new Date(notification.createdAt).toLocaleString()}</span>
-                </div>
-                <StatusChip status={notification.status === "UNREAD" ? "PENDING" : "COMPLETED"} label={notification.status} />
-                <Link className="inline-link" to={notificationLink(notification)}>
-                  Open linked item
-                </Link>
-                {notification.status === "UNREAD" && (
-                  <button
-                    className="inline-link inline-button"
-                    type="button"
-                    onClick={() => readMutation.mutate(notification.id)}
-                  >
-                    Mark read
-                  </button>
-                )}
-              </article>
+              <ListRow
+                key={notification.id}
+                title={notification.title}
+                meta={notification.body}
+                aside={
+                  <>
+                    <StatusChip status={notification.status === "UNREAD" ? "PENDING" : "COMPLETED"} label={notification.status} />
+                    <div className="inline-actions">
+                      <Link className="inline-link" to={notificationLink(notification)}>
+                        Open linked item
+                      </Link>
+                      {notification.status === "UNREAD" && (
+                        <button
+                          className="inline-link inline-button"
+                          type="button"
+                          onClick={() => readMutation.mutate(notification.id)}
+                        >
+                          Mark read
+                        </button>
+                      )}
+                    </div>
+                  </>
+                }
+              >
+                {new Date(notification.createdAt).toLocaleString()}
+              </ListRow>
             ))}
           </div>
         )}
-      </section>
+      </DataPanel>
     </main>
   );
 }

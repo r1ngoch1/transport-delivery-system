@@ -564,25 +564,16 @@ select {
   width: min(460px, 100%);
 }
 
-.booking-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-  margin-top: 20px;
-  padding: 14px;
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+.route-auth-panel {
+  background:
+    linear-gradient(135deg, rgb(75 143 140 / 10%), transparent 34%),
+    var(--color-surface);
 }
 
 .booking-list {
   display: grid;
-  gap: 12px;
+  gap: 10px;
   margin-top: 20px;
-}
-
-.booking-list .booking-row {
-  margin-top: 0;
 }
 
 .booking-main,
@@ -838,7 +829,6 @@ select {
 }
 
 .notification-header,
-.notification-page-row,
 .notification-item {
   display: grid;
   gap: 10px;
@@ -854,12 +844,11 @@ select {
   font-size: 18px;
 }
 
-.notification-item,
-.notification-page-row {
+.notification-popover-row {
   border: 1px solid var(--color-border);
   border-radius: 8px;
   padding: 12px;
-  background: #fbfdfe;
+  background: var(--color-surface-raised);
 }
 
 .notification-copy {
@@ -891,18 +880,18 @@ select {
   border-radius: 8px;
   padding: 12px;
   color: var(--color-ink);
-  background: #ffffff;
-  box-shadow: 0 16px 40px rgb(15 76 92 / 16%);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-panel);
 }
 
 .toast-success {
-  border-color: #b8eadf;
-  background: #f1fcf8;
+  border-color: var(--color-border);
+  background: var(--color-surface);
 }
 
 .toast-error {
-  border-color: #fac6c1;
-  background: #fff5f4;
+  border-color: var(--color-border);
+  background: var(--color-surface);
 }
 
 .notification-filters {

@@ -46,7 +46,7 @@ export function LoginPage() {
 
   return (
     <main className="page auth-page">
-      <section className="panel auth-panel">
+      <section className="panel auth-panel route-auth-panel">
         <p className="eyebrow">{mode === "register" && role === "DRIVER" ? "Driver access" : "Passenger access"}</p>
         <h1 className="page-title">{mode === "login" ? "Welcome back" : "Create account"}</h1>
         <p className="page-subtitle">

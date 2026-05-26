@@ -104,7 +104,7 @@ function NotificationItem({
   onMarkRead: () => void;
 }) {
   return (
-    <article className="notification-item">
+    <article className="notification-item notification-popover-row">
       <div className="notification-copy">
         <strong>{notification.title}</strong>
         <span>{notification.body}</span>

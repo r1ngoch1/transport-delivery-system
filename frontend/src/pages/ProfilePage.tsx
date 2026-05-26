@@ -2,6 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { authStore } from "../features/auth/authStore";
 import { getCurrentUser } from "../features/profile/profileApi";
 import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
+import { DataPanel } from "../shared/ui/DataPanel";
+import { PageHeader } from "../shared/ui/PageHeader";
 import { ScreenState } from "../shared/ui/ScreenState";
 import { StatusChip } from "../shared/ui/StatusChip";
 
@@ -13,8 +15,8 @@ export function ProfilePage() {
 
   return (
     <main className="page">
-      <section className="panel content-panel">
-        <h1 className="page-title">Profile</h1>
+      <DataPanel>
+        <PageHeader eyebrow="Identity" title="Profile" subtitle="Review account details and role access." />
         {profileQuery.isLoading && (
           <ScreenState className="page-subtitle" inline kind="loading" message="Loading profile" />
         )}
@@ -43,7 +45,7 @@ export function ProfilePage() {
             </div>
           </div>
         )}
-      </section>
+      </DataPanel>
     </main>
   );
 }

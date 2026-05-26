@@ -4,6 +4,9 @@ import { cancelCargoOrder, listMyCargoOrders, type CargoOrder } from "../feature
 import { findCargoPayments } from "../features/payments/paymentApi";
 import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
 import { Button } from "../shared/ui/Button";
+import { DataPanel } from "../shared/ui/DataPanel";
+import { ListRow } from "../shared/ui/ListRow";
+import { PageHeader } from "../shared/ui/PageHeader";
 import { ScreenState } from "../shared/ui/ScreenState";
 import { StatusChip } from "../shared/ui/StatusChip";
 
@@ -30,9 +33,8 @@ export function MyCargoOrdersPage() {
 
   return (
     <main className="page">
-      <section className="panel content-panel">
-        <h1 className="page-title">My cargo orders</h1>
-        <p className="page-subtitle">Cargo shipments, payment state, route details, and cancellation controls.</p>
+      <DataPanel>
+        <PageHeader eyebrow="Cargo" title="My cargo orders" subtitle="Review cargo shipments, route details, and payment status." />
         {notice && <div className="notice">{notice}</div>}
         {cargoOrdersQuery.isLoading && (
           <ScreenState className="catalog-state booking-state" kind="loading" message="Loading cargo orders" />
@@ -58,19 +60,19 @@ export function MyCargoOrdersPage() {
           <div className="admin-two-column">
             <div className="admin-list">
               {cargoOrdersQuery.data.map((order) => (
-                <button
+                <ListRow
                   key={order.id}
-                  aria-label={`${order.description} ${order.id}`}
-                  className="admin-list-row"
-                  type="button"
+                  ariaLabel={`${order.description} ${order.id}`}
+                  title={order.description}
+                  meta={routeLabel(order)}
+                  aside={<CargoPaymentStatus cargoOrderId={order.id} />}
                   onClick={() => setSelectedId(order.id)}
                 >
-                  <strong>{order.description}</strong>
-                  <span>{routeLabel(order)}</span>
-                  <span>{cargoSizeLabel(order)}</span>
-                  <span>{order.price} {order.currency}</span>
-                  <CargoPaymentStatus cargoOrderId={order.id} />
-                </button>
+                  <>
+                    <span>{cargoSizeLabel(order)}</span>
+                    <span>{order.price} {order.currency}</span>
+                  </>
+                </ListRow>
               ))}
             </div>
             {selectedOrder && (
@@ -82,7 +84,7 @@ export function MyCargoOrdersPage() {
             )}
           </div>
         )}
-      </section>
+      </DataPanel>
     </main>
   );
 }

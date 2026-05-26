@@ -2,6 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { listMyBookings, type Booking } from "../features/bookings/bookingApi";
 import { findBookingPayments } from "../features/payments/paymentApi";
 import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
+import { DataPanel } from "../shared/ui/DataPanel";
+import { ListRow } from "../shared/ui/ListRow";
+import { PageHeader } from "../shared/ui/PageHeader";
 import { ScreenState } from "../shared/ui/ScreenState";
 import { StatusChip } from "../shared/ui/StatusChip";
 
@@ -13,9 +16,8 @@ export function MyBookingsPage() {
 
   return (
     <main className="page">
-      <section className="panel content-panel">
-        <h1 className="page-title">My bookings</h1>
-        <p className="page-subtitle">Confirmed and pending passenger bookings from the gateway.</p>
+      <DataPanel>
+        <PageHeader eyebrow="Reservations" title="My bookings" subtitle="Track trip reservations and payment status." />
         {bookingsQuery.isLoading && (
           <ScreenState className="catalog-state booking-state" kind="loading" message="Loading bookings" />
         )}
@@ -36,25 +38,28 @@ export function MyBookingsPage() {
             ))}
           </div>
         )}
-      </section>
+      </DataPanel>
     </main>
   );
 }
 
 function BookingRow({ booking }: { booking: Booking }) {
   return (
-    <article className="booking-row">
-      <div className="booking-main">
-        <strong>Booking {booking.id}</strong>
-        <span>Trip {booking.tripId}</span>
-      </div>
-      <div className="booking-meta">
+    <ListRow
+      title={`Booking ${booking.id}`}
+      meta={`Trip ${booking.tripId}`}
+      aside={
+        <>
+          <StatusChip status={booking.status} />
+          <BookingPaymentStatus bookingId={booking.id} />
+        </>
+      }
+    >
+      <>
         <span>Seat {booking.seatNumber}</span>
         <span>{booking.price} RUB</span>
-      </div>
-      <StatusChip status={booking.status} />
-      <BookingPaymentStatus bookingId={booking.id} />
-    </article>
+      </>
+    </ListRow>
   );
 }
 
