@@ -430,24 +430,24 @@ button.list-row:hover {
 }
 
 .form-error {
-  color: #982f28;
-  background: #fde4e1;
-  border: 1px solid #fac6c1;
+  color: #7e2f28;
+  background: #f9e1dc;
+  border: 1px solid #e9b8ae;
 }
 
 .notice {
   margin-bottom: 14px;
-  color: #0f5f52;
-  background: #dff7f1;
-  border: 1px solid #b8eadf;
+  color: #255f4b;
+  background: #e2f1e8;
+  border: 1px solid #b9d8c7;
 }
 
 .catalog-state {
   border-radius: 8px;
   padding: 12px;
-  color: #335064;
-  background: #e8f2f6;
-  border: 1px solid #cfe1e8;
+  color: var(--color-nav);
+  background: var(--color-route-soft);
+  border: 1px solid var(--color-border);
 }
 
 .catalog-summary {
