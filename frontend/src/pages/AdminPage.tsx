@@ -21,6 +21,7 @@ import { Button } from "../shared/ui/Button";
 import { DataPanel } from "../shared/ui/DataPanel";
 import { ListRow } from "../shared/ui/ListRow";
 import { MetricTile } from "../shared/ui/MetricTile";
+import { useI18n } from "../shared/i18n/i18n";
 import { PageHeader } from "../shared/ui/PageHeader";
 import { ScreenState } from "../shared/ui/ScreenState";
 import { StatusChip } from "../shared/ui/StatusChip";
@@ -39,6 +40,7 @@ const adminSections = [
 type AdminSectionId = (typeof adminSections)[number]["id"];
 
 export function AdminPage() {
+  const { t } = useI18n();
   const location = useLocation();
   const sectionId = getSectionId(location.pathname);
   const adminDataQuery = useQuery({
@@ -49,7 +51,7 @@ export function AdminPage() {
   return (
     <main className="page admin-page">
       <aside className="panel admin-sidebar">
-        <p className="eyebrow">Admin</p>
+        <p className="eyebrow">{t("Admin")}</p>
         <nav className="admin-nav" aria-label="Admin navigation">
           {adminSections.map((section) => (
             <NavLink
@@ -58,21 +60,21 @@ export function AdminPage() {
               end={section.id === "dashboard"}
               className={({ isActive }) => (isActive ? "admin-nav-link active" : "admin-nav-link")}
             >
-              {section.label}
+              {t(section.label)}
             </NavLink>
           ))}
         </nav>
         <NavLink to="/" className="inline-link">
-          Passenger flow
+          {t("Passenger flow")}
         </NavLink>
       </aside>
 
       <section className="admin-content">
         {adminDataQuery.isLoading && (
-          <ScreenState className="page-subtitle" inline kind="loading" message="Loading admin data" />
+          <ScreenState className="page-subtitle" inline kind="loading" message={t("Loading admin data")} />
         )}
         {adminDataQuery.isError && (
-          <ApiErrorMessage error={adminDataQuery.error} fallback="Could not load admin data" />
+          <ApiErrorMessage error={adminDataQuery.error} fallback={t("Could not load admin data")} />
         )}
         {adminDataQuery.data && <AdminSection sectionId={sectionId} data={adminDataQuery.data} />}
       </section>
@@ -106,6 +108,7 @@ function AdminSection({ data, sectionId }: { data: AdminData; sectionId: AdminSe
 }
 
 function DashboardSection({ data }: { data: AdminData }) {
+  const { t } = useI18n();
   const cards = [
     { label: "Users", value: data.users.length, unit: "record", path: "/admin/users" },
     { label: "Cities", value: data.cities.length, unit: "city", path: "/admin/routes" },
@@ -119,21 +122,22 @@ function DashboardSection({ data }: { data: AdminData }) {
   return (
     <DataPanel>
       <PageHeader
-        eyebrow="Overview"
-        title="Admin dashboard"
-        subtitle="Operational workspace backed by the Admin Service facade."
+        eyebrow={t("Overview")}
+        title={t("Admin dashboard")}
+        subtitle={t("Operational workspace backed by the Admin Service facade.")}
       />
       <div className="admin-summary-grid">
         {cards.map((card) => (
-          <MetricTile key={card.label} href={card.path} label={card.label} value={formatCount(card.value, card.unit)} />
+          <MetricTile key={card.label} href={card.path} label={t(card.label)} value={formatCount(card.value, card.unit)} />
         ))}
       </div>
-      <div className="catalog-state">Audit log is written by Admin Service runtime logs.</div>
+      <div className="catalog-state">{t("Audit log is written by Admin Service runtime logs.")}</div>
     </DataPanel>
   );
 }
 
 function UsersSection({ users }: { users: AdminUser[] }) {
+  const { t } = useI18n();
   const [search, setSearch] = useState("");
   const filteredUsers = useMemo(
     () =>
@@ -147,10 +151,10 @@ function UsersSection({ users }: { users: AdminUser[] }) {
 
   return (
     <DataPanel>
-      <SectionHeader eyebrow="Identity" title="Users" subtitle="Search users, inspect profile fields, and review roles." />
+      <SectionHeader eyebrow={t("Identity")} title={t("Users")} subtitle={t("Search users, inspect profile fields, and review roles.")} />
       <label className="admin-filter">
-        Search users
-        <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Email, name, role" />
+        {t("Search users")}
+        <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t("Email, name, role")} />
       </label>
       <div className="admin-two-column">
         <div className="admin-list">

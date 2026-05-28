@@ -1,6 +1,7 @@
 import type { PropsWithChildren } from "react";
 import { NavLink } from "react-router-dom";
 import { NotificationCenter } from "../../features/notifications/NotificationCenter";
+import { useI18n } from "../i18n/i18n";
 
 interface AppShellProps extends PropsWithChildren {
   isAdmin: boolean;
@@ -18,6 +19,8 @@ export function AppShell({
   notificationsEnabled,
   onLogout
 }: AppShellProps) {
+  const { locale, setLocale, t } = useI18n();
+
   return (
     <div className="app-shell">
       <header className="top-nav">
@@ -26,37 +29,53 @@ export function AppShell({
         </NavLink>
         <nav className="nav-links" aria-label="Main navigation">
           <NavLink to="/" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-            Trips
+            {t("Trips")}
           </NavLink>
           <NavLink to="/bookings" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-            Bookings
+            {t("Bookings")}
           </NavLink>
           <NavLink to="/profile" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-            Profile
+            {t("Profile")}
           </NavLink>
           {isAuthenticated && (
             <NavLink to="/cargo" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-              Cargo
+              {t("Cargo")}
             </NavLink>
           )}
           {isAdmin && (
             <NavLink to="/admin" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-              Admin
+              {t("Admin")}
             </NavLink>
           )}
           {isDriver && (
             <NavLink to="/driver" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-              Driver
+              {t("Driver")}
             </NavLink>
           )}
           <NotificationCenter enabled={notificationsEnabled} />
+          <div className="language-switch" role="group" aria-label="Language switch">
+            <button
+              className={locale === "en" ? "nav-button language-button active" : "nav-button language-button"}
+              type="button"
+              onClick={() => setLocale("en")}
+            >
+              EN
+            </button>
+            <button
+              className={locale === "ru" ? "nav-button language-button active" : "nav-button language-button"}
+              type="button"
+              onClick={() => setLocale("ru")}
+            >
+              RU
+            </button>
+          </div>
           {isAuthenticated ? (
             <button className="nav-button" type="button" onClick={onLogout}>
-              Logout
+              {t("Logout")}
             </button>
           ) : (
             <NavLink to="/login" className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}>
-              Login
+              {t("Login")}
             </NavLink>
           )}
         </nav>

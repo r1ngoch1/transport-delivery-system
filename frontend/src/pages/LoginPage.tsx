@@ -3,10 +3,12 @@ import { useNavigate } from "react-router-dom";
 import { apiRequest } from "../api/http";
 import type { AuthResponse } from "../api/types";
 import { authStore } from "../features/auth/authStore";
+import { useI18n } from "../shared/i18n/i18n";
 import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
 import { Button } from "../shared/ui/Button";
 
 export function LoginPage() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
@@ -47,34 +49,34 @@ export function LoginPage() {
   return (
     <main className="page auth-page">
       <section className="panel auth-panel route-auth-panel">
-        <p className="eyebrow">{mode === "register" && role === "DRIVER" ? "Driver access" : "Passenger access"}</p>
-        <h1 className="page-title">{mode === "login" ? "Welcome back" : "Create account"}</h1>
+        <p className="eyebrow">{mode === "register" && role === "DRIVER" ? t("Driver access") : t("Passenger access")}</p>
+        <h1 className="page-title">{mode === "login" ? t("Welcome back") : t("Create account")}</h1>
         <p className="page-subtitle">
           {mode === "login"
-            ? "Sign in to manage bookings and payment status."
-            : "Register as a passenger or driver."}
+            ? t("Sign in to manage bookings and payment status.")
+            : t("Register as a passenger or driver.")}
         </p>
-        <div className="segmented-control" aria-label="Auth mode">
+        <div className="segmented-control" aria-label={t("Auth mode")}>
           <button
-            aria-label="Show login form"
+            aria-label={t("Show login form")}
             className={mode === "login" ? "segment active" : "segment"}
             type="button"
             onClick={() => setMode("login")}
           >
-            Login
+            {t("Login")}
           </button>
           <button
-            aria-label="Show register form"
+            aria-label={t("Show register form")}
             className={mode === "register" ? "segment active" : "segment"}
             type="button"
             onClick={() => setMode("register")}
           >
-            Register
+            {t("Register")}
           </button>
         </div>
         <form className="form-grid" onSubmit={handleSubmit}>
           <label>
-            Email
+            {t("Email")}
             <input
               required
               type="email"
@@ -86,7 +88,7 @@ export function LoginPage() {
           {mode === "register" && (
             <>
               <label>
-                Full name
+                {t("Full name")}
                 <input
                   required
                   placeholder="Passenger Name"
@@ -95,7 +97,7 @@ export function LoginPage() {
                 />
               </label>
               <label>
-                Phone
+                {t("Phone")}
                 <input
                   required
                   placeholder="+79990000000"
@@ -104,16 +106,16 @@ export function LoginPage() {
                 />
               </label>
               <label>
-                Account type
+                {t("Account type")}
                 <select value={role} onChange={(event) => setRole(event.target.value as "PASSENGER" | "DRIVER")}>
-                  <option value="PASSENGER">Passenger</option>
-                  <option value="DRIVER">Driver</option>
+                  <option value="PASSENGER">{t("Passenger")}</option>
+                  <option value="DRIVER">{t("Driver")}</option>
                 </select>
               </label>
             </>
           )}
           <label>
-            Password
+            {t("Password")}
             <input
               required
               minLength={6}
@@ -126,11 +128,11 @@ export function LoginPage() {
           {error !== null && (
             <ApiErrorMessage
               error={error}
-              fallback="Gateway is unavailable. Start backend services and try again."
+              fallback={t("Gateway is unavailable. Start backend services and try again.")}
             />
           )}
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? "Please wait" : mode === "login" ? "Login" : "Register"}
+            {isSubmitting ? t("Please wait") : mode === "login" ? t("Login") : t("Register")}
           </Button>
         </form>
       </section>

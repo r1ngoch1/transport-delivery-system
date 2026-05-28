@@ -13,10 +13,12 @@ import { NotificationsPage } from "../pages/NotificationsPage";
 import { ProfilePage } from "../pages/ProfilePage";
 import { SearchPage } from "../pages/SearchPage";
 import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
+import { useI18n } from "../shared/i18n/i18n";
 import { AppShell } from "../shared/ui/AppShell";
 import { ScreenState } from "../shared/ui/ScreenState";
 
 export function AppRoutes() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const token = useAuthToken();
   const currentUserQuery = useQuery({
@@ -84,6 +86,7 @@ export function AppRoutes() {
               isError={currentUserQuery.isError}
               error={currentUserQuery.error}
               isAdmin={isAdmin}
+              t={t}
             >
               <AdminPage />
             </AdminRoute>
@@ -97,6 +100,7 @@ export function AppRoutes() {
               isError={currentUserQuery.isError}
               error={currentUserQuery.error}
               isDriver={isDriver}
+              t={t}
             >
               <DriverPage />
             </DriverRoute>
@@ -119,23 +123,24 @@ interface AdminRouteProps extends PropsWithChildren {
   isAdmin: boolean;
   isError: boolean;
   isLoading: boolean;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }
 
-function AdminRoute({ children, error, isAdmin, isError, isLoading }: AdminRouteProps) {
+function AdminRoute({ children, error, isAdmin, isError, isLoading, t }: AdminRouteProps) {
   if (!authStore.isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
   if (isLoading) {
     return (
       <main className="page">
-        <ScreenState className="page-subtitle" inline kind="loading" message="Checking admin access" />
+        <ScreenState className="page-subtitle" inline kind="loading" message={t("Checking admin access")} />
       </main>
     );
   }
   if (isError) {
     return (
       <main className="page">
-        <ApiErrorMessage error={error} fallback="Could not check admin access" />
+        <ApiErrorMessage error={error} fallback={t("Could not check admin access")} />
       </main>
     );
   }
@@ -143,11 +148,11 @@ function AdminRoute({ children, error, isAdmin, isError, isLoading }: AdminRoute
     return (
       <main className="page">
         <section className="panel content-panel">
-          <p className="eyebrow">Restricted area</p>
-          <h1 className="page-title">Admin access required</h1>
-          <p className="page-subtitle">This workspace is available only to users with the ADMIN role.</p>
+          <p className="eyebrow">{t("Restricted area")}</p>
+          <h1 className="page-title">{t("Admin access required")}</h1>
+          <p className="page-subtitle">{t("This workspace is available only to users with the ADMIN role.")}</p>
           <NavLink to="/" className="inline-link access-link">
-            Back to trips
+            {t("Back to trips")}
           </NavLink>
         </section>
       </main>
@@ -161,23 +166,24 @@ interface DriverRouteProps extends PropsWithChildren {
   isDriver: boolean;
   isError: boolean;
   isLoading: boolean;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }
 
-function DriverRoute({ children, error, isDriver, isError, isLoading }: DriverRouteProps) {
+function DriverRoute({ children, error, isDriver, isError, isLoading, t }: DriverRouteProps) {
   if (!authStore.isAuthenticated()) {
     return <Navigate to="/login" replace />;
   }
   if (isLoading) {
     return (
       <main className="page">
-        <ScreenState className="page-subtitle" inline kind="loading" message="Checking driver access" />
+        <ScreenState className="page-subtitle" inline kind="loading" message={t("Checking driver access")} />
       </main>
     );
   }
   if (isError) {
     return (
       <main className="page">
-        <ApiErrorMessage error={error} fallback="Could not check driver access" />
+        <ApiErrorMessage error={error} fallback={t("Could not check driver access")} />
       </main>
     );
   }
@@ -185,11 +191,11 @@ function DriverRoute({ children, error, isDriver, isError, isLoading }: DriverRo
     return (
       <main className="page">
         <section className="panel content-panel">
-          <p className="eyebrow">Restricted area</p>
-          <h1 className="page-title">Driver access required</h1>
-          <p className="page-subtitle">This workspace is available only to users with the DRIVER role.</p>
+          <p className="eyebrow">{t("Restricted area")}</p>
+          <h1 className="page-title">{t("Driver access required")}</h1>
+          <p className="page-subtitle">{t("This workspace is available only to users with the DRIVER role.")}</p>
           <NavLink to="/" className="inline-link access-link">
-            Back to trips
+            {t("Back to trips")}
           </NavLink>
         </section>
       </main>

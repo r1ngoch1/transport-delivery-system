@@ -20,6 +20,7 @@ import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
 import { Button } from "../shared/ui/Button";
 import { DataPanel } from "../shared/ui/DataPanel";
 import { ListRow } from "../shared/ui/ListRow";
+import { useI18n } from "../shared/i18n/i18n";
 import { PageHeader } from "../shared/ui/PageHeader";
 import { RouteMapPreview } from "../shared/ui/RouteMapPreview";
 import { ScreenState } from "../shared/ui/ScreenState";
@@ -41,6 +42,7 @@ type DriverRoute = {
 };
 
 export function DriverPage() {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
   const [notice, setNotice] = useState("");
   const profileQuery = useQuery({
@@ -64,14 +66,14 @@ export function DriverPage() {
   const updateMutation = useMutation({
     mutationFn: updateCurrentDriverProfile,
     onSuccess() {
-      setNotice("Driver profile saved");
+      setNotice(t("Driver profile saved"));
       void queryClient.invalidateQueries({ queryKey: ["driver-profile"] });
     }
   });
   const createAvailabilityMutation = useMutation({
     mutationFn: createCurrentDriverAvailabilitySlot,
     onSuccess() {
-      setNotice("Availability slot created");
+      setNotice(t("Availability slot created"));
       void queryClient.invalidateQueries({ queryKey: ["driver-availability"] });
     }
   });
@@ -79,28 +81,28 @@ export function DriverPage() {
     mutationFn: ({ id, request }: { id: string; request: DriverAvailabilitySlotRequest }) =>
       updateCurrentDriverAvailabilitySlot(id, request),
     onSuccess() {
-      setNotice("Availability slot saved");
+      setNotice(t("Availability slot saved"));
       void queryClient.invalidateQueries({ queryKey: ["driver-availability"] });
     }
   });
   const deleteAvailabilityMutation = useMutation({
     mutationFn: deleteCurrentDriverAvailabilitySlot,
     onSuccess() {
-      setNotice("Availability slot deleted");
+      setNotice(t("Availability slot deleted"));
       void queryClient.invalidateQueries({ queryKey: ["driver-availability"] });
     }
   });
   const createMutation = useMutation({
     mutationFn: createCurrentDriverProfile,
     onSuccess() {
-      setNotice("Driver profile created");
+      setNotice(t("Driver profile created"));
       void queryClient.invalidateQueries({ queryKey: ["driver-profile"] });
     }
   });
   const createTripMutation = useMutation({
     mutationFn: createTrip,
     onSuccess() {
-      setNotice("Trip created");
+      setNotice(t("Trip created"));
       void queryClient.invalidateQueries({ queryKey: ["driver-trips", profileQuery.data?.id] });
     }
   });
@@ -108,7 +110,7 @@ export function DriverPage() {
   if (profileQuery.isLoading) {
     return (
       <main className="page">
-        <ScreenState className="page-subtitle" inline kind="loading" message="Loading driver profile" />
+        <ScreenState className="page-subtitle" inline kind="loading" message={t("Loading driver profile")} />
       </main>
     );
   }
@@ -124,7 +126,7 @@ export function DriverPage() {
     }
     return (
       <main className="page">
-        <ApiErrorMessage error={profileQuery.error} fallback="Could not load driver profile" />
+        <ApiErrorMessage error={profileQuery.error} fallback={t("Could not load driver profile")} />
       </main>
     );
   }
@@ -133,7 +135,7 @@ export function DriverPage() {
   if (!profile) {
     return (
       <main className="page">
-        <ScreenState className="page-subtitle" inline kind="empty" message="Driver profile not found" />
+        <ScreenState className="page-subtitle" inline kind="empty" message={t("Driver profile not found")} />
       </main>
     );
   }
@@ -141,15 +143,15 @@ export function DriverPage() {
     <main className="page driver-page">
       <DataPanel className="driver-hero-panel">
         <PageHeader
-          eyebrow="Driver"
-          title="Driver workspace"
-          subtitle="Manage your profile, availability, and current assignments."
+          eyebrow={t("Driver")}
+          title={t("Driver workspace")}
+          subtitle={t("Manage your profile, availability, and current assignments.")}
         >
           <AvailabilityBadge status={profile.availabilityStatus} />
         </PageHeader>
         {notice && <div className="notice">{notice}</div>}
         {updateMutation.isError && (
-          <ApiErrorMessage error={updateMutation.error} fallback="Could not save driver profile" />
+          <ApiErrorMessage error={updateMutation.error} fallback={t("Could not save driver profile")} />
         )}
         <DriverProfileForm
           isSaving={updateMutation.isPending}
@@ -158,11 +160,12 @@ export function DriverPage() {
         />
       </DataPanel>
 
-      <DataPanel eyebrow="Trips" title="Create trip">
+      <DataPanel eyebrow={t("Trips")} title={t("Create trip")}>
         {createTripMutation.isError && (
-          <ApiErrorMessage error={createTripMutation.error} fallback="Could not create trip" />
+          <ApiErrorMessage error={createTripMutation.error} fallback={t("Could not create trip")} />
         )}
         <DriverTripForm
+          canCreateTrip={profile.availabilityStatus === "AVAILABLE"}
           cities={routeCatalogQuery.data?.cities ?? []}
           isSaving={createTripMutation.isPending}
           onSubmit={(request) => createTripMutation.mutate(request)}
@@ -170,12 +173,12 @@ export function DriverPage() {
         />
       </DataPanel>
 
-      <DataPanel eyebrow="Availability" title="Availability">
+      <DataPanel eyebrow={t("Availability")} title={t("Availability")}>
         {availabilityQuery.isLoading && (
-          <ScreenState className="page-subtitle" inline kind="loading" message="Loading availability" />
+          <ScreenState className="page-subtitle" inline kind="loading" message={t("Loading availability")} />
         )}
         {availabilityQuery.isError && (
-          <ApiErrorMessage error={availabilityQuery.error} fallback="Could not load availability" />
+          <ApiErrorMessage error={availabilityQuery.error} fallback={t("Could not load availability")} />
         )}
         {(createAvailabilityMutation.isError ||
           updateAvailabilityMutation.isError ||
@@ -221,16 +224,19 @@ export function DriverPage() {
 }
 
 function DriverTripForm({
+  canCreateTrip,
   cities,
   isSaving,
   onSubmit,
   routes
 }: {
+  canCreateTrip: boolean;
   cities: DriverCity[];
   isSaving: boolean;
   onSubmit: (request: CreateTripRequest) => void;
   routes: DriverRoute[];
 }) {
+  const { t } = useI18n();
   const [form, setForm] = useState({
     arrivalTime: "",
     departureTime: "",
@@ -245,6 +251,9 @@ function DriverTripForm({
       className="admin-form"
       onSubmit={(event) => {
         event.preventDefault();
+        if (!canCreateTrip) {
+          return;
+        }
         onSubmit({
           arrivalTime: new Date(form.arrivalTime).toISOString(),
           availableCargoVolume: Number(form.totalCargoVolume),
@@ -266,14 +275,15 @@ function DriverTripForm({
         });
       }}
     >
+      {!canCreateTrip && <div className="form-error">{t("Set availability to AVAILABLE before creating a trip")}</div>}
       <label>
-        Route
+        {t("Route")}
         <select
           required
           value={form.routeId}
           onChange={(event) => setForm({ ...form, routeId: event.target.value })}
         >
-          <option value="">Select route</option>
+          <option value="">{t("Select route")}</option>
           {routes.map((route) => (
             <option key={route.id} value={route.id}>
               {getCityName(cities, route.fromCityId)} -&gt; {getCityName(cities, route.toCityId)}
@@ -282,7 +292,7 @@ function DriverTripForm({
         </select>
       </label>
       <label>
-        Departure time
+        {t("Departure time")}
         <input
           required
           type="datetime-local"
@@ -291,7 +301,7 @@ function DriverTripForm({
         />
       </label>
       <label>
-        Arrival time
+        {t("Arrival time")}
         <input
           required
           type="datetime-local"
@@ -300,7 +310,7 @@ function DriverTripForm({
         />
       </label>
       <label>
-        Total seats
+        {t("Total seats")}
         <input
           min="1"
           required
@@ -310,7 +320,7 @@ function DriverTripForm({
         />
       </label>
       <label>
-        Total cargo volume
+        {t("Total cargo volume")}
         <input
           min="0"
           required
@@ -321,7 +331,7 @@ function DriverTripForm({
         />
       </label>
       <label>
-        Price
+        {t("Price")}
         <input
           min="0"
           required
@@ -330,8 +340,8 @@ function DriverTripForm({
           onChange={(event) => setForm({ ...form, price: event.target.value })}
         />
       </label>
-      <Button type="submit" disabled={isSaving || routes.length === 0}>
-        Create trip
+      <Button type="submit" disabled={isSaving || routes.length === 0 || !canCreateTrip}>
+        {t("Create trip")}
       </Button>
     </form>
   );

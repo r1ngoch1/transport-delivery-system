@@ -92,6 +92,21 @@ a {
   font-weight: 700;
 }
 
+.language-switch {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.language-button {
+  min-width: 40px;
+  padding: 6px 8px;
+}
+
+.language-button.active {
+  border-color: rgb(255 255 255 / 55%);
+  background: rgb(255 255 255 / 22%);
+}
+
 .page {
   width: min(1180px, calc(100vw - 32px));
   margin: 0 auto;

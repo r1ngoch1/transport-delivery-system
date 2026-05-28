@@ -9,6 +9,7 @@ import {
   type Notification
 } from "./notificationApi";
 import { ApiErrorMessage } from "../../shared/ui/ApiErrorMessage";
+import { useI18n } from "../../shared/i18n/i18n";
 import { ScreenState } from "../../shared/ui/ScreenState";
 import { StatusChip } from "../../shared/ui/StatusChip";
 
@@ -17,6 +18,7 @@ interface NotificationCenterProps {
 }
 
 export function NotificationCenter({ enabled }: NotificationCenterProps) {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const unreadCountQuery = useQuery({
@@ -54,28 +56,28 @@ export function NotificationCenter({ enabled }: NotificationCenterProps) {
       <button
         className="nav-button notification-button"
         type="button"
-        aria-label={`Notifications ${unreadCount} unread`}
+        aria-label={t("Notifications {count} unread", { count: unreadCount })}
         onClick={() => setOpen((current) => !current)}
       >
-        Notifications
+        {t("Notifications")}
         <span className="notification-badge">{unreadCount}</span>
       </button>
       {open && (
-        <section className="notification-popover panel" aria-label="Notification center">
+        <section className="notification-popover panel" aria-label={t("Notifications")}>
           <div className="notification-header">
-            <h2>Notifications</h2>
+            <h2>{t("Notifications")}</h2>
             <Link className="inline-link" to="/notifications">
-              View all
+              {t("View all")}
             </Link>
           </div>
           {notificationsQuery.isLoading && (
-            <ScreenState className="catalog-state" inline kind="loading" message="Loading notifications" />
+            <ScreenState className="catalog-state" inline kind="loading" message={t("Loading notifications")} />
           )}
           {notificationsQuery.isError && (
-            <ApiErrorMessage error={notificationsQuery.error} fallback="Could not load notifications" />
+            <ApiErrorMessage error={notificationsQuery.error} fallback={t("Could not load notifications")} />
           )}
           {notificationsQuery.isSuccess && latestNotifications.length === 0 && (
-            <ScreenState className="catalog-state" inline kind="empty" message="No notifications" />
+            <ScreenState className="catalog-state" inline kind="empty" message={t("No notifications")} />
           )}
           {latestNotifications.slice(0, 5).map((notification) => (
             <NotificationItem
@@ -103,6 +105,7 @@ function NotificationItem({
   notification: Notification;
   onMarkRead: () => void;
 }) {
+  const { t } = useI18n();
   return (
     <article className="notification-item notification-popover-row">
       <div className="notification-copy">
@@ -112,12 +115,17 @@ function NotificationItem({
       </div>
       <StatusChip status={notification.status === "UNREAD" ? "PENDING" : "COMPLETED"} label={notification.status} />
       <div className="inline-actions">
-        <Link className="inline-link" to={notificationLink(notification)} aria-label={`Open ${notification.title}`}>
-          Open
+        <Link className="inline-link" to={notificationLink(notification)} aria-label={t("Open {title}", { title: notification.title })}>
+          {t("Open")}
         </Link>
         {notification.status === "UNREAD" && (
-          <button className="inline-link inline-button" type="button" onClick={onMarkRead} aria-label={`Mark ${notification.title} as read`}>
-            Mark read
+          <button
+            className="inline-link inline-button"
+            type="button"
+            onClick={onMarkRead}
+            aria-label={t("Mark {title} as read", { title: notification.title })}
+          >
+            {t("Mark read")}
           </button>
         )}
       </div>

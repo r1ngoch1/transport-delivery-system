@@ -1,17 +1,20 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { LanguageProvider } from "../i18n/i18n";
 import { RouteMapPreview } from "./RouteMapPreview";
 
 describe("RouteMapPreview", () => {
   it("renders selected route details", () => {
     render(
-      <RouteMapPreview
-        from="Yekaterinburg"
-        to="Tyumen"
-        distanceKm={330}
-        durationMinutes={260}
-        capacityLabel="18 seats available"
-      />
+      <LanguageProvider>
+        <RouteMapPreview
+          from="Yekaterinburg"
+          to="Tyumen"
+          distanceKm={330}
+          durationMinutes={260}
+          capacityLabel="18 seats available"
+        />
+      </LanguageProvider>
     );
 
     expect(screen.getByRole("img", { name: "Route from Yekaterinburg to Tyumen" })).toBeInTheDocument();
@@ -23,7 +26,11 @@ describe("RouteMapPreview", () => {
   });
 
   it("renders empty route state", () => {
-    render(<RouteMapPreview from="" to="" />);
+    render(
+      <LanguageProvider>
+        <RouteMapPreview from="" to="" />
+      </LanguageProvider>
+    );
 
     expect(screen.getByText("Choose a route to preview distance and capacity.")).toBeInTheDocument();
   });

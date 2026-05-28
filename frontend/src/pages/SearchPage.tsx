@@ -6,6 +6,7 @@ import { createBooking, type Booking } from "../features/bookings/bookingApi";
 import { createCargoOrder, type CargoOrder } from "../features/cargo/cargoApi";
 import { getCityName, getRouteCatalog } from "../features/routes/routeApi";
 import { searchTrips, type Trip } from "../features/trips/tripApi";
+import { useI18n } from "../shared/i18n/i18n";
 import { ApiErrorMessage } from "../shared/ui/ApiErrorMessage";
 import { Button } from "../shared/ui/Button";
 import { PageHeader } from "../shared/ui/PageHeader";
@@ -14,6 +15,7 @@ import { ScreenState } from "../shared/ui/ScreenState";
 import { StatusChip } from "../shared/ui/StatusChip";
 
 export function SearchPage() {
+  const { t } = useI18n();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const routeCatalogQuery = useQuery({
@@ -63,8 +65,8 @@ export function SearchPage() {
   const capacityLabel =
     routeMatchesSubmittedSearch && firstTrip
       ? mode === "cargo"
-        ? `${formatNumber(firstTrip.availableCargoVolume ?? firstTrip.totalCargoVolume ?? 0)} m3 cargo available`
-        : `${firstTrip.availableSeats ?? firstTrip.totalSeats} seats available`
+        ? t("{value} m3 cargo available", { value: formatNumber(firstTrip.availableCargoVolume ?? firstTrip.totalCargoVolume ?? 0) })
+        : t("{value} seats available", { value: firstTrip.availableSeats ?? firstTrip.totalSeats })
       : undefined;
   const bookingMutation = useMutation({
     mutationFn: (trip: Trip) => createBooking(trip.id, "1"),
@@ -100,7 +102,7 @@ export function SearchPage() {
 
   function handleSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const nextRouteLabel = `${from || "Any city"} -> ${to || "Any city"}`;
+    const nextRouteLabel = `${from || t("Any city")} -> ${to || t("Any city")}`;
     const matchedRoute = routes.find(
       (route) =>
         getCityName(cityLookup, route.fromCityId).toLowerCase() === from.trim().toLowerCase() &&
@@ -114,7 +116,7 @@ export function SearchPage() {
     setCargoError("");
 
     if (!matchedRoute) {
-      setSearchError("No route found for selected cities");
+      setSearchError(t("No route found for selected cities"));
       return;
     }
 
@@ -138,7 +140,7 @@ export function SearchPage() {
       return;
     }
 
-    const validationError = validateCargoForm(cargoForm, trip);
+    const validationError = validateCargoForm(cargoForm, trip, t);
     if (validationError) {
       setCargoError(validationError);
       return;
@@ -152,25 +154,25 @@ export function SearchPage() {
   return (
     <main className="page search-layout">
       <form className="panel search-panel" onSubmit={handleSearch}>
-        <p className="eyebrow">{mode === "cargo" ? "Search cargo space" : "Search trip"}</p>
-        <div className="segmented-control" aria-label="Search mode">
+        <p className="eyebrow">{mode === "cargo" ? t("Search cargo space") : t("Search trip")}</p>
+        <div className="segmented-control" aria-label={t("Search mode")}>
           <button
             className={mode === "passenger" ? "segment active" : "segment"}
             type="button"
             onClick={() => setMode("passenger")}
           >
-            Passenger
+            {t("Passenger")}
           </button>
           <button
             className={mode === "cargo" ? "segment active" : "segment"}
             type="button"
             onClick={() => setMode("cargo")}
           >
-            Cargo
+            {t("Cargo")}
           </button>
         </div>
         <label>
-          From
+          {t("From")}
           <input
             placeholder="Yekaterinburg"
             value={from}
@@ -178,17 +180,17 @@ export function SearchPage() {
           />
         </label>
         <label>
-          To
+          {t("To")}
           <input placeholder="Tyumen" value={to} onChange={(event) => setTo(event.target.value)} />
         </label>
         <label>
-          Date
+          {t("Date")}
           <input type="date" value={date} onChange={(event) => setDate(event.target.value)} />
         </label>
         {mode === "cargo" && (
           <CargoFormFields cargoForm={cargoForm} setCargoForm={setCargoForm} />
         )}
-        <Button type="submit">{mode === "cargo" ? "Search cargo space" : "Search"}</Button>
+        <Button type="submit">{mode === "cargo" ? t("Search cargo space") : t("Search")}</Button>
         <RouteCatalogSummary
           isLoading={routeCatalogQuery.isLoading}
           error={routeCatalogQuery.error}
@@ -198,15 +200,15 @@ export function SearchPage() {
       </form>
       <section className="results-panel">
         <PageHeader
-          eyebrow={mode === "cargo" ? "Cargo route" : "Passenger route"}
-          title="Find a trip"
+          eyebrow={mode === "cargo" ? t("Cargo route") : t("Passenger route")}
+          title={t("Find a trip")}
           subtitle={
             <>
-              Showing {searchedRoute}
-              {date ? ` on ${date}` : ""}.{" "}
+              {t("Showing")} {searchedRoute}
+              {date ? ` ${t("on {date}", { date })}` : ""}.{" "}
               {mode === "cargo"
-                ? "Search routes, compare cargo capacity, and create cargo orders through the gateway."
-                : "Search routes, compare seats, and book through the gateway."}
+                ? t("Search routes, compare cargo capacity, and create cargo orders through the gateway.")
+                : t("Search routes, compare seats, and book through the gateway.")}
             </>
           }
         >
@@ -222,19 +224,19 @@ export function SearchPage() {
         {createdBooking && (
           <div className="notice booking-created">
             <div>
-              <strong>Booking created</strong>
-              <span>Seat {createdBooking.seatNumber}</span>
+              <strong>{t("Booking created")}</strong>
+              <span>{t("Seat {seat}", { seat: createdBooking.seatNumber })}</span>
             </div>
             <StatusChip status={createdBooking.status} />
             <Link className="inline-link" to="/bookings">
-              View bookings
+              {t("View bookings")}
             </Link>
           </div>
         )}
         {createdCargoOrder && (
           <div className="notice booking-created">
             <div>
-              <strong>Cargo order created</strong>
+              <strong>{t("Cargo order created")}</strong>
               <span>
                 {createdCargoOrder.volumeM3} m3 · {createdCargoOrder.price} {createdCargoOrder.currency}
               </span>
@@ -250,10 +252,10 @@ export function SearchPage() {
         {cargoMutation.isError && (
           <ApiErrorMessage error={cargoMutation.error} fallback="Could not create cargo order" />
         )}
-        {tripSearch.isPending && <ScreenState kind="loading" message="Searching trips" />}
-        {tripSearch.isError && <ApiErrorMessage error={tripSearch.error} fallback="Could not search trips" />}
+        {tripSearch.isPending && <ScreenState kind="loading" message={t("Searching trips")} />}
+        {tripSearch.isError && <ApiErrorMessage error={tripSearch.error} fallback={t("Could not search trips")} />}
         {tripSearch.isSuccess && tripSearch.data.length === 0 && (
-          <ScreenState kind="empty" message="No trips found for this route and date" />
+          <ScreenState kind="empty" message={t("No trips found for this route and date")} />
         )}
         {tripSearch.isSuccess && tripSearch.data.length > 0 && (
           <div className="trip-list">
@@ -261,19 +263,23 @@ export function SearchPage() {
               <article className="trip-card panel" key={trip.id}>
                 <div>
                   <strong>{formatTripTime(trip.departureTime)}</strong>
-                  <span>departure</span>
+                  <span>{t("departure")}</span>
                 </div>
                 <div>
                   <strong>{searchedRoute}</strong>
                   {mode === "cargo" ? (
-                    <span>{formatNumber(trip.availableCargoVolume ?? trip.totalCargoVolume ?? 0)} m3 cargo available</span>
+                    <span>
+                      {t("{value} m3 cargo available", {
+                        value: formatNumber(trip.availableCargoVolume ?? trip.totalCargoVolume ?? 0)
+                      })}
+                    </span>
                   ) : (
-                    <span>{trip.availableSeats ?? trip.totalSeats} seats available</span>
+                    <span>{t("{value} seats available", { value: trip.availableSeats ?? trip.totalSeats })}</span>
                   )}
                 </div>
                 <strong>
                   {mode === "cargo"
-                    ? cargoPriceEstimateLabel(cargoForm)
+                    ? cargoPriceEstimateLabel(cargoForm, t)
                     : `${trip.price} RUB`}
                 </strong>
                 <Button
@@ -281,7 +287,7 @@ export function SearchPage() {
                   disabled={bookingMutation.isPending || cargoMutation.isPending}
                   onClick={() => (mode === "cargo" ? handleCreateCargoOrder(trip) : handleBook(trip))}
                 >
-                  {mode === "cargo" ? (cargoMutation.isPending ? "Shipping" : "Ship cargo") : (bookingMutation.isPending ? "Booking" : "Book")}
+                  {mode === "cargo" ? (cargoMutation.isPending ? t("Shipping") : t("Ship cargo")) : (bookingMutation.isPending ? t("Booking") : t("Book"))}
                 </Button>
               </article>
             ))}
@@ -325,31 +331,32 @@ function CargoFormFields({
     widthCm: string;
   }) => void;
 }) {
+  const { t } = useI18n();
   return (
     <div className="cargo-form-grid">
       <label>
-        Description
+        {t("Description")}
         <input
           value={cargoForm.description}
           onChange={(event) => setCargoForm({ ...cargoForm, description: event.target.value })}
         />
       </label>
       <label>
-        Pickup address
+        {t("Pickup address")}
         <input
           value={cargoForm.pickupAddress}
           onChange={(event) => setCargoForm({ ...cargoForm, pickupAddress: event.target.value })}
         />
       </label>
       <label>
-        Dropoff address
+        {t("Dropoff address")}
         <input
           value={cargoForm.dropoffAddress}
           onChange={(event) => setCargoForm({ ...cargoForm, dropoffAddress: event.target.value })}
         />
       </label>
       <label>
-        Declared value
+        {t("Declared value")}
         <input
           min="0"
           step="0.01"
@@ -359,35 +366,35 @@ function CargoFormFields({
         />
       </label>
       <label>
-        Sender name
+        {t("Sender name")}
         <input
           value={cargoForm.senderName}
           onChange={(event) => setCargoForm({ ...cargoForm, senderName: event.target.value })}
         />
       </label>
       <label>
-        Sender phone
+        {t("Sender phone")}
         <input
           value={cargoForm.senderPhone}
           onChange={(event) => setCargoForm({ ...cargoForm, senderPhone: event.target.value })}
         />
       </label>
       <label>
-        Recipient name
+        {t("Recipient name")}
         <input
           value={cargoForm.recipientName}
           onChange={(event) => setCargoForm({ ...cargoForm, recipientName: event.target.value })}
         />
       </label>
       <label>
-        Recipient phone
+        {t("Recipient phone")}
         <input
           value={cargoForm.recipientPhone}
           onChange={(event) => setCargoForm({ ...cargoForm, recipientPhone: event.target.value })}
         />
       </label>
       <label>
-        Weight kg
+        {t("Weight kg")}
         <input
           min="0"
           step="0.01"
@@ -397,7 +404,7 @@ function CargoFormFields({
         />
       </label>
       <label>
-        Length cm
+        {t("Length cm")}
         <input
           min="0"
           step="0.01"
@@ -407,7 +414,7 @@ function CargoFormFields({
         />
       </label>
       <label>
-        Width cm
+        {t("Width cm")}
         <input
           min="0"
           step="0.01"
@@ -417,7 +424,7 @@ function CargoFormFields({
         />
       </label>
       <label>
-        Height cm
+        {t("Height cm")}
         <input
           min="0"
           step="0.01"
@@ -439,21 +446,22 @@ function validateCargoForm(
     weightKg: string;
     widthCm: string;
   },
-  trip: Trip
+  trip: Trip,
+  t: (key: string, params?: Record<string, string | number>) => string
 ) {
   const weightKg = Number(cargoForm.weightKg);
   const lengthCm = Number(cargoForm.lengthCm);
   const widthCm = Number(cargoForm.widthCm);
   const heightCm = Number(cargoForm.heightCm);
   if (!cargoForm.description.trim()) {
-    return "Cargo description is required";
+    return t("Cargo description is required");
   }
   if (![weightKg, lengthCm, widthCm, heightCm].every((value) => Number.isFinite(value) && value > 0)) {
-    return "Cargo dimensions and weight must be positive";
+    return t("Cargo dimensions and weight must be positive");
   }
   const volumeM3 = calculateCargoVolumeM3(lengthCm, widthCm, heightCm);
   if (volumeM3 > (trip.availableCargoVolume ?? trip.totalCargoVolume ?? 0)) {
-    return "Cargo volume exceeds available trip capacity";
+    return t("Cargo volume exceeds available trip capacity");
   }
   return "";
 }
@@ -471,22 +479,25 @@ function calculateCargoVolumeM3(lengthCm: number, widthCm: number, heightCm: num
   return (lengthCm * widthCm * heightCm) / 1_000_000;
 }
 
-function cargoPriceEstimateLabel(cargoForm: {
+function cargoPriceEstimateLabel(
+  cargoForm: {
   heightCm: string;
   lengthCm: string;
   weightKg: string;
   widthCm: string;
-}) {
+  },
+  t: (key: string, params?: Record<string, string | number>) => string
+) {
   const weightKg = Number(cargoForm.weightKg);
   const lengthCm = Number(cargoForm.lengthCm);
   const widthCm = Number(cargoForm.widthCm);
   const heightCm = Number(cargoForm.heightCm);
   if (![weightKg, lengthCm, widthCm, heightCm].every((value) => Number.isFinite(value) && value > 0)) {
-    return "Enter cargo details";
+    return t("Enter cargo details");
   }
   const volumeM3 = calculateCargoVolumeM3(lengthCm, widthCm, heightCm);
   const price = 500 + weightKg * 20 + volumeM3 * 300;
-  return `Estimated cargo price ${price.toFixed(2)} RUB`;
+  return t("Estimated cargo price {price} RUB", { price: price.toFixed(2) });
 }
 
 function formatNumber(value: number) {
@@ -518,20 +529,22 @@ function RouteCatalogSummary({
     estimatedDurationMinutes?: number;
   }>;
 }) {
+  const { t } = useI18n();
+
   if (isLoading) {
-    return <ScreenState kind="loading" message="Loading cities and routes" />;
+    return <ScreenState kind="loading" message={t("Loading cities and routes")} />;
   }
 
   if (error) {
-    return <ApiErrorMessage error={error} fallback="Could not load route catalog" />;
+    return <ApiErrorMessage error={error} fallback={t("Could not load route catalog")} />;
   }
 
   return (
     <div className="catalog-summary">
       <div>
-        <p className="eyebrow">Cities</p>
+        <p className="eyebrow">{t("Cities")}</p>
         {cities.length === 0 ? (
-          <ScreenState className="muted-text" inline kind="empty" message="No cities available" />
+          <ScreenState className="muted-text" inline kind="empty" message={t("No cities available")} />
         ) : (
           <div className="chip-list">
             {cities.map((city) => (
@@ -543,9 +556,9 @@ function RouteCatalogSummary({
         )}
       </div>
       <div>
-        <p className="eyebrow">Routes</p>
+        <p className="eyebrow">{t("Routes")}</p>
         {routes.length === 0 ? (
-          <ScreenState className="muted-text" inline kind="empty" message="No routes available" />
+          <ScreenState className="muted-text" inline kind="empty" message={t("No routes available")} />
         ) : (
           <div className="route-list">
             {routes.map((route) => (

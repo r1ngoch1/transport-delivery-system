@@ -265,6 +265,7 @@ describe("App routes", () => {
   afterEach(() => {
     cleanup();
     authStore.clearToken();
+    globalThis.localStorage?.removeItem("routeflow-locale");
     vi.restoreAllMocks();
   });
 
@@ -281,6 +282,17 @@ describe("App routes", () => {
     await waitForRouteCatalog();
     const catalog = screen.getByText("Routes").closest("div") as HTMLElement;
     expect(within(catalog).getByText("Yekaterinburg -> Tyumen")).toBeInTheDocument();
+  });
+
+  it("translates route catalog labels on the search page", async () => {
+    globalThis.localStorage?.setItem("routeflow-locale", "ru");
+
+    renderApp("/");
+
+    expect(await screen.findByText("Маршруты")).toBeInTheDocument();
+    expect(screen.getByText("Города")).toBeInTheDocument();
+    expect(screen.queryByText("Routes")).not.toBeInTheDocument();
+    expect(screen.queryByText("Cities")).not.toBeInTheDocument();
   });
 
   it("shows empty route catalog states on the search page", async () => {
@@ -621,6 +633,30 @@ describe("App routes", () => {
       totalCargoVolume: 10,
       price: 1500
     });
+  });
+
+  it("blocks driver trip creation until the driver is available", async () => {
+    const user = userEvent.setup();
+    const fetchMock = createDefaultFetchMock({ driverUnavailable: true });
+    vi.stubGlobal("fetch", fetchMock);
+    authStore.setToken("jwt-driver");
+    renderApp("/driver");
+
+    expect(await screen.findByRole("heading", { name: "Driver workspace" })).toBeInTheDocument();
+    expect(screen.getByText("Set availability to AVAILABLE before creating a trip")).toBeInTheDocument();
+    await user.selectOptions(screen.getByLabelText("Route"), "route-1");
+    await user.type(screen.getByLabelText("Departure time"), "2026-06-03T08:00");
+    await user.type(screen.getByLabelText("Arrival time"), "2026-06-03T12:00");
+    await user.type(screen.getByLabelText("Total seats"), "32");
+    await user.type(screen.getByLabelText("Total cargo volume"), "10");
+    await user.type(screen.getByLabelText("Price"), "1500");
+    await user.click(screen.getByRole("button", { name: "Create trip" }));
+
+    expect(
+      fetchMock.mock.calls.some(
+        ([request, init]) => requestUrl(request).endsWith("/api/trips") && requestMethod(request, init) === "POST"
+      )
+    ).toBe(false);
   });
 
   it("manages current driver availability slots", async () => {
@@ -1017,7 +1053,12 @@ describe("App routes", () => {
 });
 
 function createDefaultFetchMock(
-  options: { emptyRouteCatalog?: boolean; missingDriverProfile?: boolean; routeCatalogError?: boolean } = {}
+  options: {
+    driverUnavailable?: boolean;
+    emptyRouteCatalog?: boolean;
+    missingDriverProfile?: boolean;
+    routeCatalogError?: boolean;
+  } = {}
 ) {
   let driverProfileCreated = false;
   let driverAvailabilitySlots = [...driverAvailabilityFixtures];
@@ -1173,7 +1214,10 @@ function createDefaultFetchMock(
           404
         );
       }
-      return jsonResponse(driverFixtures[0]);
+      return jsonResponse({
+        ...driverFixtures[0],
+        availabilityStatus: options.driverUnavailable ? "UNAVAILABLE" : driverFixtures[0].availabilityStatus
+      });
     }
     if (url.endsWith("/api/admin/cargo-orders")) {
       return jsonResponse(cargoOrderFixtures);

@@ -1,3 +1,5 @@
+import { useI18n } from "../i18n/i18n";
+
 interface RouteMapPreviewProps {
   capacityLabel?: string;
   distanceKm?: number;
@@ -13,21 +15,22 @@ export function RouteMapPreview({
   from,
   to
 }: RouteMapPreviewProps) {
+  const { t } = useI18n();
   const hasRoute = Boolean(from.trim() && to.trim());
 
   return (
-    <section className="route-map-panel panel" aria-label="Route preview">
+    <section className="route-map-panel panel" aria-label={t("Route preview")}>
       <div className="route-map-copy">
-        <p className="eyebrow">Route preview</p>
-        <h2 className="section-title">{hasRoute ? `${from} to ${to}` : "Select route"}</h2>
+        <p className="eyebrow">{t("Route preview")}</p>
+        <h2 className="section-title">{hasRoute ? t("Route from {from} to {to}", { from, to }) : t("Select route")}</h2>
         {!hasRoute && (
-          <p className="page-subtitle">Choose a route to preview distance and capacity.</p>
+          <p className="page-subtitle">{t("Choose a route to preview distance and capacity.")}</p>
         )}
       </div>
       <div
         className="route-map-canvas"
         role="img"
-        aria-label={hasRoute ? `Route from ${from} to ${to}` : "Route preview placeholder"}
+        aria-label={hasRoute ? t("Route from {from} to {to}", { from, to }) : t("Route preview placeholder")}
       >
         <span className="route-pin route-pin-start" />
         <span className="route-path" />
@@ -42,7 +45,7 @@ export function RouteMapPreview({
       {hasRoute && (
         <div className="route-map-stats">
           {distanceKm !== undefined && <span>{distanceKm} km</span>}
-          {durationMinutes !== undefined && <span>{formatDuration(durationMinutes)}</span>}
+          {durationMinutes !== undefined && <span>{formatDuration(durationMinutes, t)}</span>}
           {capacityLabel && <span>{capacityLabel}</span>}
         </div>
       )}
@@ -50,14 +53,14 @@ export function RouteMapPreview({
   );
 }
 
-function formatDuration(minutes: number) {
+function formatDuration(minutes: number, t: (key: string, params?: Record<string, string | number>) => string) {
   const hours = Math.floor(minutes / 60);
   const remainingMinutes = minutes % 60;
   if (hours === 0) {
-    return `${remainingMinutes}m`;
+    return t("{minutes}m", { minutes: remainingMinutes });
   }
   if (remainingMinutes === 0) {
-    return `${hours}h`;
+    return t("{hours}h", { hours });
   }
-  return `${hours}h ${remainingMinutes}m`;
+  return t("{hours}h {minutes}m", { hours, minutes: remainingMinutes });
 }
