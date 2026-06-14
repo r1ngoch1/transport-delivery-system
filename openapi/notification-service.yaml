@@ -1,0 +1,240 @@
+openapi: 3.0.3
+info:
+  title: Notification Service API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+security:
+  - bearerAuth: []
+paths:
+  /api/notifications:
+    get:
+      tags: [Notifications]
+      operationId: listNotifications
+      summary: List current user's notifications
+      parameters:
+        - $ref: '#/components/parameters/NotificationType'
+        - $ref: '#/components/parameters/NotificationStatus'
+        - $ref: '#/components/parameters/NotificationSeverity'
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 100
+      responses:
+        '200':
+          description: Notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Notification'
+        default:
+          $ref: '#/components/responses/Error'
+  /api/notifications/unread-count:
+    get:
+      tags: [Notifications]
+      operationId: getUnreadNotificationCount
+      summary: Count unread notifications for current user
+      responses:
+        '200':
+          description: Unread count
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnreadCountResponse'
+        default:
+          $ref: '#/components/responses/Error'
+  /api/notifications/{id}:
+    get:
+      tags: [Notifications]
+      operationId: getNotification
+      summary: Get notification by id
+      parameters:
+        - $ref: '#/components/parameters/NotificationId'
+      responses:
+        '200':
+          description: Notification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        default:
+          $ref: '#/components/responses/Error'
+  /api/notifications/{id}/read:
+    patch:
+      tags: [Notifications]
+      operationId: markNotificationRead
+      summary: Mark notification as read
+      parameters:
+        - $ref: '#/components/parameters/NotificationId'
+      responses:
+        '200':
+          description: Updated notification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+        default:
+          $ref: '#/components/responses/Error'
+  /api/notifications/read-all:
+    patch:
+      tags: [Notifications]
+      operationId: markAllNotificationsRead
+      summary: Mark all current user's unread notifications as read
+      responses:
+        '200':
+          description: Updated count
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MarkAllReadResponse'
+        default:
+          $ref: '#/components/responses/Error'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    NotificationId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+    NotificationType:
+      name: type
+      in: query
+      schema:
+        $ref: '#/components/schemas/NotificationType'
+    NotificationStatus:
+      name: status
+      in: query
+      schema:
+        $ref: '#/components/schemas/NotificationStatus'
+    NotificationSeverity:
+      name: severity
+      in: query
+      schema:
+        $ref: '#/components/schemas/NotificationSeverity'
+  schemas:
+    Notification:
+      type: object
+      required:
+        - id
+        - recipientUserId
+        - type
+        - severity
+        - status
+        - title
+        - body
+        - deliveryChannel
+        - createdAt
+      properties:
+        id:
+          type: string
+          format: uuid
+        recipientUserId:
+          type: string
+          format: uuid
+        type:
+          $ref: '#/components/schemas/NotificationType'
+        severity:
+          $ref: '#/components/schemas/NotificationSeverity'
+        status:
+          $ref: '#/components/schemas/NotificationStatus'
+        title:
+          type: string
+          maxLength: 160
+        body:
+          type: string
+        entityType:
+          $ref: '#/components/schemas/NotificationEntityType'
+        entityId:
+          type: string
+          format: uuid
+        deliveryChannel:
+          $ref: '#/components/schemas/NotificationDeliveryChannel'
+        eventId:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        readAt:
+          type: string
+          format: date-time
+          nullable: true
+    NotificationType:
+      type: string
+      enum: [BOOKING, CARGO, PAYMENT, SYSTEM]
+    NotificationSeverity:
+      type: string
+      enum: [INFO, SUCCESS, WARNING, ERROR]
+    NotificationStatus:
+      type: string
+      enum: [UNREAD, READ]
+    NotificationEntityType:
+      type: string
+      enum: [BOOKING, CARGO_ORDER, PAYMENT]
+    NotificationDeliveryChannel:
+      type: string
+      enum: [IN_APP, LOG, EMAIL, SMS]
+    UnreadCountResponse:
+      type: object
+      required: [unreadCount]
+      properties:
+        unreadCount:
+          type: integer
+          format: int64
+    MarkAllReadResponse:
+      type: object
+      required: [updatedCount]
+      properties:
+        updatedCount:
+          type: integer
+          format: int32
+    ErrorResponse:
+      type: object
+      required: [timestamp, status, error, message, path]
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+  responses:
+    Error:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

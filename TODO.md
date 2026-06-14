@@ -190,26 +190,87 @@
     - [x] Настроить app shell, routing, protected routes и auth state.
     - [x] Подключить базовый API client и schema-aligned TypeScript types.
     - [x] Добавить генерацию frontend API client/types из OpenAPI contracts.
-  - [ ] Passenger booking MVP.
+  - [x] Passenger booking MVP.
     - [x] Добавить auth flow: register, login, JWT token storage, logout.
     - [x] Добавить страницу профиля текущего пользователя.
     - [x] Добавить просмотр cities/routes.
     - [x] Добавить поиск trips по route/date.
-    - [ ] Добавить booking flow: выбор trip, создание booking, отображение pending/confirmed/cancelled status.
-    - [ ] Добавить страницу моих бронирований.
-    - [ ] Добавить отображение payment/status по booking.
-  - [ ] Frontend quality gates.
-    - [ ] Добавить единое отображение API errors в формате backend `ApiExceptionHandler`.
-    - [ ] Добавить loading, empty и error states для основных экранов.
-    - [ ] Добавить frontend smoke/e2e сценарий пассажира через Gateway.
-    - [ ] Добавить проверку `npm run build` и frontend tests.
-    - [ ] После стабилизации добавить frontend в Docker Compose.
+    - [x] Добавить booking flow: выбор trip, создание booking, отображение pending/confirmed/cancelled status.
+    - [x] Добавить страницу моих бронирований.
+    - [x] Добавить отображение payment/status по booking.
+  - [x] Frontend quality gates.
+    - [x] Добавить единое отображение API errors в формате backend `ApiExceptionHandler`.
+    - [x] Добавить loading, empty и error states для основных экранов.
+    - [x] Добавить frontend smoke/e2e сценарий пассажира через Gateway.
+    - [x] Добавить проверку `npm run build` и frontend tests.
+    - [x] После стабилизации добавить frontend в Docker Compose.
   - [ ] Next frontend stages.
-    - [ ] Добавить admin screens для CRUD после passenger MVP.
-    - [ ] Добавить driver profile/availability screens.
-    - [ ] Добавить cargo order flow.
-    - [ ] Добавить notification UX для booking/cargo/payment событий.
-- [ ] Реальная платежная интеграция.
+    - [x] Admin screens для CRUD после passenger MVP.
+      - [x] Добавить admin layout: отдельная навигация, guard по роли `ADMIN`, понятный переход назад в passenger flow.
+      - [x] Подключить Admin Service/ API facade вместо прямого обращения к отдельным business services там, где есть агрегированные endpoints.
+      - [x] Добавить dashboard со сводкой по пользователям, маршрутам, рейсам, бронированиям, платежам, cargo orders и audit log.
+      - [x] Добавить управление пользователями: список, поиск/фильтры, просмотр профиля, роли, блокировка/разблокировка при наличии backend endpoint.
+      - [x] Добавить CRUD для cities/routes: таблица, форма создания/редактирования, validation, delete confirmation, обработка конфликтов.
+      - [x] Добавить CRUD для trips: выбор route, дата/время, capacity, price, driver assignment, статусы `SCHEDULED`, `IN_PROGRESS`, `COMPLETED`, `CANCELLED`.
+      - [x] Добавить просмотр bookings: фильтры по status/user/trip, детали booking, связанный payment, cancel action если поддерживается backend.
+      - [x] Добавить просмотр payments: фильтры по status/target, детали payment, idempotency key, provider fields после реальной платежной интеграции.
+      - [x] Добавить audit log screen: таблица действий admin, фильтры по actor/action/entity/date, детали payload без раскрытия чувствительных данных.
+      - [x] Покрыть admin screens smoke/e2e сценарием: login admin, CRUD route/trip, просмотр booking/payment/audit.
+    - [x] Backend endpoints needed for full Admin UI.
+      - [x] Admin facade: `GET /api/admin/summary` со счетчиками users, cities, routes, trips, bookings, payments, cargo orders, audit events.
+      - [x] Admin facade: `GET /api/admin/audit-events` с фильтрами `actorId`, `action`, `resourceType`, `resourceId`, `from`, `to`, `page`, `size`.
+      - [x] Admin facade: `GET /api/admin/audit-events/{id}` для просмотра payload/details без чувствительных данных.
+      - [x] User Service/Admin facade: `PATCH /api/admin/users/{id}/roles` для изменения ролей пользователя.
+      - [x] User Service/Admin facade: `PATCH /api/admin/users/{id}/enabled` или `POST /api/admin/users/{id}/lock` и `POST /api/admin/users/{id}/unlock`.
+      - [x] User Service/Admin facade: `GET /api/admin/users` должен поддерживать query-фильтры `q`, `role`, `enabled`, `page`, `size`.
+      - [x] Route Service/Admin facade: `DELETE /api/admin/cities/{id}` или `DELETE /api/cities/{id}` с проверкой конфликтов, если город используется маршрутом.
+      - [x] Route Service/Admin facade: `DELETE /api/admin/routes/{id}` или `DELETE /api/routes/{id}` с проверкой конфликтов, если маршрут используется рейсом.
+      - [x] Route Service/Admin facade: `GET /api/admin/cities/{id}` и `GET /api/admin/routes/{id}` для detail/edit screens через facade.
+      - [x] Trip Service/Admin facade: `POST /api/admin/trips` и `PATCH /api/admin/trips/{id}` через facade, чтобы frontend не ходил напрямую в Trip Service.
+      - [x] Trip Service/Admin facade: `DELETE /api/admin/trips/{id}` или `PATCH /api/admin/trips/{id}` со статусом `CANCELLED`, если физическое удаление не поддерживается.
+      - [x] Trip Service/Admin facade: `GET /api/admin/trips` должен поддерживать фильтры `status`, `routeId`, `driverId`, `dateFrom`, `dateTo`, `page`, `size`.
+      - [x] Booking Service/Admin facade: `GET /api/admin/bookings` должен поддерживать фильтры `status`, `userId`, `tripId`, `paymentId`, `page`, `size`.
+      - [x] Booking Service/Admin facade: `POST /api/admin/bookings/{id}/cancel` для admin cancel action с audit reason.
+      - [x] Payment Service/Admin facade: `GET /api/admin/payments` должен поддерживать фильтры `status`, `targetType`, `targetId`, `userId`, `page`, `size`.
+      - [x] Payment Service/Admin facade: `GET /api/admin/payments/{id}` должен возвращать provider fields, idempotency key и related target summary.
+      - [x] Cargo Service/Admin facade: `GET /api/admin/cargo-orders` должен поддерживать фильтры `status`, `tripId`, `userId`, `paymentId`, `page`, `size`.
+      - [x] Cargo Service/Admin facade: `POST /api/admin/cargo-orders/{id}/cancel` или другой ручной admin action, если бизнес-процесс это допускает.
+    - [x] Driver profile/availability screens.
+      - [x] Добавить driver onboarding flow для пользователя с ролью `DRIVER`: создание/обновление driver profile.
+        - [x] Показать onboarding/empty state, если driver profile еще не создан.
+        - [x] Добавить self-service создание driver profile после появления backend endpoint.
+      - [x] Добавить форму driver profile: ФИО/контакты из user profile, license number, license category, license expiration date.
+      - [x] Добавить экран availability: интервалы доступности, календарный/табличный режим, создание/редактирование/удаление availability slots.
+      - [x] Добавить отображение назначенных trips водителя: upcoming/current/history, route, departure time, capacity, cargo volume.
+      - [x] Добавить статусные действия водителя, если поддержаны backend endpoints: backend endpoints пока отсутствуют, UI-действия не добавлять.
+      - [x] Обработать edge cases: профиль еще не создан, лицензия просрочена, availability пересекается, driver уже назначен на другой trip.
+        - [x] Профиль еще не создан: onboarding/empty state.
+        - [x] Лицензия просрочена: предупреждение в профиле.
+        - [x] Availability пересекается: клиентская проверка перед созданием/редактированием slot.
+        - [x] Driver уже назначен на другой trip: Trip Service возвращает `409 Conflict` при пересекающемся назначении.
+      - [x] Добавить role-aware navigation: passenger/admin/driver разделы показываются только доступным ролям.
+      - [x] Покрыть driver flow тестами: создание профиля, изменение availability, просмотр назначенных trips.
+    - [x] Cargo order flow.
+      - [x] Добавить cargo search flow поверх существующего поиска trips: route/date, доступный cargo volume, price estimate.
+      - [x] Добавить форму cargo order: pickup/dropoff city/address, dimensions, weight, declared value, description, контакты отправителя/получателя.
+      - [x] Добавить клиентскую валидацию dimensions/weight и проверку доступного cargo volume по выбранному trip.
+      - [x] Добавить создание cargo order через Cargo Service и оплату через Payment Service с `Idempotency-Key`.
+      - [x] Добавить страницу моих cargo orders: status, trip, payment status, размеры/вес, история изменений.
+      - [x] Добавить cargo order details: route timeline, payment block, cancel action если поддерживается backend.
+      - [x] Добавить admin cargo screens: список cargo orders, фильтры по status/trip/user/payment, детали и ручные действия при наличии backend endpoints.
+      - [x] Покрыть cargo smoke/e2e: login, поиск trip, создание cargo order, payment success, просмотр статуса.
+    - [x] Notification UX для booking/cargo/payment событий.
+      - [x] Спроектировать Notification Service API для inbox, unread count, read/read-all и фильтров.
+      - [x] Реализовать backend-источник уведомлений: persistence, Kafka `payment-events` consumer, idempotency по `eventId`, Gateway route.
+      - [x] Определить frontend-модель notifications: тип, severity, read/unread, entity link, createdAt, delivery channel.
+      - [x] Добавить notification center в app shell: badge unread count, dropdown/side panel, список последних событий.
+      - [x] Добавить toast notifications для важных событий: booking confirmed/cancelled, payment success/failed, cargo status changed.
+      - [x] Добавить экран всех уведомлений: фильтры по типу/status/date, mark as read, mark all as read.
+      - [x] Подключить backend-источник уведомлений, когда появится API: polling через TanStack Query или SSE/WebSocket отдельным этапом.
+      - [x] До появления realtime API добавить graceful fallback: обновление статусов после user action и ручной refresh.
+      - [x] Добавить deep links из notification в booking/cargo/payment details.
+      - [x] Покрыть notification UX тестами: unread badge, mark as read, переход из уведомления в связанную сущность.
+- [ ] Реальная платежная интеграция. (отложено, сейчас пропускаем)
   - [ ] Выбрать payment provider и sandbox account.
   - [ ] Спроектировать payment lifecycle вместо MVP auto-success.
   - [ ] Добавить provider payment id и webhook endpoint.

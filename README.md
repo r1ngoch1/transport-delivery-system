@@ -39,6 +39,18 @@ Run order:
 
 The scenario registers a passenger and an admin, logs in, stores JWT tokens, queries seeded cities/routes/trips through Gateway, creates a booking, checks booking status, finds the payment by booking id, and checks an Admin Service aggregate endpoint.
 
+## Frontend
+
+The React frontend lives in `frontend/` and talks to the system only through API Gateway.
+
+Useful commands:
+
+- `cd frontend && npm run dev` starts the Vite dev server on `5173`.
+- `cd frontend && npm run verify` runs frontend tests and the production build.
+- `cd frontend && npm run smoke:gateway` runs the passenger smoke scenario through `http://localhost:8080`.
+
+Docker Compose includes the production frontend on `http://localhost:3000`. The container serves the built app with nginx and proxies `/api/**` to `api-gateway:8080`.
+
 Driver Service is available through Gateway at `/api/drivers/**` and directly on port `8086`.
 Cargo Service is available through Gateway at `/api/cargo-orders/**` and directly on port `8088`.
 Admin Service is available through Gateway at `/api/admin/**` and directly on port `8089`.

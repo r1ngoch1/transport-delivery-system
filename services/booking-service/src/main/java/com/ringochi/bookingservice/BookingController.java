@@ -3,6 +3,9 @@ package com.ringochi.bookingservice;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -66,9 +70,17 @@ public class BookingController {
     }
 
     @GetMapping("/admin")
-    public List<Booking> all(@RequestHeader(value = "X-User-Roles", required = false) String roles) {
+    public List<Booking> all(@RequestHeader(value = "X-User-Roles", required = false) String roles,
+                             @RequestParam(required = false) BookingStatus status,
+                             @RequestParam(required = false) UUID userId,
+                             @RequestParam(required = false) UUID tripId,
+                             @RequestParam(required = false) UUID paymentId,
+                             @RequestParam(defaultValue = "0") int page,
+                             @RequestParam(defaultValue = "50") int size) {
         requireAdmin(roles);
-        return bookings.findAll();
+        var pageable = PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 100),
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+        return bookings.findAll(bookingSpec(status, userId, tripId, paymentId), pageable).getContent();
     }
 
     @GetMapping("/admin/{id}")
@@ -80,12 +92,42 @@ public class BookingController {
     @PostMapping("/{id}/cancel")
     public Booking cancel(@RequestHeader("X-User-Id") UUID userId, @PathVariable UUID id) {
         Booking booking = byId(userId, id);
+        return cancelBooking(booking);
+    }
+
+    @PostMapping("/admin/{id}/cancel")
+    public Booking adminCancel(@RequestHeader(value = "X-User-Roles", required = false) String roles, @PathVariable UUID id) {
+        requireAdmin(roles);
+        Booking booking = bookings.findById(id).orElseThrow(() -> notFound());
+        return cancelBooking(booking);
+    }
+
+    private Booking cancelBooking(Booking booking) {
         if (booking.getStatus() != BookingStatus.CANCELLED) {
             booking.setStatus(BookingStatus.CANCELLED);
             booking.setUpdatedAt(Instant.now());
             tripClient.releaseSeat(booking.getTripId());
         }
         return bookings.save(booking);
+    }
+
+    private Specification<Booking> bookingSpec(BookingStatus status, UUID userId, UUID tripId, UUID paymentId) {
+        return (root, query, cb) -> {
+            var predicate = cb.conjunction();
+            if (status != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("status"), status));
+            }
+            if (userId != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("userId"), userId));
+            }
+            if (tripId != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("tripId"), tripId));
+            }
+            if (paymentId != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("paymentId"), paymentId));
+            }
+            return predicate;
+        };
     }
 
     private ResponseStatusException notFound() {

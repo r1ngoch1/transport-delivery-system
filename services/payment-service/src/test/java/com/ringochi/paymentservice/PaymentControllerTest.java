@@ -18,6 +18,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.server.ResponseStatusException;
@@ -108,24 +111,38 @@ class PaymentControllerTest {
     @Test
     void byTargetReturnsAllPaymentsWhenFilterIsMissing() {
         Payment payment = payment(TargetType.BOOKING, UUID.randomUUID(), UUID.randomUUID(), "1200.00");
-        when(payments.findAll()).thenReturn(List.of(payment));
+        when(payments.findAll(anyPaymentSpec(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(payment)));
 
-        List<Payment> result = controller.byTarget(null, payment.getTargetId());
+        List<Payment> result = controller.byTarget(null, null, payment.getTargetId(), null, 0, 50);
 
         assertThat(result).containsExactly(payment);
-        verify(payments).findAll();
+        verify(payments).findAll(anyPaymentSpec(), any(Pageable.class));
     }
 
     @Test
     void byTargetFiltersByTypeAndId() {
         UUID targetId = UUID.randomUUID();
         Payment payment = payment(TargetType.BOOKING, targetId, UUID.randomUUID(), "1200.00");
-        when(payments.findByTargetTypeAndTargetId(TargetType.BOOKING, targetId)).thenReturn(List.of(payment));
+        when(payments.findAll(anyPaymentSpec(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(payment)));
 
-        List<Payment> result = controller.byTarget(TargetType.BOOKING, targetId);
+        List<Payment> result = controller.byTarget(null, TargetType.BOOKING, targetId, null, 0, 50);
 
         assertThat(result).containsExactly(payment);
-        verify(payments).findByTargetTypeAndTargetId(TargetType.BOOKING, targetId);
+        verify(payments).findAll(anyPaymentSpec(), any(Pageable.class));
+    }
+
+    @Test
+    void byTargetSupportsAdminFiltersAndPaging() {
+        UUID targetId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        Payment payment = payment(TargetType.BOOKING, targetId, userId, "1200.00");
+        payment.setStatus(PaymentStatus.SUCCESS);
+        when(payments.findAll(anyPaymentSpec(), any(Pageable.class))).thenReturn(new PageImpl<>(List.of(payment)));
+
+        List<Payment> result = controller.byTarget(PaymentStatus.SUCCESS, TargetType.BOOKING, targetId, userId, 1, 10);
+
+        assertThat(result).containsExactly(payment);
+        verify(payments).findAll(anyPaymentSpec(), any(Pageable.class));
     }
 
     private static Payment payment(TargetType targetType, UUID targetId, UUID userId, String amount) {
@@ -135,5 +152,10 @@ class PaymentControllerTest {
         payment.setUserId(userId);
         payment.setAmount(new BigDecimal(amount));
         return payment;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Specification<Payment> anyPaymentSpec() {
+        return any(Specification.class);
     }
 }

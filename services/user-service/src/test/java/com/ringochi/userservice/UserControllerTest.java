@@ -9,12 +9,17 @@ import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
@@ -150,9 +155,10 @@ class UserControllerTest {
     void allReturnsUsersForAdmin() {
         User passenger = user("passenger@example.com", "+10000000001", "Passenger One", Role.PASSENGER);
         User driver = user("driver@example.com", "+10000000002", "Driver One", Role.DRIVER);
-        when(users.findAll()).thenReturn(List.of(passenger, driver));
+        when(users.findAll(org.mockito.ArgumentMatchers.<Specification<User>>any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(passenger, driver)));
 
-        List<UserController.UserDto> response = controller.all("ADMIN");
+        List<UserController.UserDto> response = controller.all("ADMIN", null, null, null, 0, 20);
 
         assertThat(response).extracting(UserController.UserDto::email)
                 .containsExactly("passenger@example.com", "driver@example.com");
@@ -160,11 +166,59 @@ class UserControllerTest {
 
     @Test
     void allRejectsNonAdmin() {
-        assertThatThrownBy(() -> controller.all("PASSENGER"))
+        assertThatThrownBy(() -> controller.all("PASSENGER", null, null, null, 0, 20))
                 .isInstanceOfSatisfying(ResponseStatusException.class, exception ->
                         assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN));
 
-        verify(users, never()).findAll();
+        verify(users, never()).findAll(org.mockito.ArgumentMatchers.<Specification<User>>any(), any(Pageable.class));
+    }
+
+    @Test
+    void allSupportsAdminFiltersAndPaging() {
+        User driver = user("driver@example.com", "+10000000002", "Driver One", Role.DRIVER);
+        when(users.findAll(org.mockito.ArgumentMatchers.<Specification<User>>any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(driver)));
+
+        List<UserController.UserDto> response = controller.all("ADMIN", "driver", Role.DRIVER, true, 1, 10);
+
+        assertThat(response).extracting(UserController.UserDto::email).containsExactly("driver@example.com");
+        verify(users).findAll(org.mockito.ArgumentMatchers.<Specification<User>>any(), any(Pageable.class));
+    }
+
+    @Test
+    void adminUpdatesUserRoles() {
+        User user = user("driver@example.com", "+10000000002", "Driver One", Role.DRIVER);
+        when(users.findById(user.getId())).thenReturn(Optional.of(user));
+        when(users.save(user)).thenReturn(user);
+
+        UserController.UserDto response = controller.updateRoles("ADMIN", user.getId(),
+                new UserController.UpdateRolesRequest(Set.of(Role.PASSENGER, Role.ADMIN)));
+
+        assertThat(response.roles()).containsExactlyInAnyOrder(Role.PASSENGER, Role.ADMIN);
+        assertThat(user.getUpdatedAt()).isAfter(user.getCreatedAt());
+        verify(users).save(user);
+    }
+
+    @Test
+    void adminUpdatesUserEnabledFlag() {
+        User user = user("driver@example.com", "+10000000002", "Driver One", Role.DRIVER);
+        when(users.findById(user.getId())).thenReturn(Optional.of(user));
+        when(users.save(user)).thenReturn(user);
+
+        UserController.UserDto response = controller.updateEnabled("ADMIN", user.getId(),
+                new UserController.UpdateEnabledRequest(false));
+
+        assertThat(response.enabled()).isFalse();
+        verify(users).save(user);
+    }
+
+    @Test
+    void adminUpdateRolesRejectsEmptyRoleSet() {
+        UUID userId = UUID.randomUUID();
+
+        assertThatThrownBy(() -> controller.updateRoles("ADMIN", userId, new UserController.UpdateRolesRequest(Set.of())))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception ->
+                        assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST));
     }
 
     private static User user(String email, String phone, String fullName, Role role) {

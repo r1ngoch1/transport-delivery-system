@@ -61,6 +61,10 @@ paths:
       operationId: findPayments
       security: [{ bearerAuth: [] }]
       parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/PaymentStatus'
         - name: targetType
           in: query
           schema:
@@ -70,6 +74,26 @@ paths:
           schema:
             type: string
             format: uuid
+        - name: userId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 0
+            minimum: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            format: int32
+            default: 50
+            minimum: 1
+            maximum: 100
       responses:
         '200':
           description: OK

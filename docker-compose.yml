@@ -97,6 +97,34 @@ services:
       timeout: 5s
       retries: 10
 
+  postgres-admin:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: admin_db
+      POSTGRES_USER: admin_service
+      POSTGRES_PASSWORD: admin_service
+    ports:
+      - "15440:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin_service -d admin_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  postgres-notification:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: notification_db
+      POSTGRES_USER: notification_service
+      POSTGRES_PASSWORD: notification_service
+    ports:
+      - "15441:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notification_service -d notification_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
   kafka:
     image: apache/kafka:3.7.1
     ports:
@@ -290,6 +318,9 @@ services:
         SERVICE_MODULE: services/admin-service
     environment:
       SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-admin:5432/admin_db
+      SPRING_DATASOURCE_USERNAME: admin_service
+      SPRING_DATASOURCE_PASSWORD: admin_service
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
     ports:
       - "8089:8089"
@@ -307,6 +338,8 @@ services:
       driver-service:
         condition: service_healthy
       cargo-service:
+        condition: service_healthy
+      postgres-admin:
         condition: service_healthy
       booking-service:
         condition: service_healthy
@@ -383,6 +416,9 @@ services:
         SERVICE_MODULE: services/notification-service
     environment:
       SPRING_CONFIG_IMPORT: optional:configserver:http://config-server:8889
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-notification:5432/notification_db
+      SPRING_DATASOURCE_USERNAME: notification_service
+      SPRING_DATASOURCE_PASSWORD: notification_service
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://discovery-server:8761/eureka/
     ports:
@@ -391,6 +427,8 @@ services:
       config-server:
         condition: service_healthy
       discovery-server:
+        condition: service_healthy
+      postgres-notification:
         condition: service_healthy
       kafka:
         condition: service_healthy
@@ -431,8 +469,26 @@ services:
         condition: service_healthy
       admin-service:
         condition: service_healthy
+      notification-service:
+        condition: service_healthy
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8080/actuator/health >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: ""
+    ports:
+      - "3000:80"
+    depends_on:
+      api-gateway:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost/ >/dev/null"]
       interval: 10s
       timeout: 5s
       retries: 12

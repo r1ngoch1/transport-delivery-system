@@ -1,10 +1,10 @@
-import type { BookingStatus, PaymentStatus, TripStatus } from "../../api/types";
+import type { BookingStatus, CargoStatus, PaymentStatus, TripStatus } from "../../api/types";
 
-type Status = BookingStatus | PaymentStatus | TripStatus;
+type Status = BookingStatus | CargoStatus | PaymentStatus | TripStatus;
 
-const successStatuses: Status[] = ["CONFIRMED", "SUCCESS", "COMPLETED"];
+const successStatuses: Status[] = ["CONFIRMED", "SUCCESS", "COMPLETED", "PAID"];
 const dangerStatuses: Status[] = ["CANCELLED", "FAILED"];
-const warningStatuses: Status[] = ["PENDING", "REFUNDED"];
+const warningStatuses: Status[] = ["PENDING", "PENDING_PAYMENT", "REFUNDED", "IN_PROGRESS"];
 
 export function StatusChip({ status, label = status }: { status: Status; label?: string }) {
   const tone = getTone(status);

@@ -1,5 +1,6 @@
 import { routeClient } from "../../api/generated/client";
 import type { components } from "../../api/generated/route";
+import { formatApiError } from "../../shared/errors/apiError";
 
 export type City = components["schemas"]["City"];
 export type Route = components["schemas"]["Route"];
@@ -19,10 +20,10 @@ export async function getRouteCatalog(): Promise<RouteCatalog> {
   const routesError = (routesResult as { error?: unknown }).error;
 
   if (citiesError) {
-    throw new Error(extractErrorMessage(citiesError, "Could not load cities"));
+    throw new Error(formatApiError(citiesError, "Could not load cities"));
   }
   if (routesError) {
-    throw new Error(extractErrorMessage(routesError, "Could not load routes"));
+    throw new Error(formatApiError(routesError, "Could not load routes"));
   }
 
   return {
@@ -38,9 +39,3 @@ export function getCityName(cities: Array<{ id: string; name?: string }>, cityId
   return cities.find((city) => city.id === cityId)?.name ?? "Unknown city";
 }
 
-function extractErrorMessage(error: unknown, fallback: string): string {
-  if (typeof error === "object" && error && "message" in error) {
-    return String(error.message);
-  }
-  return fallback;
-}

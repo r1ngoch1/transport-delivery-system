@@ -6,6 +6,14 @@ spring:
     name: admin-service
   config:
     import: optional:configserver:http://localhost:8889
+  datasource:
+    url: jdbc:postgresql://localhost:15440/admin_db
+    username: admin_service
+    password: admin_service
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
 
 eureka:
   client:

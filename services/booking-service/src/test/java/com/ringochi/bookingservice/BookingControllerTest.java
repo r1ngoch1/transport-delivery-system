@@ -17,6 +17,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -125,18 +128,35 @@ class BookingControllerTest {
     void allReturnsBookingsForAdmin() {
         Booking first = booking(UUID.randomUUID(), UUID.randomUUID(), BookingStatus.CONFIRMED);
         Booking second = booking(UUID.randomUUID(), UUID.randomUUID(), BookingStatus.PENDING);
-        when(bookings.findAll()).thenReturn(List.of(first, second));
+        when(bookings.findAll(org.mockito.ArgumentMatchers.<Specification<Booking>>any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(first, second)));
 
-        List<Booking> result = controller.all("ADMIN");
+        List<Booking> result = controller.all("ADMIN", null, null, null, null, 0, 50);
 
         assertThat(result).containsExactly(first, second);
     }
 
     @Test
     void allRejectsNonAdmin() {
-        assertThatThrownBy(() -> controller.all("PASSENGER"))
+        assertThatThrownBy(() -> controller.all("PASSENGER", null, null, null, null, 0, 50))
                 .isInstanceOfSatisfying(ResponseStatusException.class, exception ->
                         assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.FORBIDDEN));
+    }
+
+    @Test
+    void allSupportsAdminFiltersAndPaging() {
+        UUID userId = UUID.randomUUID();
+        UUID tripId = UUID.randomUUID();
+        UUID paymentId = UUID.randomUUID();
+        Booking booking = booking(userId, tripId, BookingStatus.CONFIRMED);
+        booking.setPaymentId(paymentId);
+        when(bookings.findAll(org.mockito.ArgumentMatchers.<Specification<Booking>>any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(booking)));
+
+        List<Booking> result = controller.all("ADMIN", BookingStatus.CONFIRMED, userId, tripId, paymentId, 1, 10);
+
+        assertThat(result).containsExactly(booking);
+        verify(bookings).findAll(org.mockito.ArgumentMatchers.<Specification<Booking>>any(), any(Pageable.class));
     }
 
     @Test
@@ -147,6 +167,19 @@ class BookingControllerTest {
         Booking result = controller.adminById("ADMIN", booking.getId());
 
         assertThat(result).isEqualTo(booking);
+    }
+
+    @Test
+    void adminCancelMarksBookingCancelledAndReleasesSeat() {
+        Booking booking = booking(UUID.randomUUID(), UUID.randomUUID(), BookingStatus.CONFIRMED);
+        when(bookings.findById(booking.getId())).thenReturn(Optional.of(booking));
+        when(bookings.save(booking)).thenReturn(booking);
+
+        Booking result = controller.adminCancel("ADMIN", booking.getId());
+
+        assertThat(result.getStatus()).isEqualTo(BookingStatus.CANCELLED);
+        verify(tripClient).releaseSeat(booking.getTripId());
+        verify(bookings).save(booking);
     }
 
     private static TripClient.TripDto trip(UUID tripId, BigDecimal price) {

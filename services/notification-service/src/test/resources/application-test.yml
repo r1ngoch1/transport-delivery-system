@@ -16,6 +16,10 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     listener:
       auto-startup: false
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
 
 eureka:
   client:

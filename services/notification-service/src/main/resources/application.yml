@@ -6,6 +6,14 @@ spring:
     name: notification-service
   config:
     import: optional:configserver:http://localhost:8889
+  datasource:
+    url: jdbc:postgresql://localhost:15441/notification_db
+    username: notification_service
+    password: notification_service
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
   kafka:
     bootstrap-servers: localhost:9092
     consumer:

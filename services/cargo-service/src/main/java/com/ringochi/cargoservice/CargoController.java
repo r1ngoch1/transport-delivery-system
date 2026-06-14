@@ -5,12 +5,16 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -43,7 +47,7 @@ public class CargoController {
         checkCapacity(request);
 
         try {
-            var payment = paymentClient.create(new PaymentClient.CreatePaymentRequest(
+            var payment = paymentClient.create("cargo-order-" + request.getId(), new PaymentClient.CreatePaymentRequest(
                     "CARGO_ORDER", request.getId(), userId, request.getPrice(), request.getCurrency()));
             request.setPaymentId(payment.id());
             if ("SUCCESS".equals(payment.status())) {
@@ -65,9 +69,17 @@ public class CargoController {
     }
 
     @GetMapping
-    public List<CargoOrder> all(@RequestHeader(value = "X-User-Roles", required = false) String roles) {
+    public List<CargoOrder> all(@RequestHeader(value = "X-User-Roles", required = false) String roles,
+                                @RequestParam(required = false) CargoStatus status,
+                                @RequestParam(required = false) UUID tripId,
+                                @RequestParam(required = false) UUID userId,
+                                @RequestParam(required = false) UUID paymentId,
+                                @RequestParam(defaultValue = "0") int page,
+                                @RequestParam(defaultValue = "50") int size) {
         requireAdmin(roles);
-        return cargoOrders.findAll();
+        var pageable = PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 100),
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+        return cargoOrders.findAll(cargoSpec(status, tripId, userId, paymentId), pageable).getContent();
     }
 
     @GetMapping("/admin/{id}")
@@ -89,6 +101,18 @@ public class CargoController {
     @PostMapping("/{id}/cancel")
     public CargoOrder cancel(@RequestHeader("X-User-Id") UUID userId, @PathVariable UUID id) {
         CargoOrder order = byId(userId, id);
+        return cancelOrder(order);
+    }
+
+    @PostMapping("/admin/{id}/cancel")
+    public CargoOrder adminCancel(@RequestHeader(value = "X-User-Roles", required = false) String roles,
+                                  @PathVariable UUID id) {
+        requireAdmin(roles);
+        CargoOrder order = cargoOrders.findById(id).orElseThrow(() -> notFound());
+        return cancelOrder(order);
+    }
+
+    private CargoOrder cancelOrder(CargoOrder order) {
         if (order.getStatus() != CargoStatus.CANCELLED) {
             order.setStatus(CargoStatus.CANCELLED);
             touch(order);
@@ -180,6 +204,25 @@ public class CargoController {
         if (roles == null || !roles.contains("ADMIN")) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "ADMIN role required");
         }
+    }
+
+    private Specification<CargoOrder> cargoSpec(CargoStatus status, UUID tripId, UUID userId, UUID paymentId) {
+        return (root, query, cb) -> {
+            var predicates = new java.util.ArrayList<jakarta.persistence.criteria.Predicate>();
+            if (status != null) {
+                predicates.add(cb.equal(root.get("status"), status));
+            }
+            if (tripId != null) {
+                predicates.add(cb.equal(root.get("tripId"), tripId));
+            }
+            if (userId != null) {
+                predicates.add(cb.equal(root.get("userId"), userId));
+            }
+            if (paymentId != null) {
+                predicates.add(cb.equal(root.get("paymentId"), paymentId));
+            }
+            return cb.and(predicates.toArray(jakarta.persistence.criteria.Predicate[]::new));
+        };
     }
 
     public record CargoCapacity(UUID tripId, BigDecimal maxWeightKg, BigDecimal reservedWeightKg,

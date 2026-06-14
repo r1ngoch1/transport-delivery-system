@@ -19,6 +19,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -65,6 +68,23 @@ class TripControllerTest {
     }
 
     @Test
+    void adminListSupportsFiltersAndPaging() {
+        UUID routeId = UUID.randomUUID();
+        UUID driverId = UUID.randomUUID();
+        Instant from = Instant.parse("2026-05-20T00:00:00Z");
+        Instant to = Instant.parse("2026-05-21T00:00:00Z");
+        Trip trip = trip(routeId, 10, 8);
+        trip.setDriverId(driverId);
+        when(trips.findAll(org.mockito.ArgumentMatchers.<Specification<Trip>>any(), any(Pageable.class)))
+                .thenReturn(new PageImpl<>(List.of(trip)));
+
+        List<Trip> result = controller.all(TripStatus.SCHEDULED, routeId, driverId, from, to, 1, 10);
+
+        assertThat(result).containsExactly(trip);
+        verify(trips).findAll(org.mockito.ArgumentMatchers.<Specification<Trip>>any(), any(Pageable.class));
+    }
+
+    @Test
     void adminCreateValidatesRouteAndDefaultsAvailability() {
         UUID routeId = UUID.randomUUID();
         Trip request = trip(routeId, 12, 0);
@@ -104,13 +124,36 @@ class TripControllerTest {
     }
 
     @Test
+    void driverCreateUsesCurrentDriverProfileAndIgnoresSubmittedDriverId() {
+        UUID routeId = UUID.randomUUID();
+        UUID userId = UUID.randomUUID();
+        UUID currentDriverId = UUID.randomUUID();
+        UUID submittedDriverId = UUID.randomUUID();
+        Trip request = trip(routeId, 12, 0);
+        request.setDriverId(submittedDriverId);
+        request.setTotalCargoVolume(40.0);
+        request.setAvailableCargoVolume(0.0);
+        when(routeClient.getRoute(routeId)).thenReturn(new RouteClient.RouteDto(
+                routeId, UUID.randomUUID(), UUID.randomUUID(), 100, 120, true));
+        when(driverClient.getCurrentDriver(userId)).thenReturn(new DriverClient.DriverDto(
+                currentDriverId, userId, "Ivan Driver", true, DriverClient.AvailabilityStatus.AVAILABLE));
+        when(trips.save(any(Trip.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Trip result = controller.create(userId, "DRIVER", request);
+
+        assertThat(result.getDriverId()).isEqualTo(currentDriverId);
+        assertThat(result.getAvailableSeats()).isEqualTo(12);
+        assertThat(result.getAvailableCargoVolume()).isEqualTo(40.0);
+        verify(driverClient).getCurrentDriver(userId);
+        verify(driverClient, never()).getDriver(submittedDriverId);
+    }
+
+    @Test
     void adminCreateRejectsUnavailableDriver() {
         UUID routeId = UUID.randomUUID();
         UUID driverId = UUID.randomUUID();
         Trip request = trip(routeId, 12, 0);
         request.setDriverId(driverId);
-        when(routeClient.getRoute(routeId)).thenReturn(new RouteClient.RouteDto(
-                routeId, UUID.randomUUID(), UUID.randomUUID(), 100, 120, true));
         when(driverClient.getDriver(driverId)).thenReturn(new DriverClient.DriverDto(
                 driverId, UUID.randomUUID(), "Ivan Driver", true, DriverClient.AvailabilityStatus.ON_TRIP));
 
@@ -129,8 +172,6 @@ class TripControllerTest {
         UUID driverId = UUID.randomUUID();
         Trip request = trip(routeId, 12, 0);
         request.setDriverId(driverId);
-        when(routeClient.getRoute(routeId)).thenReturn(new RouteClient.RouteDto(
-                routeId, UUID.randomUUID(), UUID.randomUUID(), 100, 120, true));
         when(driverClient.getDriver(driverId)).thenReturn(new DriverClient.DriverDto(
                 driverId, UUID.randomUUID(), "Ivan Driver", false, DriverClient.AvailabilityStatus.AVAILABLE));
 
@@ -138,6 +179,30 @@ class TripControllerTest {
                 .isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
                     assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
                     assertThat(exception.getReason()).isEqualTo("Driver is not available");
+                });
+
+        verify(trips, never()).save(any(Trip.class));
+    }
+
+    @Test
+    void adminCreateRejectsDriverAssignedToOverlappingTrip() {
+        UUID routeId = UUID.randomUUID();
+        UUID driverId = UUID.randomUUID();
+        Trip request = trip(routeId, 12, 0);
+        request.setDriverId(driverId);
+        Trip assignedTrip = trip(UUID.randomUUID(), 12, 8);
+        assignedTrip.setDriverId(driverId);
+        when(routeClient.getRoute(routeId)).thenReturn(new RouteClient.RouteDto(
+                routeId, UUID.randomUUID(), UUID.randomUUID(), 100, 120, true));
+        when(driverClient.getDriver(driverId)).thenReturn(new DriverClient.DriverDto(
+                driverId, UUID.randomUUID(), "Ivan Driver", true, DriverClient.AvailabilityStatus.AVAILABLE));
+        when(trips.findDriverScheduleConflicts(driverId, request.getDepartureTime(), request.getArrivalTime(), request.getId()))
+                .thenReturn(List.of(assignedTrip));
+
+        assertThatThrownBy(() -> controller.create("ADMIN", request))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
+                    assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+                    assertThat(exception.getReason()).isEqualTo("Driver is already assigned to another trip");
                 });
 
         verify(trips, never()).save(any(Trip.class));
@@ -192,6 +257,41 @@ class TripControllerTest {
                 });
 
         verify(trips, never()).save(any(Trip.class));
+    }
+
+    @Test
+    void adminUpdateRejectsDriverAssignedToOverlappingTrip() {
+        Trip existing = trip(UUID.randomUUID(), 12, 8);
+        UUID driverId = UUID.randomUUID();
+        Trip request = new Trip();
+        request.setDriverId(driverId);
+        Trip assignedTrip = trip(UUID.randomUUID(), 12, 8);
+        assignedTrip.setDriverId(driverId);
+        when(trips.findById(existing.getId())).thenReturn(Optional.of(existing));
+        when(driverClient.getDriver(driverId)).thenReturn(new DriverClient.DriverDto(
+                driverId, UUID.randomUUID(), "Ivan Driver", true, DriverClient.AvailabilityStatus.AVAILABLE));
+        when(trips.findDriverScheduleConflicts(driverId, existing.getDepartureTime(), existing.getArrivalTime(), existing.getId()))
+                .thenReturn(List.of(assignedTrip));
+
+        assertThatThrownBy(() -> controller.update("ADMIN", existing.getId(), request))
+                .isInstanceOfSatisfying(ResponseStatusException.class, exception -> {
+                    assertThat(exception.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+                    assertThat(exception.getReason()).isEqualTo("Driver is already assigned to another trip");
+                });
+
+        verify(trips, never()).save(any(Trip.class));
+    }
+
+    @Test
+    void adminCancelMarksTripCancelled() {
+        Trip existing = trip(UUID.randomUUID(), 12, 8);
+        when(trips.findById(existing.getId())).thenReturn(Optional.of(existing));
+        when(trips.save(existing)).thenReturn(existing);
+
+        Trip result = controller.cancel("ADMIN", existing.getId());
+
+        assertThat(result.getStatus()).isEqualTo(TripStatus.CANCELLED);
+        verify(trips).save(existing);
     }
 
     @Test

@@ -6,6 +6,8 @@ export type PaymentStatus = "PENDING" | "SUCCESS" | "FAILED" | "REFUNDED";
 
 export type TripStatus = "SCHEDULED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
 
+export type CargoStatus = "PENDING_PAYMENT" | "PAID" | "CANCELLED";
+
 export interface ApiErrorResponse {
   timestamp: string;
   status: number;
@@ -17,6 +19,7 @@ export interface ApiErrorResponse {
 export interface AuthResponse {
   accessToken: string;
   tokenType?: string;
+  user?: User;
 }
 
 export interface User {

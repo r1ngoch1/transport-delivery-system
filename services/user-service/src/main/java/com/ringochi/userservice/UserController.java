@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -82,15 +86,50 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<UserDto> all(@RequestHeader(value = "X-User-Roles", required = false) String roles) {
+    public List<UserDto> all(@RequestHeader(value = "X-User-Roles", required = false) String roles,
+                             @RequestParam(required = false) String q,
+                             @RequestParam(required = false) Role role,
+                             @RequestParam(required = false) Boolean enabled,
+                             @RequestParam(defaultValue = "0") int page,
+                             @RequestParam(defaultValue = "20") int size) {
         requireAdmin(roles);
-        return users.findAll().stream().map(this::toDto).toList();
+        var pageable = PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 100),
+                Sort.by(Sort.Direction.DESC, "createdAt"));
+        return users.findAll(userSpec(q, role, enabled), pageable).stream().map(this::toDto).toList();
     }
 
     @GetMapping("/users/{id}")
     public UserDto byId(@PathVariable UUID id) {
         return users.findById(id).map(this::toDto)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+    }
+
+    @PatchMapping("/admin/users/{id}/roles")
+    public UserDto updateRoles(@RequestHeader(value = "X-User-Roles", required = false) String roles,
+                               @PathVariable UUID id,
+                               @RequestBody UpdateRolesRequest request) {
+        requireAdmin(roles);
+        if (request.roles() == null || request.roles().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "At least one role is required");
+        }
+        User user = users.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        user.getRoles().clear();
+        user.getRoles().addAll(request.roles());
+        touch(user);
+        return toDto(users.save(user));
+    }
+
+    @PatchMapping("/admin/users/{id}/enabled")
+    public UserDto updateEnabled(@RequestHeader(value = "X-User-Roles", required = false) String roles,
+                                 @PathVariable UUID id,
+                                 @RequestBody UpdateEnabledRequest request) {
+        requireAdmin(roles);
+        User user = users.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+        user.setEnabled(request.enabled());
+        touch(user);
+        return toDto(users.save(user));
     }
 
     private UserDto toDto(User user) {
@@ -104,9 +143,40 @@ public class UserController {
         }
     }
 
+    private Specification<User> userSpec(String q, Role role, Boolean enabled) {
+        return (root, query, cb) -> {
+            var predicate = cb.conjunction();
+            if (q != null && !q.isBlank()) {
+                String pattern = "%" + q.toLowerCase() + "%";
+                predicate = cb.and(predicate, cb.or(
+                        cb.like(cb.lower(root.get("email")), pattern),
+                        cb.like(cb.lower(root.get("phone")), pattern),
+                        cb.like(cb.lower(root.get("fullName")), pattern)
+                ));
+            }
+            if (role != null) {
+                predicate = cb.and(predicate, cb.equal(root.join("roles"), role));
+            }
+            if (enabled != null) {
+                predicate = cb.and(predicate, cb.equal(root.get("enabled"), enabled));
+            }
+            return predicate;
+        };
+    }
+
+    private void touch(User user) {
+        Instant updatedAt = Instant.now();
+        if (!updatedAt.isAfter(user.getCreatedAt())) {
+            updatedAt = user.getCreatedAt().plusNanos(1);
+        }
+        user.setUpdatedAt(updatedAt);
+    }
+
     public record RegisterRequest(String email, String phone, String password, String fullName, Role role) {}
     public record LoginRequest(String email, String password) {}
     public record UpdateUserRequest(String phone, String fullName) {}
+    public record UpdateRolesRequest(Set<Role> roles) {}
+    public record UpdateEnabledRequest(boolean enabled) {}
     public record AuthResponse(String accessToken, UserDto user) {}
     public record UserDto(UUID id, String email, String phone, String fullName, boolean enabled, Set<Role> roles,
                           Instant createdAt, Instant updatedAt) {}

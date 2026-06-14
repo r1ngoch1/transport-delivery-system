@@ -14,4 +14,16 @@ describe("StatusChip", () => {
 
     expect(screen.getByText("FAILED")).toHaveClass("status-danger");
   });
+
+  it("renders paid status as success", () => {
+    render(<StatusChip status="PAID" />);
+
+    expect(screen.getByText("PAID")).toHaveClass("status-success");
+  });
+
+  it("renders scheduled status as neutral", () => {
+    render(<StatusChip status="SCHEDULED" />);
+
+    expect(screen.getByText("SCHEDULED")).toHaveClass("status-neutral");
+  });
 });
